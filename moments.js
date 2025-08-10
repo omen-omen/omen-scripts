@@ -1,515 +1,422 @@
-export const MOMENTS = [
-  { id: 0, title: "DISSOLUTION", levels: [
-    "Let every name you carry sink beneath the silence.",
-    "Close your eyes and notice one label you can release right now; watch it fade like mist.",
-    "Each morning, whisper a label on the out‑breath and picture it dissolving before the next inhale."
-  ]},
-  { id: 1, title: "STIRRING", levels: [
-    "Feel the tiniest wiggle inside that whispers, “I’m here!”",
-    "Ask, “Where is today’s flutter—heart, toes, idea, smile?” Nod to it.",
-    "Settle, locate the stir, wiggle that spot, and say, “Thanks, little stir—I’ll carry you.”"
-  ]},
-  { id: 2, title: "EMBRYO PULSE", levels: [
-    "Trust the warmth gathering in the dark.",
-    "Place a hand on your belly; sense the gentle pulse of becoming.",
-    "Before sleep, cup your hands over your center and murmur, “Grow safely.”"
-  ]},
-  { id: 3, title: "FIRST WHISPER", levels: [
-    "Hear the hush before language.",
-    "In a quiet room, listen for the faint sound beneath all other sounds.",
-    "Spend one silent minute, welcoming thoughts without saying them aloud."
-  ]},
-  { id: 4, title: "FLICKER", levels: [
-    "Notice the single spark inside the void.",
-    "Recall a sudden idea that lit you up today—name it.",
-    "Light a match or imagine one, then blow it out, honoring sparks without clinging."
-  ]},
-  { id: 5, title: "MURMUR", levels: [
-    "Let potential hum without shape.",
-    "Hum softly; feel vibration in chest, letting it wander without needing tune.",
-    "Once a day, sit with background noises, identifying them without judging."
-  ]},
-  { id: 6, title: "BUD", levels: [
-    "Hold the promise without unfolding.",
-    "Picture something you’re not ready to share yet—smile at its secrecy.",
-    "Protect one fresh idea by noting it privately rather than announcing."
-  ]},
-  { id: 7, title: "GLIMMER", levels: [
-    "Let possibility wink at you.",
-    "Catch a small moment of delight and say “I see you.”",
-    "Jot a daily “glimmer list” of three tiny pleasant surprises."
-  ]},
-  { id: 8, title: "THICKNESS", levels: [
-    "Sense resistance coalescing.",
-    "Where does life feel syrupy today? Touch that tension kindly.",
-    "Do one slow intentional action—pour tea, tie shoes—feeling density turn to flow."
-  ]},
-  { id: 9, title: "RUMBLING", levels: [
-    "Feel the ground of self tremble.",
-    "Note a low‑grade restlessness; give it space instead of shoving it down.",
-    "Stomp feet gently for ten seconds, acknowledging hidden movement."
-  ]},
-  { id: 10, title: "SPARK", levels: [
-    "Declare: I am.",
-    "Say your name aloud like it’s brand‑new, hear its weight.",
-    "Meet your eyes in a mirror each morning and nod once in recognition."
-  ]},
-  { id: 11, title: "VEIL", levels: [
-    "Recognize the film between seeing and seen.",
-    "Fog a glass with breath; notice how it blurs vision then clears.",
-    "Ask, “What assumption is clouding this moment?” and wipe it mentally."
-  ]},
-  { id: 12, title: "SHADOW PULSE", levels: [
-    "Meet the part that hides from light.",
-    "List one avoided feeling; sense its heartbeat.",
-    "During sunset, greet your literal shadow and thank it for walking with you."
-  ]},
-  { id: 13, title: "CLUTCH", levels: [
-    "Admit what you grip in fear.",
-    "Grip your fist, name the fear, then loosen fingers.",
-    "Practice a daily “release breath”—exhale with palms opening."
-  ]},
-  { id: 14, title: "ECHO CHAMBER", levels: [
-    "Listen to your own doubt reverberate.",
-    "Write a doubt down, read it aloud, notice it weaken outside your head.",
-    "Share one small uncertainty with a trusted friend, breaking the chamber."
-  ]},
-  { id: 15, title: "KNOT", levels: [
-    "Locate the tangle that tightens when named.",
-    "Massage shoulders where you carry knots; ask what story lives there.",
-    "Each evening, stretch the area that feels most tangled, breathing out tension."
-  ]},
-  { id: 16, title: "CRAWL", levels: [
-    "Move though the earth is heavy.",
-    "Recall a task you did slowly yet surely today—celebrate persistence.",
-    "Do one action at half‑speed, honoring steady crawl over flashy sprint."
-  ]},
-  { id: 17, title: "ACHE", levels: [
-    "Respect the pain that signals growth.",
-    "Place a gentle hand on a sore muscle; whisper “thank you for building me.”",
-    "Log one ache daily and note how it changes over time."
-  ]},
-  { id: 18, title: "FRACTURE", levels: [
-    "Notice the first hairline crack in certainty.",
-    "What belief felt less solid today? Trace the crack without fixing.",
-    "Draw a small broken line in a journal; let it remind you that opening begins with breaks."
-  ]},
-  { id: 19, title: "HEAT", levels: [
-    "Let tension raise the temperature of will.",
-    "Where did you feel flushed when challenged? Identify that power source.",
-    "Warm palms by rubbing quickly, then set them over heart and breathe."
-  ]},
-  { id: 20, title: "THRESHOLD HUM", levels: [
-    "Pause at the gate that asks if you will cross.",
-    "Stand before a literal doorway; feel the buzz of decision.",
-    "Before starting something new each day, linger one breath at the doorway of action."
-  ]},
-  { id: 21, title: "IMPLOSION", levels: [
-    "Witness collapse without fleeing.",
-    "Recall a plan that fell inward today; note lessons emerging.",
-    "Spend one minute watching a dissolving ice cube, staying present with melt."
-  ]},
-  { id: 22, title: "IGNITION", levels: [
-    "Strike the match of recognition.",
-    "Remember one “aha!” moment from the day; replay the spark.",
-    "Light a candle (or imagine) at dawn; snuff it at dusk, honoring cycles of ignition."
-  ]},
-  { id: 23, title: "HOLLOW", levels: [
-    "Feel the echo now ringing with intent.",
-    "Put ear to an empty cup; hear its soft hum, behold usefulness of hollow.",
-    "Leave five minutes unscheduled—protect empty space."
-  ]},
-  { id: 24, title: "SIGNAL", levels: [
-    "Send a wordless yes into the dark.",
-    "Recall when you signaled openness (smile, gesture) and felt response.",
-    "Raise one finger skyward each morning as silent “ready” to the day."
-  ]},
-  { id: 25, title: "ORIENTATION", levels: [
-    "Choose one direction, however slight.",
-    "Spin slowly; stop where body says “there.”",
-    "Set a tiny daily aim (drink water, call friend) and point physically in its direction."
-  ]},
-  { id: 26, title: "SEEP", levels: [
-    "Allow purpose to bleed outward.",
-    "Notice where enthusiasm leaked into conversation.",
-    "Write a purposeful word on a sticky note and let moisture blur edges over time."
-  ]},
-  { id: 27, title: "QUIVER", levels: [
-    "Hold the bowstring of desire taut.",
-    "Feel tension before release in any task; savor it.",
-    "Pause right before sending a message, breathe, then release."
-  ]},
-  { id: 28, title: "GEOMETRY", levels: [
-    "Trace the rough outline of a new form.",
-    "Sketch one simple shape that represents today’s idea.",
-    "End each day by drawing a basic symbol of your current project."
-  ]},
-  { id: 29, title: "ALIGNMENT", levels: [
-    "Let bones remember their true axis.",
-    "Stand tall; sense spine stacking naturally.",
-    "Shimmy shoulders into alignment whenever you catch yourself slouching."
-  ]},
-  { id: 30, title: "STEP", levels: [
-    "Place weight on the future.",
-    "Recall first physical step you took toward goal today.",
-    "Take one intentional step forward when you rise from bed; say “forward.”"
-  ]},
-  { id: 31, title: "BREATH", levels: [
-    "Invite air to complete the circuit.",
-    "Notice one breath you fully felt today.",
-    "Three times daily, inhale for four, hold two, exhale six."
-  ]},
-  { id: 32, title: "EMBER", levels: [
-    "Guard the small fire.",
-    "Recall a fragile hope; visualize cupping it from wind.",
-    "Write one sentence feeding your hope; keep in pocket."
-  ]},
-  { id: 33, title: "WORD", levels: [
-    "Speak the first essential thing.",
-    "What single word defined your day? Whisper it again.",
-    "Choose a daily “anchor word” and let it guide actions."
-  ]},
-  { id: 34, title: "GLIDE", levels: [
-    "Move with the grain of the day.",
-    "Identify a moment you flowed effortlessly.",
-    "When work feels rough, pause until motion regains smoothness."
-  ]},
-  { id: 35, title: "MIRROR", levels: [
-    "See yourself seeing.",
-    "Observe eyes in mirror two seconds longer than usual.",
-    "Note one judgment you hold about yourself, replace with curiosity."
-  ]},
-  { id: 36, title: "GROUND", levels: [
-    "Stand where you are, entirely.",
-    "Press feet firmly; feel floor support.",
-    "Touch something earthy (stone, soil) each day to root presence."
-  ]},
-  { id: 37, title: "OFFER", levels: [
-    "Give away what you cannot keep.",
-    "Recall something you shared freely today and how it felt.",
-    "Gift one compliment daily without expectation."
-  ]},
-  { id: 38, title: "TIDE", levels: [
-    "Feel the pull beyond your edges.",
-    "Notice rhythms of energy highs/lows; mark times.",
-    "Work with your natural ebb—rest when low, surge when high."
-  ]},
-  { id: 39, title: "WEAVE", levels: [
-    "Interlace intent with action.",
-    "Match a task with its purpose aloud: “I email to connect.”",
-    "End day tying a loose end on project, stitching cohesion."
-  ]},
-  { id: 40, title: "GLOW", levels: [
-    "Let quiet power diffuse.",
-    "Recall someone noticing your calm presence.",
-    "Sit with back straight, imagine soft light expanding five inches around you."
-  ]},
-  { id: 41, title: "PULSE", levels: [
-    "Keep rhythm with what surrounds you.",
-    "Tap foot to ambient sound; align.",
-    "Take three synced breaths with a natural beat (clock tick, waves, music)."
-  ]},
-  { id: 42, title: "SWAY", levels: [
-    "Let motion become conversation.",
-    "Rock gently while standing; sense messages in movement.",
-    "When thinking, sway side to side until clarity."
-  ]},
-  { id: 43, title: "STREAM", levels: [
-    "Follow the current openly.",
-    "Recall where you let circumstance carry you helpfully today.",
-    "Choose one small task to perform exactly as conditions suggest, not forced."
-  ]},
-  { id: 44, title: "HORIZON", levels: [
-    "Hold distance without longing.",
-    "Look at far line (skyline) and breathe, letting future stay future.",
-    "Spend 30 seconds gazing far, relaxing eyes."
-  ]},
-  { id: 45, title: "CHORD", levels: [
-    "Sound your note without apology.",
-    "Sing or speak a sound that feels “you,” notice resonance.",
-    "Voice a truthful statement daily, even if small."
-  ]},
-  { id: 46, title: "LIFT", levels: [
-    "Rise just enough to lighten another.",
-    "Recount one act that raised someone’s mood.",
-    "Offer tiny assistance (hold door, text encouragement) daily."
-  ]},
-  { id: 47, title: "ARC", levels: [
-    "Curve toward what calls.",
-    "Note subtle leaning of attention—what drew you?",
-    "Follow a mild curiosity for five minutes each day."
-  ]},
-  { id: 48, title: "BALANCE", levels: [
-    "Let neither shadow nor glare dominate.",
-    "Identify where extremes arose; center.",
-    "Practice tree pose (or stand on one foot) for 30 seconds to embody balance."
-  ]},
-  { id: 49, title: "DOOR", levels: [
-    "Touch the surface before you enter.",
-    "Feel texture of an actual door; pause.",
-    "Knock lightly on desk before beginning work, signaling entry."
-  ]},
-  { id: 50, title: "STILL POINT", levels: [
-    "Sit inside the unmoving center.",
-    "Where did you find calm today? Revisit in memory.",
-    "Two‑minute sitting meditation at midday connecting to stillness."
-  ]},
-  { id: 51, title: "STIR", levels: [
-    "Spin the silence a quarter turn.",
-    "Swirl drink and watch patterns.",
-    "Gently rotate wrists in circles before typing, loosening stagnant energy."
-  ]},
-  { id: 52, title: "EDGE", levels: [
-    "Sense the blade between comfort and growth.",
-    "What moment felt thrilling‑scary today? Name it.",
-    "Do one micro‑challenge (cold splash, hard conversation line) daily."
-  ]},
-  { id: 53, title: "GATHER", levels: [
-    "Collect the scattered pieces into coherence.",
-    "Consolidate notes into one place.",
-    "At day’s end, list three disjoint events and draw a link."
-  ]},
-  { id: 54, title: "SURGE", levels: [
-    "Feel energy crest but not break.",
-    "Recall a peak focus wave; note what sustained it.",
-    "Ride productivity sprint for 25 minutes, then rest intentionally."
-  ]},
-  { id: 55, title: "STRIDE", levels: [
-    "Cross the room with unborrowed power.",
-    "Walk hallway noticing your own rhythm, not copying others.",
-    "Take one “power walk” lap daily, breathing deep."
-  ]},
-  { id: 56, title: "SPARKSTORM", levels: [
-    "Let many ideas strike at once.",
-    "Dump rapid ideas onto paper for five minutes.",
-    "Hold a daily micro‑brainstorm before lunch, no judging."
-  ]},
-  { id: 57, title: "FRICTION", levels: [
-    "Embrace heat that sharpens intention.",
-    "Note a conflict that clarified what you value.",
-    "When irritation arises, ask, “What is this polishing?”"
-  ]},
-  { id: 58, title: "ROAR", levels: [
-    "Speak louder than your fear expected.",
-    "Remember one time you voiced opinion clearly today.",
-    "Practice a 10‑second loud “ha!” in private, freeing throat."
-  ]},
-  { id: 59, title: "LIFT‑OFF", levels: [
-    "Leave ground assumptions behind.",
-    "Identify a rule you questioned; feel space beneath.",
-    "Imagine balloon strings cut from feet for thirty seconds, rising."
-  ]},
-  { id: 60, title: "FLOW", levels: [
-    "Act as though resistance forgot your name.",
-    "Note task you lost track of time in.",
-    "When focused, set 15‑minute timer to stretch flow safely."
-  ]},
-  { id: 61, title: "QUENCH", levels: [
-    "Cool what has overheated; hold shape.",
-    "Drink water mindfully after intense moment.",
-    "Keep a cool‑down ritual (cold water on wrists) after vigorous work."
-  ]},
-  { id: 62, title: "FOCUS", levels: [
-    "Aim the beam where it matters.",
-    "Name single priority; ignore others for set period.",
-    "Start each work block by writing the target in one word."
-  ]},
-  { id: 63, title: "FORGE", levels: [
-    "Use pressure to craft rather than crush.",
-    "Recall stress that taught skill today.",
-    "Reframe one obstacle as shaping tool in journal."
-  ]},
-  { id: 64, title: "FLIGHT", levels: [
-    "Move faster than doubt can track.",
-    "Celebrate quick action taken before second‑guessing.",
-    "Commit to one spontaneous act each day."
-  ]},
-  { id: 65, title: "ORBIT", levels: [
-    "Hold distance enough for perspective.",
-    "Step back from issue physically, observe.",
-    "Take a five‑minute walk around block to gain orbit."
-  ]},
-  { id: 66, title: "DRUM", levels: [
-    "Keep heartbeat for those who have forgotten.",
-    "Clap steady rhythm in group setting, anchoring.",
-    "Tap gentle beat on desk before meetings, stabilizing energy."
-  ]},
-  { id: 67, title: "SHIELD", levels: [
-    "Guard the fragile without hiding.",
-    "Visualize translucent bubble protecting your focus.",
-    "Say “safe and seen” when setting a boundary."
-  ]},
-  { id: 68, title: "CRACKLE", levels: [
-    "Let the field hiss with possibility.",
-    "Listen to static between radio stations; feel alive flicker.",
-    "Before brainstorming, rub palms until they buzz."
-  ]},
-  { id: 69, title: "BLAZE", levels: [
-    "Burn so the path appears.",
-    "Note where your passion illuminated a way for others.",
-    "Write a bold statement of intent, place where visible."
-  ]},
-  { id: 70, title: "CLASH", levels: [
-    "Meet the unavoidable confrontation.",
-    "Identify tension avoided, take first honest sentence.",
-    "Practice “I feel…” starter daily to face friction."
-  ]},
-  { id: 71, title: "SHATTER", levels: [
-    "Break the old casing clean.",
-    "Recall belief smashed today; admire shards.",
-    "Snap a twig (or pencil stub) gently, honoring endings."
-  ]},
-  { id: 72, title: "OVERFLOW", levels: [
-    "Let excess spill into generosity.",
-    "Share surplus (idea, food) and note joy.",
-    "Keep “give” post‑it; each day move one extra item to others."
-  ]},
-  { id: 73, title: "SPIRAL", levels: [
-    "Rise by turning inward and outward.",
-    "Trace spiral on paper while breathing, feeling ascent.",
-    "Each evening, review day’s loop forward, noting growth."
-  ]},
-  { id: 74, title: "STOKE", levels: [
-    "Feed the fire that fuels many.",
-    "Compliment someone’s effort, watch their spark grow.",
-    "Share article/song that inspired you daily."
-  ]},
-  { id: 75, title: "QUAKE", levels: [
-    "Let the ground of belief rearrange.",
-    "Acknowledge unsettled feeling; ask what new landscape emerges.",
-    "Stand with knees soft, gently shake body for 15 seconds."
-  ]},
-  { id: 76, title: "PIERCE", levels: [
-    "Cut through the last veil.",
-    "Identify truth beneath politeness today.",
-    "Practice 30‑second “radical honesty” journaling daily."
-  ]},
-  { id: 77, title: "WHITE HEAT", levels: [
-    "Glow beyond color.",
-    "Recall peak intensity moment; sense clarity inside it.",
-    "Meditate on blank white screen/candle for one minute, embracing purity."
-  ]},
-  { id: 78, title: "RUPTURE", levels: [
-    "Split open—become more space than wall.",
-    "Notice vulnerability shown today; honor openness.",
-    "Share one imperfect story with someone safe daily."
-  ]},
-  { id: 79, title: "CLARITY", levels: [
-    "See with the eye that never blinks.",
-    "Write one sentence that captures truth of situation.",
-    "Do a quick body scan for foggy spots; breathe until clear."
-  ]},
-  { id: 80, title: "STILL FLAME", levels: [
-    "Burn without consuming.",
-    "Remember sustained passion that didn’t exhaust you.",
-    "Hold a candle (real or imagined) steady for 60 seconds, practicing calm energy."
-  ]},
-  { id: 81, title: "RESONANCE", levels: [
-    "Vibrate with that which has no name.",
-    "Hum note matching external sound; feel synergy.",
-    "Listen to favorite song seated, sensing shared frequency."
-  ]},
-  { id: 82, title: "VISION", levels: [
-    "Hold an image too vast for language.",
-    "Doodle dream scene without words.",
-    "Spend 2 minutes visualizing desired future in vivid detail."
-  ]},
-  { id: 83, title: "GRACEFALL", levels: [
-    "Descend gently into new altitude.",
-    "Recall a soft letting‑go that lowered stress.",
-    "Exhale and allow shoulders to drop each hour."
-  ]},
-  { id: 84, title: "SYNTHESIS", levels: [
-    "Let opposites complete each other.",
-    "Identify two conflicting ideas that fit together today.",
-    "Write “and” between two seeming contradictions in journal daily."
-  ]},
-  { id: 85, title: "GLIMPSE", levels: [
-    "Catch the pattern behind events.",
-    "Spot repeating theme in day; note insight.",
-    "End day mapping three events to a connecting thread."
-  ]},
-  { id: 86, title: "BEACON", levels: [
-    "Shine so others recall their origin.",
-    "Remember moment someone turned to you for guidance.",
-    "Share hopeful story publicly (post, talk) daily as lighthouse."
-  ]},
-  { id: 87, title: "TRANSLUCENCE", levels: [
-    "Let light pass through your stories.",
-    "Re‑tell a story minus exaggeration; feel clarity.",
-    "Practice transparency: answer simple questions directly five times a day."
-  ]},
-  { id: 88, title: "LATTICE", levels: [
-    "Perceive the grid holding all things.",
-    "Notice hidden structure (calendar, social rule) supporting you.",
-    "Spend one minute visualizing web of connections around one action."
-  ]},
-  { id: 89, title: "MERGE", levels: [
-    "Join without losing outline.",
-    "Recall collaboration where you stayed yourself.",
-    "In group setting, silently affirm “together, distinct” three times."
-  ]},
-  { id: 90, title: "ECHELON", levels: [
-    "Stand on the terrace of wider time.",
-    "Imagine looking back from ten years; what matters?",
-    "Once daily, zoom out mentally to decade perspective before big decision."
-  ]},
-  { id: 91, title: "HUSH", levels: [
-    "Silence even the sacred words.",
-    "Pause before responding; taste quiet.",
-    "Observe one hour of intentional silence daily (or as possible)."
-  ]},
-  { id: 92, title: "WEIGHTLESSNESS", levels: [
-    "Float above measure.",
-    "Recall lightness moment free of judgment.",
-    "Lie on floor and imagine body drifting upward for 60 seconds daily."
-  ]},
-  { id: 93, title: "IRIS", levels: [
-    "Let boundaries act as lenses.",
-    "View situation through someone else’s eyes.",
-    "Pick color object, study edges focusing view like camera aperture."
-  ]},
-  { id: 94, title: "BREATHLESS", levels: [
-    "Live moment before next inhale.",
-    "Notice gap between breaths; rest there.",
-    "Practice box breathing (4‑4‑4‑4) thrice daily."
-  ]},
-  { id: 95, title: "PULSEWAVE", levels: [
-    "Feel the cosmos heartbeat inside yours.",
-    "Place finger on pulse; sync with ambient sound.",
-    "Before sleep, tap pulse count of 60 on chest, merging rhythms."
-  ]},
-  { id: 96, title: "APERTURE", levels: [
-    "Open where no hinge exists.",
-    "Imagine heart as camera lens widening to receive.",
-    "Each day note one thing you newly allowed in."
-  ]},
-  { id: 97, title: "NADIR ZENITH", levels: [
-    "Contain the lowest high.",
-    "Reflect on cycle from valley to peak today.",
-    "Plot mood point morning/night to observe arc."
-  ]},
-  { id: 98, title: "CRYSTAL", levels: [
-    "Know the shape of pure intention.",
-    "Identify core desire; picture it faceted and clear.",
-    "Write intention on paper, fold into triangle, keep near workspace."
-  ]},
-  { id: 99, title: "MIRRORLESS", levels: [
-    "Reflect nothing, reveal everything.",
-    "Spend one minute looking at surroundings, not self, absorbing raw reality.",
-    "Avoid mirrors/screens for first waking hour."
-  ]},
-  { id: 100, title: "SOURCE TOUCH", levels: [
-    "Disappear into what always remains.",
-    "Sit quietly asking, “What in me never changes?” sense the answer.",
-    "End day with palms over heart, whisper “home,” falling into stillness."
+window.MOMENTS = [
+  { title: "DISSOLUTION", lines: [
+    "LET EVERY NAME YOU CARRY SINK BENEATH THE SILENCE.",
+    "CLOSE YOUR EYES AND NOTICE ONE LABEL YOU CAN RELEASE RIGHT NOW; WATCH IT FADE LIKE MIST.",
+    "EACH MORNING, WHISPER A LABEL ON THE OUT-BREATH AND PICTURE IT DISSOLVING BEFORE THE NEXT INHALE."
+  ]},
+  { title: "STIRRING", lines: [
+    "FEEL THE TINIEST WIGGLE INSIDE THAT WHISPERS, “I’M HERE!”",
+    "ASK, “WHERE IS TODAY’S FLUTTER—HEART, TOES, IDEA, SMILE?” NOD TO IT.",
+    "SETTLE, LOCATE THE STIR, WIGGLE THAT SPOT, AND SAY, “THANKS, LITTLE STIR—I’LL CARRY YOU.”"
+  ]},
+  { title: "EMBRYO PULSE", lines: [
+    "TRUST THE WARMTH GATHERING IN THE DARK.",
+    "PLACE A HAND ON YOUR BELLY; SENSE THE GENTLE PULSE OF BECOMING.",
+    "BEFORE SLEEP, CUP YOUR HANDS OVER YOUR CENTER AND MURMUR, “GROW SAFELY.”"
+  ]},
+  { title: "FIRST WHISPER", lines: [
+    "HEAR THE HUSH BEFORE LANGUAGE.",
+    "IN A QUIET ROOM, LISTEN FOR THE FAINT SOUND BENEATH ALL OTHER SOUNDS.",
+    "SPEND ONE SILENT MINUTE, WELCOMING THOUGHTS WITHOUT SAYING THEM ALOUD."
+  ]},
+  { title: "FLICKER", lines: [
+    "NOTICE THE SINGLE SPARK INSIDE THE VOID.",
+    "RECALL A SUDDEN IDEA THAT LIT YOU UP TODAY—NAME IT.",
+    "LIGHT A MATCH OR IMAGINE ONE, THEN BLOW IT OUT, HONORING SPARKS WITHOUT CLINGING."
+  ]},
+  { title: "MURMUR", lines: [
+    "LET POTENTIAL HUM WITHOUT SHAPE.",
+    "HUM SOFTLY; FEEL VIBRATION IN CHEST, LETTING IT WANDER WITHOUT NEEDING TUNE.",
+    "ONCE A DAY, SIT WITH BACKGROUND NOISES, IDENTIFYING THEM WITHOUT JUDGING."
+  ]},
+  { title: "BUD", lines: [
+    "HOLD THE PROMISE WITHOUT UNFOLDING.",
+    "PICTURE SOMETHING YOU’RE NOT READY TO SHARE YET—SMILE AT ITS SECRECY.",
+    "PROTECT ONE FRESH IDEA BY NOTING IT PRIVATELY RATHER THAN ANNOUNCING."
+  ]},
+  { title: "GLIMMER", lines: [
+    "LET POSSIBILITY WINK AT YOU.",
+    "CATCH A SMALL MOMENT OF DELIGHT AND SAY “I SEE YOU.”",
+    "JOT A DAILY “GLIMMER LIST” OF THREE TINY PLEASANT SURPRISES."
+  ]},
+  { title: "THICKNESS", lines: [
+    "SENSE RESISTANCE COALESCING.",
+    "WHERE DOES LIFE FEEL SYRUPY TODAY? TOUCH THAT TENSION KINDLY.",
+    "DO ONE SLOW INTENTIONAL ACTION—POUR TEA, TIE SHOES—FEELING DENSITY TURN TO FLOW."
+  ]},
+  { title: "RUMBLING", lines: [
+    "FEEL THE GROUND OF SELF TREMBLE.",
+    "NOTE A LOW-GRADE RESTLESSNESS; GIVE IT SPACE INSTEAD OF SHOVING IT DOWN.",
+    "STOMP FEET GENTLY FOR TEN SECONDS, ACKNOWLEDGING HIDDEN MOVEMENT."
+  ]},
+  { title: "SPARK", lines: [
+    "DECLARE: I AM.",
+    "SAY YOUR NAME ALOUD LIKE IT’S BRAND-NEW, HEAR ITS WEIGHT.",
+    "MEET YOUR EYES IN A MIRROR EACH MORNING AND NOD ONCE IN RECOGNITION."
+  ]},
+  { title: "VEIL", lines: [
+    "RECOGNIZE THE FILM BETWEEN SEEING AND SEEN.",
+    "FOG A GLASS WITH BREATH; NOTICE HOW IT BLURS VISION THEN CLEARS.",
+    "ASK, “WHAT ASSUMPTION IS CLOUDING THIS MOMENT?” AND WIPE IT MENTALLY."
+  ]},
+  { title: "SHADOW PULSE", lines: [
+    "MEET THE PART THAT HIDES FROM LIGHT.",
+    "LIST ONE AVOIDED FEELING; SENSE ITS HEARTBEAT.",
+    "DURING SUNSET, GREET YOUR LITERAL SHADOW AND THANK IT FOR WALKING WITH YOU."
+  ]},
+  { title: "CLUTCH", lines: [
+    "ADMIT WHAT YOU GRIP IN FEAR.",
+    "GRIP YOUR FIST, NAME THE FEAR, THEN LOOSEN FINGERS.",
+    "PRACTICE A DAILY “RELEASE BREATH”—EXHALE WITH PALMS OPENING."
+  ]},
+  { title: "ECHO CHAMBER", lines: [
+    "LISTEN TO YOUR OWN DOUBT REVERBERATE.",
+    "WRITE A DOUBT DOWN, READ IT ALOUD, NOTICE IT WEAKEN OUTSIDE YOUR HEAD.",
+    "SHARE ONE SMALL UNCERTAINTY WITH A TRUSTED FRIEND, BREAKING THE CHAMBER."
+  ]},
+  { title: "KNOT", lines: [
+    "LOCATE THE TANGLE THAT TIGHTENS WHEN NAMED.",
+    "MASSAGE SHOULDERS WHERE YOU CARRY KNOTS; ASK WHAT STORY LIVES THERE.",
+    "EACH EVENING, STRETCH THE AREA THAT FEELS MOST TANGLED, BREATHING OUT TENSION."
+  ]},
+  { title: "CRAWL", lines: [
+    "MOVE THOUGH THE EARTH IS HEAVY.",
+    "RECALL A TASK YOU DID SLOWLY YET SURELY TODAY—CELEBRATE PERSISTENCE.",
+    "DO ONE ACTION AT HALF-SPEED, HONORING STEADY CRAWL OVER FLASHY SPRINT."
+  ]},
+  { title: "ACHE", lines: [
+    "RESPECT THE PAIN THAT SIGNALS GROWTH.",
+    "PLACE A GENTLE HAND ON A SORE MUSCLE; WHISPER “THANK YOU FOR BUILDING ME.”",
+    "LOG ONE ACHE DAILY AND NOTE HOW IT CHANGES OVER TIME."
+  ]},
+  { title: "FRACTURE", lines: [
+    "NOTICE THE FIRST HAIRLINE CRACK IN CERTAINTY.",
+    "WHAT BELIEF FELT LESS SOLID TODAY? TRACE THE CRACK WITHOUT FIXING.",
+    "DRAW A SMALL BROKEN LINE IN A JOURNAL; LET IT REMIND YOU THAT OPENING BEGINS WITH BREAKS."
+  ]},
+  { title: "HEAT", lines: [
+    "LET TENSION RAISE THE TEMPERATURE OF WILL.",
+    "WHERE DID YOU FEEL FLUSHED WHEN CHALLENGED? IDENTIFY THAT POWER SOURCE.",
+    "WARM PALMS BY RUBBING QUICKLY, THEN SET THEM OVER HEART AND BREATHE."
+  ]},
+  { title: "THRESHOLD HUM", lines: [
+    "PAUSE AT THE GATE THAT ASKS IF YOU WILL CROSS.",
+    "STAND BEFORE A LITERAL DOORWAY; FEEL THE BUZZ OF DECISION.",
+    "BEFORE STARTING SOMETHING NEW EACH DAY, LINGER ONE BREATH AT THE DOORWAY OF ACTION."
+  ]},
+  { title: "IMPLOSION", lines: [
+    "WITNESS COLLAPSE WITHOUT FLEEING.",
+    "RECALL A PLAN THAT FELL INWARD TODAY; NOTE LESSONS EMERGING.",
+    "SPEND ONE MINUTE WATCHING A DISSOLVING ICE CUBE, STAYING PRESENT WITH MELT."
+  ]},
+  { title: "IGNITION", lines: [
+    "STRIKE THE MATCH OF RECOGNITION.",
+    "REMEMBER ONE “AHA!” MOMENT FROM THE DAY; REPLAY THE SPARK.",
+    "LIGHT A CANDLE (OR IMAGINE) AT DAWN; SNUFF IT AT DUSK, HONORING CYCLES OF IGNITION."
+  ]},
+  { title: "HOLLOW", lines: [
+    "FEEL THE ECHO NOW RINGING WITH INTENT.",
+    "PUT EAR TO AN EMPTY CUP; HEAR ITS SOFT HUM, BEHOLD USEFULNESS OF HOLLOW.",
+    "LEAVE FIVE MINUTES UNSCHEDULED—PROTECT EMPTY SPACE."
+  ]},
+  { title: "SIGNAL", lines: [
+    "SEND A WORDLESS YES INTO THE DARK.",
+    "RECALL WHEN YOU SIGNALED OPENNESS (SMILE, GESTURE) AND FELT RESPONSE.",
+    "RAISE ONE FINGER SKYWARD EACH MORNING AS SILENT “READY” TO THE DAY."
+  ]},
+  { title: "ORIENTATION", lines: [
+    "CHOOSE ONE DIRECTION, HOWEVER SLIGHT.",
+    "SPIN SLOWLY; STOP WHERE BODY SAYS “THERE.”",
+    "SET A TINY DAILY AIM (DRINK WATER, CALL FRIEND) AND POINT PHYSICALLY IN ITS DIRECTION."
+  ]},
+  { title: "SEEP", lines: [
+    "ALLOW PURPOSE TO BLEED OUTWARD.",
+    "NOTICE WHERE ENTHUSIASM LEAKED INTO CONVERSATION.",
+    "WRITE A PURPOSEFUL WORD ON A STICKY NOTE AND LET MOISTURE BLUR EDGES OVER TIME."
+  ]},
+  { title: "QUIVER", lines: [
+    "HOLD THE BOWSTRING OF DESIRE TAUT.",
+    "FEEL TENSION BEFORE RELEASE IN ANY TASK; SAVOR IT.",
+    "PAUSE RIGHT BEFORE SENDING A MESSAGE, BREATHE, THEN RELEASE."
+  ]},
+  { title: "GEOMETRY", lines: [
+    "TRACE THE ROUGH OUTLINE OF A NEW FORM.",
+    "SKETCH ONE SIMPLE SHAPE THAT REPRESENTS TODAY’S IDEA.",
+    "END EACH DAY BY DRAWING A BASIC SYMBOL OF YOUR CURRENT PROJECT."
+  ]},
+  { title: "ALIGNMENT", lines: [
+    "LET BONES REMEMBER THEIR TRUE AXIS.",
+    "STAND TALL; SENSE SPINE STACKING NATURALLY.",
+    "SHIMMY SHOULDERS INTO ALIGNMENT WHENEVER YOU CATCH YOURSELF SLOUCHING."
+  ]},
+  { title: "STEP", lines: [
+    "PLACE WEIGHT ON THE FUTURE.",
+    "RECALL FIRST PHYSICAL STEP YOU TOOK TOWARD GOAL TODAY.",
+    "TAKE ONE INTENTIONAL STEP FORWARD WHEN YOU RISE FROM BED; SAY “FORWARD.”"
+  ]},
+  { title: "BREATH", lines: [
+    "INVITE AIR TO COMPLETE THE CIRCUIT.",
+    "NOTICE ONE BREATH YOU FULLY FELT TODAY.",
+    "THREE TIMES DAILY, INHALE FOR FOUR, HOLD TWO, EXHALE SIX."
+  ]},
+  { title: "EMBER", lines: [
+    "GUARD THE SMALL FIRE.",
+    "RECALL A FRAGILE HOPE; VISUALIZE CUPPING IT FROM WIND.",
+    "WRITE ONE SENTENCE FEEDING YOUR HOPE; KEEP IN POCKET."
+  ]},
+  { title: "WORD", lines: [
+    "SPEAK THE FIRST ESSENTIAL THING.",
+    "WHAT SINGLE WORD DEFINED YOUR DAY? WHISPER IT AGAIN.",
+    "CHOOSE A DAILY “ANCHOR WORD” AND LET IT GUIDE ACTIONS."
+  ]},
+  { title: "GLIDE", lines: [
+    "MOVE WITH THE GRAIN OF THE DAY.",
+    "IDENTIFY A MOMENT YOU FLOWED EFFORTLESSLY.",
+    "WHEN WORK FEELS ROUGH, PAUSE UNTIL MOTION REGAINS SMOOTHNESS."
+  ]},
+  { title: "MIRROR", lines: [
+    "SEE YOURSELF SEEING.",
+    "OBSERVE EYES IN MIRROR TWO SECONDS LONGER THAN USUAL.",
+    "NOTE ONE JUDGMENT YOU HOLD ABOUT YOURSELF, REPLACE WITH CURIOSITY."
+  ]},
+  { title: "GROUND", lines: [
+    "STAND WHERE YOU ARE, ENTIRELY.",
+    "PRESS FEET FIRMLY; FEEL FLOOR SUPPORT.",
+    "TOUCH SOMETHING EARTHY (STONE, SOIL) EACH DAY TO ROOT PRESENCE."
+  ]},
+  { title: "OFFER", lines: [
+    "GIVE AWAY WHAT YOU CANNOT KEEP.",
+    "RECALL SOMETHING YOU SHARED FREELY TODAY AND HOW IT FELT.",
+    "GIFT ONE COMPLIMENT DAILY WITHOUT EXPECTATION."
+  ]},
+  { title: "TIDE", lines: [
+    "FEEL THE PULL BEYOND YOUR EDGES.",
+    "NOTICE RHYTHMS OF ENERGY HIGHS/LOWS; MARK TIMES.",
+    "WORK WITH YOUR NATURAL EBB—REST WHEN LOW, SURGE WHEN HIGH."
+  ]},
+  { title: "WEAVE", lines: [
+    "INTERLACE INTENT WITH ACTION.",
+    "MATCH A TASK WITH ITS PURPOSE ALOUD: “I EMAIL TO CONNECT.”",
+    "END DAY TYING A LOOSE END ON PROJECT, STITCHING COHESION."
+  ]},
+  { title: "GLOW", lines: [
+    "LET QUIET POWER DIFFUSE.",
+    "RECALL SOMEONE NOTICING YOUR CALM PRESENCE.",
+    "SIT WITH BACK STRAIGHT, IMAGINE SOFT LIGHT EXPANDING FIVE INCHES AROUND YOU."
+  ]},
+  { title: "ARC", lines: [
+    "RISE GENTLY FROM ONE POINT TO ANOTHER.",
+    "NAME A TRANSITION YOU’RE IN THE MIDDLE OF; TRACE ITS CURVE.",
+    "DRAW A SMALL ARC IN A NOTEBOOK TO REMIND YOU THAT CHANGE IS A GRADUAL SWEEP."
+  ]},
+  { title: "FOLD", lines: [
+    "TURN INWARD WITHOUT COLLAPSING.",
+    "FOLD HANDS TOGETHER; FEEL WARMTH BETWEEN PALMS.",
+    "ONCE DAILY, CURL INTO A SAFE POSITION FOR ONE MINUTE BEFORE OPENING AGAIN."
+  ]},
+  { title: "TRACE", lines: [
+    "FOLLOW THE OUTLINE OF WHAT IS.",
+    "WITH FINGER, TRACE OBJECT NEARBY; NOTE ITS EDGES.",
+    "EACH EVENING, TRACE THE SHAPE OF YOUR DAY IN THREE SIMPLE WORDS."
+  ]},
+  { title: "SPILL", lines: [
+    "LET WHAT IS INSIDE OVERFLOW.",
+    "WRITE WITHOUT STOPPING FOR ONE MINUTE; LET IT SPILL RAW.",
+    "ONCE A WEEK, SHARE AN UNEDITED THOUGHT WITH SOMEONE YOU TRUST."
+  ]},
+  { title: "KISS", lines: [
+    "MAKE CONTACT WITH AFFECTION.",
+    "RECALL THE LAST THING YOU TOUCHED WITH CARE TODAY.",
+    "GENTLY TOUCH SOMETHING DAILY AS IF IT WERE ALIVE AND PRECIOUS."
+  ]},
+  { title: "TURN", lines: [
+    "SHIFT FOCUS BY A FRACTION.",
+    "TURN YOUR HEAD AND NOTICE WHAT WAS OUT OF VIEW.",
+    "CHANGE ONE SMALL HABIT’S DIRECTION FOR A DAY AND OBSERVE THE RESULT."
+  ]},
+  { title: "LISTEN", lines: [
+    "OFFER FULL EAR WITHOUT EXPECTATION.",
+    "GIVE FIVE MINUTES OF PURE LISTENING TO SOMEONE OR SOMETHING.",
+    "EACH NIGHT, LISTEN TO A SOUND UNTIL IT FADES COMPLETELY."
+  ]},
+  { title: "REST", lines: [
+    "SUSPEND ALL STRIVING.",
+    "NAME A MOMENT YOU LET YOURSELF STOP TODAY.",
+    "BUILD A DAILY MINUTE OF NOTHINGNESS; NO INPUT, NO OUTPUT."
+  ]},
+  { title: "DROP", lines: [
+    "LET GO INTO GRAVITY.",
+    "IMAGINE HOLDING A STONE; RELEASE IT MENTALLY.",
+    "PICK ONE BURDEN AND VISUALIZE IT FALLING AWAY AS YOU EXHALE."
+  ]},
+  { title: "SIP", lines: [
+    "TAKE IN LESS THAN YOU THINK YOU NEED.",
+    "DRINK WATER SLOWLY, NOTING TEMPERATURE AND TEXTURE.",
+    "ONCE A DAY, TAKE A SMALLER PORTION AND FULLY APPRECIATE IT."
+  ]},
+  { title: "PRESS", lines: [
+    "APPLY JUST ENOUGH FORCE.",
+    "PRESS YOUR HAND AGAINST A WALL; FEEL ITS RESISTANCE.",
+    "DURING TENSION, PRESS FEET INTO GROUND TO STEADY YOURSELF."
+  ]},
+  { title: "CLIMB", lines: [
+    "MOVE UPWARD WITH EFFORT.",
+    "REMEMBER A RECENT CHALLENGE YOU OVERCAME; FEEL THE ASCENT.",
+    "TAKE STAIRS MINDFULLY, ACKNOWLEDGING EACH STEP AS A GAIN."
+  ]},
+  { title: "SLIP", lines: [
+    "PASS THROUGH WITHOUT CATCHING.",
+    "NOTICE WHEN YOU LET SOMETHING SLIDE TODAY—WITHOUT REGRET.",
+    "INTENTIONALLY LET ONE NONESSENTIAL TASK GO UNTOUCHED."
+  ]},
+  { title: "BOW", lines: [
+    "LOWER YOURSELF WITH RESPECT.",
+    "BOW SLIGHTLY TO THE NEXT OBJECT OR PERSON YOU ENCOUNTER.",
+    "END EACH DAY WITH A SILENT BOW TO YOUR OWN EFFORTS."
+  ]},
+  { title: "SHIVER", lines: [
+    "FEEL THE BODY'S RESPONSE TO A CHANGE.",
+    "RECALL A TIME YOU FELT A SUDDEN CHILL OF AWARENESS.",
+    "STAND OUTSIDE BRIEFLY AND NOTICE THE AIR'S IMPACT ON YOUR SKIN."
+  ]},
+  { title: "MARK", lines: [
+    "MAKE THIS MOMENT VISIBLE.",
+    "LEAVE A SMALL SYMBOL SOMEWHERE YOU’LL FIND IT LATER.",
+    "KEEP A DAILY TALLY MARK FOR SOMETHING YOU VALUE."
+  ]},
+  { title: "SHADE", lines: [
+    "STEP OUT OF DIRECT LIGHT.",
+    "NOTICE WHERE SHADOWS GATHER IN YOUR SPACE.",
+    "ONCE A DAY, MOVE INTO SHADE AND REST THERE FOR ONE MINUTE."
+  ]},
+  { title: "BREATHE", lines: [
+    "RETURN TO THE SOURCE OF CALM.",
+    "FOCUS ON ONE FULL INHALE AND ONE FULL EXHALE.",
+    "SET THREE ALARMS AS REMINDERS TO TAKE TEN CONSCIOUS BREATHS."
+  ]},
+  { title: "CAST", lines: [
+    "SEND SOMETHING OUTWARD.",
+    "THROW A WORD, LOOK, OR OBJECT INTO THE WORLD WITH INTENTION.",
+    "WRITE ONE WISH ON PAPER AND RELEASE IT INTO WATER OR WIND."
+  ]},
+  { title: "SWAY", lines: [
+    "MOVE BACK AND FORTH WITHOUT DECIDING.",
+    "STAND AND LET YOUR BODY SWAY GENTLY FOR A MINUTE.",
+    "WHEN UNCERTAIN, LET YOURSELF METAPHORICALLY SWAY BEFORE CHOOSING."
+  ]},
+  { title: "CLARIFY", lines: [
+    "MAKE THE CLOUDS TRANSPARENT.",
+    "NAME ONE THING THAT IS UNCLEAR; DEFINE ITS EDGES.",
+    "EACH NIGHT, WRITE A SINGLE SENTENCE THAT SUMMARIZES YOUR DAY."
+  ]},
+  { title: "UNFOLD", lines: [
+    "ALLOW LAYERS TO REVEAL.",
+    "SLOWLY OPEN A PIECE OF PAPER OR CLOTH; NOTICE EACH CREASE.",
+    "ONCE A WEEK, SHARE A PART OF YOUR STORY YOU’VE KEPT CLOSED."
+  ]},
+  { title: "ANCHOR", lines: [
+    "DROP INTO STABILITY.",
+    "IMAGINE LOWERING AN ANCHOR FROM YOUR CHEST INTO THE EARTH.",
+    "TOUCH A CONSISTENT OBJECT DAILY TO REMIND YOU OF YOUR ROOTS."
+  ]},
+  { title: "SPREAD", lines: [
+    "EXTEND BEYOND YOURSELF.",
+    "SPREAD YOUR FINGERS WIDE; FEEL THE SPACE BETWEEN THEM.",
+    "SMILE AT A STRANGER EACH DAY, LETTING WARMTH SPREAD."
+  ]},
+  { title: "CLOSE", lines: [
+    "SEAL WHAT NEEDS ENDING.",
+    "CLOSE A DOOR GENTLY; NOTICE THE SOUND.",
+    "FINISH ONE LINGERING TASK BEFORE SLEEP."
+  ]},
+  { title: "LEAN", lines: [
+    "REST AGAINST SOMETHING STRONG.",
+    "LEAN YOUR BACK INTO A WALL AND BREATHE.",
+    "CALL OR VISIT SOMEONE WHO GROUNDS YOU."
+  ]},
+  { title: "POUR", lines: [
+    "LET FLOW BE UNINTERRUPTED.",
+    "POUR A LIQUID SLOWLY AND NOTICE ITS PATH.",
+    "SPEAK CONTINUOUSLY FOR ONE MINUTE WITHOUT SELF-EDIT."
+  ]},
+  { title: "TUNE", lines: [
+    "ADJUST UNTIL RESONANCE IS FELT.",
+    "LISTEN TO A SOUND AND MATCH ITS PITCH WITH YOUR VOICE.",
+    "CHECK IN WITH YOURSELF DAILY, ADJUSTING MOOD OR ENERGY IF NEEDED."
+  ]},
+  { title: "LIFT", lines: [
+    "RAISE SOMETHING GENTLY.",
+    "LIFT AN OBJECT AND HOLD IT AT EYE LEVEL.",
+    "LIFT SOMEONE’S SPIRIT WITH A KIND WORD."
+  ]},
+  { title: "FLOAT", lines: [
+    "ALLOW SUPPORT TO HOLD YOU.",
+    "IMAGINE LYING ON WATER; FEEL IT LIFT YOU.",
+    "SPEND A MINUTE DAILY LETTING GO OF ALL MUSCULAR TENSION."
+  ]},
+  { title: "BRIDGE", lines: [
+    "CONNECT TWO SIDES.",
+    "NAME TWO PARTS OF YOUR LIFE THAT NEED LINKING.",
+    "TAKE ONE ACTION TO CONNECT WITH SOMEONE YOU’VE BEEN DISTANT FROM."
+  ]},
+  { title: "CARRY", lines: [
+    "HOLD SOMETHING WITH CARE.",
+    "REMEMBER WHAT YOU CARRIED TODAY AND WHY.",
+    "WRITE DOWN ONE RESPONSIBILITY AND HOW YOU HONOR IT."
+  ]},
+  { title: "DROP ANCHOR", lines: [
+    "FIND STILLNESS AMIDST MOTION.",
+    "VISUALIZE AN ANCHOR HALTING YOUR DRIFT.",
+    "CHOOSE A DAILY RITUAL THAT GROUNDS YOU."
+  ]},
+  { title: "LIGHTEN", lines: [
+    "REDUCE WHAT WEIGHS YOU.",
+    "NOTICE ONE BURDEN YOU CAN RELEASE.",
+    "REMOVE ONE UNNEEDED ITEM FROM YOUR SPACE."
+  ]},
+  { title: "SPARKLE", lines: [
+    "CATCH LIGHT AND RETURN IT.",
+    "SEE WHERE YOU NATURALLY SHINE TODAY.",
+    "DO ONE SMALL ACT THAT MAKES SOMEONE ELSE LIGHT UP."
+  ]},
+  { title: "DIP", lines: [
+    "TOUCH AND WITHDRAW.",
+    "DIP YOUR FINGERS INTO WATER AND NOTICE SENSATION.",
+    "TRY ONE NEW THING BRIEFLY, JUST TO TASTE."
+  ]},
+  { title: "KNEEL", lines: [
+    "COME LOW TO MEET SOMETHING.",
+    "KNEEL AND TOUCH THE GROUND WITH RESPECT.",
+    "SPEND A MOMENT EACH WEEK ACKNOWLEDGING SOMETHING GREATER THAN YOU."
+  ]},
+  { title: "SPIRAL", lines: [
+    "MOVE INWARD OR OUTWARD WITH CURVE.",
+    "TRACE A SPIRAL SHAPE; NOTICE HOW IT FEELS.",
+    "REFLECT ON HOW YOUR PATH THIS MONTH HAS LOOPED OR EXPANDED."
+  ]},
+  { title: "SWEEP", lines: [
+    "CLEAR WITH ONE MOTION.",
+    "SWEEP A SURFACE CLEAN AND NOTICE THE FRESHNESS.",
+    "ONCE A WEEK, REMOVE CLUTTER FROM ONE AREA IN ONE GO."
+  ]},
+  { title: "POCKET", lines: [
+    "KEEP SOMETHING CLOSE.",
+    "PLACE A SMALL OBJECT IN YOUR POCKET AS A TALISMAN.",
+    "CARRY A WORD OR IDEA IN MIND ALL DAY."
+  ]},
+  { title: "PLANT", lines: [
+    "PLACE INTO EARTH OR FUTURE.",
+    "PLANT A SEED LITERALLY OR SYMBOLICALLY.",
+    "NAME ONE INTENTION YOU’RE SOWING THIS WEEK."
+  ]},
+  { title: "DRIFT", lines: [
+    "LET CURRENTS GUIDE YOU.",
+    "NOTICE WHEN YOU MOVED WITHOUT PUSHING.",
+    "ALLOW ONE PART OF YOUR DAY TO UNFOLD WITHOUT PLAN."
+  ]},
+  { title: "SOURCE TOUCH", lines: [
+    "CONTACT THE ORIGIN.",
+    "REMEMBER A PLACE OR PERSON THAT FEELS LIKE HOME.",
+    "ONCE A WEEK, RETURN TO A PHYSICAL OR MENTAL PLACE OF BEGINNING."
   ]}
 ];
-
-export function getMomentById(id) {
-  return MOMENTS.find(m => m.id === id) || null;
-}
-
-export function randomMoment() {
-  return MOMENTS[Math.floor(Math.random() * MOMENTS.length)];
-}
