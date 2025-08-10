@@ -1,0 +1,31 @@
+// moments.js
+const MOMENTS = [
+  { title: "WAKE", line: "NOTICE YOUR FIRST BREATH" },
+  { title: "WAKE", line: "TAKE ONE DEEPER BREATH THEN RELEASE" },
+  { title: "WAKE", line: "REST FOR THREE SLOW BREATHS" },
+  { title: "KNOT", line: "SPOT THE TIGHT AREA" },
+  { title: "KNOT", line: "FIND THE TIGHT SPOT HOVER A HAND ABOVE IT" },
+  { title: "KNOT", line: "BREATHE INTO THE TIGHT SPOT UNTIL IT SOFTENS" },
+  { title: "GRAVITY", line: "FEEL YOUR WEIGHT ON THE FLOOR" },
+  { title: "GRAVITY", line: "FEEL THE MASS OF YOUR BODY FULLY" },
+  { title: "GRAVITY", line: "LET GRAVITY HOLD YOU FOR FIVE HEARTBEATS" },
+  { title: "STILL", line: "FREEZE FOR FIVE SECONDS" },
+  { title: "STILL", line: "COUNT TEN HEARTBEATS WITHOUT ADDING THOUGHT" },
+  { title: "STILL", line: "WAIT UNTIL THE NEXT TINY SOUND APPEARS" },
+  { title: "SINK", line: "EMPTY YOUR LUNGS COMPLETELY" },
+  { title: "SINK", line: "EXHALE UNTIL LUNGS EMPTY HOLD TWO BEATS" },
+  { title: "SINK", line: "EXHALE LONGER THAN THE LAST THREE BREATHS" },
+  { title: "SHADOW", line: "NAME A HIDDEN FEAR" },
+  { title: "SHADOW", line: "WRITE ONE HIDDEN WORRY FOLD THE PAPER SHUT" },
+  { title: "SHADOW", line: "SPEAK THE WORRY THEN WHISPER RELEASE" },
+  { title: "MURMUR", line: "LISTEN PAST THE NOISE" },
+  { title: "MURMUR", line: "CLOSE EYES LISTEN FOR THE FAINTEST SOUND" },
+  { title: "MURMUR", line: "COUNT THREE SOUNDS YOU USUALLY MISS" },
+  { title: "HOLD", line: "FEEL YOUR HEARTBEAT" },
+  { title: "HOLD", line: "CUP BOTH HANDS FEEL PULSE FIFTEEN BEATS" },
+  { title: "HOLD", line: "MATCH PULSE TO A SLOWER BREATH" },
+  { title: "HOME", line: "HAND ON HEART SAY HERE" },
+  { title: "HOME", line: "REST HAND ON HEART SAY HERE" },
+  { title: "HOME", line: "FEEL THE STEADY HOUSE OF YOURSELF" }
+  // Continue here with all the rest of your moments until you reach 100 entries
+];
