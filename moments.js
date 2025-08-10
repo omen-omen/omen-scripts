@@ -1,7 +1,3 @@
-// OMEN Moments (0–100) — Full set with 3 perception levels per moment
-// NOTE: This contains 101 entries (Code_00 through Code_100) to match the source canon.
-// If you need exactly 100, drop Code_00 (DISSOLUTION) or merge 99/100.
-
 export const MOMENTS = [
   { id: 0, title: "DISSOLUTION", levels: [
     "Let every name you carry sink beneath the silence.",
