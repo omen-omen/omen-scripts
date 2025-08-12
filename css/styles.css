@@ -134,7 +134,7 @@ body.small-bar{ --bar:var(--bar-thin); }
 body.big-bar  { --bar:var(--bar-thick); }
 
 /* Weekly label: two lines on mobile only */
-#weekly{ text-align:center; line-height:1.2; white-space:nowrap; }
+#weekly{ text-align:right; line-height:1.2; white-space:nowrap; }
 #weekly .mbr{ display:none; }
 @media (max-width:640px){
   #weekly{ white-space:normal; display:inline-block; text-align: right; }
