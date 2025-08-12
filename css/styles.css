@@ -137,6 +137,6 @@ body.big-bar  { --bar:var(--bar-thick); }
 #weekly{ text-align:center; line-height:1.2; white-space:nowrap; }
 #weekly .mbr{ display:none; }
 @media (max-width:640px){
-  #weekly{ white-space:normal; display:inline-block; }
-  #weekly .mbr{ display:block; height:0; }
+  #weekly{ white-space:normal; display:inline-block; text-align: right; }
+  #weekly .mbr{ display:block; height:0; text-align: right;}
 }
