@@ -114,12 +114,23 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
 .top   { top:0; left:0; height:var(--bar); width:0; animation-name:topSnake; }
 .right { top:var(--bar); right:0; width:var(--bar); height:0; animation-name:rightSnake; }
 .bottom{ bottom:0; right:var(--bar); height:var(--bar); width:0; animation-name:bottomSnake; }
-.left  { bottom:0; left:0; width:var(--bar); height:0; animation-name:leftSnake; }
+/* Left segment: start above bottom bar, grow to just under top bar */
+.left{
+  bottom: var(--bar);    /* was 0 — this caused the visible lag */
+  left: 0;
+  width: var(--bar);
+  height: 0;
+  animation-name: leftSnake;
+}
 
 @keyframes topSnake   { 0%{width:0}   25%{width:100%}                               100%{width:100%} }
 @keyframes rightSnake { 0%{height:0}  25%{height:0} 50%{height:calc(100% - var(--bar))} 100%{height:calc(100% - var(--bar))} }
 @keyframes bottomSnake{ 0%{width:0}   50%{width:0} 75%{width:calc(100% - var(--bar))}   100%{width:calc(100% - var(--bar))} }
-@keyframes leftSnake  { 0%{height:0}  75%{height:0} 100%{height:calc(100% - (var(--bar)*2))} }
+@keyframes leftSnake{
+  0%   { height: 0; }
+  75%  { height: 0; }                               /* wait until the third side finishes (12s) */
+  100% { height: calc(100% - (var(--bar) * 2)); }   /* fills up to the bottom of the top bar */
+} }
 
 /* Thickness modes */
 body.small-bar{ --bar:var(--bar-thin); }
