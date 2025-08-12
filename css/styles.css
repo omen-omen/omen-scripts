@@ -58,9 +58,6 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
   padding:1.2rem; line-height:1.35; font-weight:700; letter-spacing:.05em;
   font-size:var(--hud-font); color:var(--ink); background:transparent; pointer-events:auto;
 }
-@media (max-width:640px){
-  .hud{ width:120vw; padding:1.1rem; font-size:calc(var(--hud-font) * 1.5); }
-}
 .hud-content{ display:flex; flex-direction:column; align-items:center; width:100%; }
 .hud-title{ font-size:calc(var(--hud-font)*1.25); font-weight:900; margin:0 0 2em 0; }
 .hud-line{ margin:.3em 0 0 0; font-size:var(--hud-font); opacity:0; transition:opacity 2s ease; }
@@ -134,31 +131,48 @@ body.small-bar{ --bar:var(--bar-thin); }
 body.big-bar  { --bar:var(--bar-thick); }
 
 /* Weekly label: two lines on mobile only */
-#weekly{ text-align:right; line-height:1.2; white-space:nowrap; }
+#weekly{ text-align:center; line-height:1.2; white-space:nowrap; }
 #weekly .mbr{ display:none; }
 @media (max-width:640px){
-  #weekly{ white-space:normal; display:inline-block; text-align: right; }
-  #weekly .mbr{ display:block; height:0; text-align: right;}
+  #weekly{ white-space:normal; display:inline-block; }
+  #weekly .mbr{ display:block; height:0; }
 }
-/* --- MOBILE: keep 1/6 gutter left and right (text spans 4/6) --- */
+
+/* =================
+   MOBILE REFINEMENTS
+   ================= */
+
+/* 1) Weekly Exploration aligned right on mobile */
+@media (max-width: 640px) {
+  .bottom-right {
+    right: var(--pad);
+    left: auto;
+    text-align: right;
+  }
+  #weekly {
+    display: inline-block;
+    text-align: right;
+  }
+}
+
+/* 2) HUD gutters: keep 1/6 viewport empty on each side (content spans middle 4/6) */
 @media (max-width: 640px) {
   .hud {
-    /* center box that occupies 4/6 of the viewport width */
-    width: 66.6667vw;
-    min-width: 0;
+    width: 100vw;
     max-width: none;
+    min-width: 0;
     box-sizing: border-box;
+
+    /* 1/6 viewport gutters left/right; keep at least 1rem; respect safe areas */
+    padding-left: max(16.6667vw, 1rem, env(safe-area-inset-left));
+    padding-right: max(16.6667vw, 1rem, env(safe-area-inset-right));
+    padding-top: 1rem;
+    padding-bottom: 1rem;
 
     /* keep your larger mobile font size */
     font-size: calc(var(--hud-font) * 1.5);
-
-    /* comfortable padding; safe-area aware for notches */
-    padding: 1rem;
-    padding-left: max(1rem, env(safe-area-inset-left));
-    padding-right: max(1rem, env(safe-area-inset-right));
   }
 
-  /* allow long words to wrap instead of overflowing */
   .hud-content {
     overflow-wrap: anywhere;
     word-break: break-word;
