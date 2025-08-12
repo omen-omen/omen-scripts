@@ -1,4 +1,4 @@
-/* ================= OMEN app.js (RTP) ================= */
+/* ================= OMEN app.js (RTP + OMEN→Instagram) ================= */
 (function () {
   "use strict";
 
@@ -25,10 +25,26 @@
         layerB=breathingBar && breathingBar.querySelector(".layer-b");
     var topLeft=document.querySelector(".top-left");
 
-    // If core nodes are missing, bail quietly (Carrd loader builds them)
+    // Bail if scaffold missing (Carrd loader injects it)
     if(!hudWrap||!hud||!weeklyLink||!tickerWrap||!tickerRail||!tickerText||!breatheLink||!breatheOverlay||!stopBtn||!breathingBar||!layerA||!layerB){
       return;
     }
+
+    /* ---------- Make OMEN title clickable → Instagram ---------- */
+    (function(){
+      var omenTitle = document.querySelector(".omen");
+      function openIG(){ window.open("https://www.instagram.com/omen___omen/", "_blank", "noopener"); }
+      if (omenTitle) {
+        omenTitle.style.pointerEvents = "auto";  // override CSS pointer-events:none
+        omenTitle.style.cursor = "pointer";
+        omenTitle.setAttribute("role","link");
+        omenTitle.setAttribute("tabindex","0");
+        omenTitle.addEventListener("click", openIG);
+        omenTitle.addEventListener("keydown", function(e){
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openIG(); }
+        });
+      }
+    })();
 
     /* ---------- Prevent clicks (hover-only UX on desktop) ---------- */
     if(!isTouch){
@@ -48,22 +64,20 @@
       hudWrap.setAttribute("aria-hidden","true");
       hud.textContent = "";
     }
-
     var over=false, hideT=null;
     function armHide(){ clearTimeout(hideT); hideT=setTimeout(function(){ if(!over) closeHud(); },180); }
 
-    // >>> CLOSE WEEKLY whenever a top-left item opens <<<
+    // Close Weekly whenever a top-left item opens
     function wireHud(el, text){
       if(!el) return;
       el.addEventListener("mouseenter",function(){
         over=true;
-        hideWeekly();                 // <-- fix: close Weekly on desktop hover
+        hideWeekly();
         openHud(text);
         clearTimeout(hideT);
       });
       el.addEventListener("mouseleave",function(){ over=false; armHide(); });
     }
-
     wireHud(why,  "LIFE DRIFTS US OFF-CENTER. THIS IS A LIGHTHOUSE. SO WE CAN FACE WHAT’S REAL.");
     wireHud(how,  "WE DRIFT WITH ONE NEW EXPLORATION PER WEEK. ASK THE ORACLE FOR DAILY GUIDANCE. JOURNAL WHENEVER YOU FEEL LIKE IT.");
     wireHud(what, "A MINIMAL INSTRUMENT FOR ATTENTION. FOR ALIGNMENT THROUGH COMMITMENT AND DEVOTION. FOR SELF-RELIANCE, REDEMPTION, AND SOVEREIGNTY.");
@@ -78,18 +92,18 @@
         if(!el) return;
         el.addEventListener("touchstart",function(e){
           e.preventDefault(); e.stopPropagation();
-          hideWeekly();               // <-- fix: close Weekly on mobile tap
+          hideWeekly();
           openHud(text);
         },{passive:false});
         el.addEventListener("click",function(e){
           e.preventDefault(); e.stopPropagation();
-          hideWeekly();               // <-- fix: close Weekly on mobile click
+          hideWeekly();
           openHud(text);
         });
       }
-      sticky(why,  "OMEN OFFERS A WEEKLY ORIENTING SIGNAL SO YOU CAN CUT THROUGH NOISE, RESET YOUR NERVOUS SYSTEM, AND RETURN TO WHAT IS ESSENTIAL.");
-      sticky(how,  "HOVER WEEKLY EXPLORATION TO READ THE WEEK’S LINE WHILE A THIN BORDER LOOPS. HOVER BREATHE FOR A BLANK FIELD WITH A THICKER LOOPING BORDER.");
-      sticky(what, "OMEN IS A MINIMAL ORACLE—PART RITUAL, PART TOOL. ONE PRECISE PROMPT PER WEEK AND A BREATHING FRAME TO HOLD YOUR ATTENTION.");
+      sticky(why,  "LIFE DRIFTS US OFF-CENTER. THIS IS A LIGHTHOUSE. SO WE CAN FACE WHAT’S REAL.");
+      sticky(how,  "WE DRIFT WITH ONE NEW EXPLORATION PER WEEK. ASK THE ORACLE FOR DAILY GUIDANCE. JOURNAL WHENEVER YOU FEEL LIKE IT.");
+      sticky(what, "A MINIMAL INSTRUMENT FOR ATTENTION. FOR ALIGNMENT THROUGH COMMITMENT AND DEVOTION. FOR SELF-RELIANCE, REDEMPTION, AND SOVEREIGNTY.");
       sticky(book, "COMING SOON");
 
       document.addEventListener("touchstart",function(ev){
@@ -132,8 +146,6 @@
         })(lines[i],(i+1)*1000);
       }
     }
-
-    // Also close Weekly when opening Oracle (desktop + mobile)
     if(oracle){
       oracle.addEventListener('mouseenter',function(){
         over=true;
@@ -167,8 +179,7 @@
         seg.classList.remove('is-fading');
         seg.style.animation='none';
       });
-      // reflow to apply 'none', then clear to let CSS keyframes re-attach
-      layer.offsetWidth;  // force reflow
+      layer.offsetWidth;  // reflow
       layer.querySelectorAll('.seg').forEach(function(seg){ seg.style.animation=''; });
     }
 
@@ -181,7 +192,7 @@
     function startLayer(layer){
       if(!layer) return;
       resetLayer(layer);
-      // delay by two RAFs so browsers treat it as a fresh start (prevents first-run stall)
+      // two RAFs ensure first run starts cleanly (prevents stall)
       requestAnimationFrame(function(){
         requestAnimationFrame(function(){
           layer.classList.add('run');
