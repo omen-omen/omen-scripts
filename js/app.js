@@ -1,8 +1,9 @@
-/* ================= OMEN app.js (self-bootstrapping) ================= */
+/* ================= OMEN app.js (RTP) ================= */
 (function () {
   "use strict";
 
-  function ready(fn) {
+  /* ---------- DOM ready ---------- */
+  function ready(fn){
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", fn);
     } else {
@@ -10,54 +11,9 @@
     }
   }
 
-  // Inject full markup if the page doesn't have it (Carrd-friendly)
-  function ensureScaffold() {
-    if (document.querySelector(".app")) return; // already present
-    var html = [
-      '<div class="app">',
-        '<div class="omen" aria-hidden="true">OMEN</div>',
-        '<div class="top-left">',
-          '<a class="corner" id="why">WHY</a>',
-          '<a class="corner" id="how">HOW</a>',
-          '<a class="corner" id="what">WHAT</a>',
-        '</div>',
-        '<div class="bottom-left">',
-          '<a class="corner" id="breathe">BREATHE</a>',
-          '<a class="corner" id="oracle" aria-disabled="true" role="presentation">ORACLE</a>',
-          '<a class="corner" id="book">BOOK</a>',
-        '</div>',
-        '<div class="bottom-right">',
-          '<a id="weekly">WEEKLY<span class="mbr"></span> EXPLORATION</a>',
-        '</div>',
-      '</div>',
-
-      '<div class="hud-wrap" id="hudWrap" aria-hidden="true"><div class="hud" id="hud"></div></div>',
-
-      '<div class="ticker-wrap" id="tickerWrap" aria-hidden="true">',
-        '<div class="ticker-rail" id="tickerRail"><div class="ticker" id="tickerText"></div></div>',
-      '</div>',
-
-      '<div class="breathe" id="breatheOverlay" aria-hidden="true"><div id="stopBtn">INHALE</div></div>',
-
-      '<div id="breathingBar" aria-hidden="true">',
-        '<div class="layer layer-a">',
-          '<div class="seg top"></div><div class="seg right"></div>',
-          '<div class="seg bottom"></div><div class="seg left"></div>',
-        '</div>',
-        '<div class="layer layer-b">',
-          '<div class="seg top"></div><div class="seg right"></div>',
-          '<div class="seg bottom"></div><div class="seg left"></div>',
-        '</div>',
-      '</div>'
-    ].join("");
-    document.body.insertAdjacentHTML("beforeend", html);
-  }
-
-  ready(function init () {
-    ensureScaffold();
-
-    var $ = function (q) { return document.querySelector(q); };
-    var isTouch = ("ontouchstart" in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
+  ready(function init(){
+    var $ = function(q){ return document.querySelector(q); };
+    var isTouch = ("ontouchstart" in window) || (navigator.maxTouchPoints>0) || (navigator.msMaxTouchPoints>0);
 
     /* ---------- Elements ---------- */
     var hudWrap=$("#hudWrap"), hud=$("#hud");
@@ -69,8 +25,13 @@
         layerB=breathingBar && breathingBar.querySelector(".layer-b");
     var topLeft=document.querySelector(".top-left");
 
-    /* ---------- Prevent clicks on desktop (hover-only UX) ---------- */
-    if (!isTouch) {
+    // If core nodes are missing, bail quietly (Carrd loader builds them)
+    if(!hudWrap||!hud||!weeklyLink||!tickerWrap||!tickerRail||!tickerText||!breatheLink||!breatheOverlay||!stopBtn||!breathingBar||!layerA||!layerB){
+      return;
+    }
+
+    /* ---------- Prevent clicks (hover-only UX on desktop) ---------- */
+    if(!isTouch){
       document.querySelectorAll("a").forEach(function(a){
         a.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); });
       });
@@ -87,39 +48,64 @@
       hudWrap.setAttribute("aria-hidden","true");
       hud.textContent = "";
     }
+
     var over=false, hideT=null;
     function armHide(){ clearTimeout(hideT); hideT=setTimeout(function(){ if(!over) closeHud(); },180); }
+
+    // >>> CLOSE WEEKLY whenever a top-left item opens <<<
     function wireHud(el, text){
       if(!el) return;
-      el.addEventListener("mouseenter", function(){ over=true; openHud(text); clearTimeout(hideT); });
-      el.addEventListener("mouseleave", function(){ over=false; armHide(); });
+      el.addEventListener("mouseenter",function(){
+        over=true;
+        hideWeekly();                 // <-- fix: close Weekly on desktop hover
+        openHud(text);
+        clearTimeout(hideT);
+      });
+      el.addEventListener("mouseleave",function(){ over=false; armHide(); });
     }
-    wireHud(why,"OMEN OFFERS A WEEKLY ORIENTING SIGNAL SO YOU CAN CUT THROUGH NOISE, RESET YOUR NERVOUS SYSTEM, AND RETURN TO WHAT IS ESSENTIAL.");
-    wireHud(how,"HOVER WEEKLY EXPLORATION TO READ THE WEEK’S LINE WHILE A THIN BORDER LOOPS. HOVER BREATHE FOR A BLANK FIELD WITH A THICKER LOOPING BORDER.");
-    wireHud(what,"OMEN IS A MINIMAL ORACLE—PART RITUAL, PART TOOL. ONE PRECISE PROMPT PER WEEK AND A BREATHING FRAME TO HOLD YOUR ATTENTION.");
-    wireHud(book,"COMING SOON");
-    hud.addEventListener("mouseenter", function(){ over=true; clearTimeout(hideT); });
-    hud.addEventListener("mouseleave", function(){ over=false; armHide(); });
 
-    // Mobile sticky HUD
-    if (isTouch) {
+    wireHud(why,  "OMEN OFFERS A WEEKLY ORIENTING SIGNAL SO YOU CAN CUT THROUGH NOISE, RESET YOUR NERVOUS SYSTEM, AND RETURN TO WHAT IS ESSENTIAL.");
+    wireHud(how,  "HOVER WEEKLY EXPLORATION TO READ THE WEEK’S LINE WHILE A THIN BORDER LOOPS. HOVER BREATHE FOR A BLANK FIELD WITH A THICKER LOOPING BORDER.");
+    wireHud(what, "OMEN IS A MINIMAL ORACLE—PART RITUAL, PART TOOL. ONE PRECISE PROMPT PER WEEK AND A BREATHING FRAME TO HOLD YOUR ATTENTION.");
+    wireHud(book, "COMING SOON");
+
+    hud.addEventListener("mouseenter",function(){ over=true; clearTimeout(hideT); });
+    hud.addEventListener("mouseleave",function(){ over=false; armHide(); });
+
+    // Mobile sticky HUD (also closes Weekly)
+    if(isTouch){
       function sticky(el,text){
         if(!el) return;
-        el.addEventListener("touchstart", function(e){ e.preventDefault(); e.stopPropagation(); openHud(text); }, {passive:false});
-        el.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); openHud(text); });
+        el.addEventListener("touchstart",function(e){
+          e.preventDefault(); e.stopPropagation();
+          hideWeekly();               // <-- fix: close Weekly on mobile tap
+          openHud(text);
+        },{passive:false});
+        el.addEventListener("click",function(e){
+          e.preventDefault(); e.stopPropagation();
+          hideWeekly();               // <-- fix: close Weekly on mobile click
+          openHud(text);
+        });
       }
-      sticky(why,"OMEN OFFERS A WEEKLY ORIENTING SIGNAL SO YOU CAN CUT THROUGH NOISE, RESET YOUR NERVOUS SYSTEM, AND RETURN TO WHAT IS ESSENTIAL.");
-      sticky(how,"HOVER WEEKLY EXPLORATION TO READ THE WEEK’S LINE WHILE A THIN BORDER LOOPS. HOVER BREATHE FOR A BLANK FIELD WITH A THICKER LOOPING BORDER.");
-      sticky(what,"OMEN IS A MINIMAL ORACLE—PART RITUAL, PART TOOL. ONE PRECISE PROMPT PER WEEK AND A BREATHING FRAME TO HOLD YOUR ATTENTION.");
-      sticky(book,"COMING SOON");
-      document.addEventListener("touchstart", function(ev){ var t=ev.target; if(!(topLeft&&topLeft.contains(t)) && !(hud&&hud.contains(t))) closeHud(); }, {passive:true});
-      document.addEventListener("click", function(ev){ var t=ev.target; if(!(topLeft&&topLeft.contains(t)) && !(hud&&hud.contains(t))) closeHud(); });
+      sticky(why,  "OMEN OFFERS A WEEKLY ORIENTING SIGNAL SO YOU CAN CUT THROUGH NOISE, RESET YOUR NERVOUS SYSTEM, AND RETURN TO WHAT IS ESSENTIAL.");
+      sticky(how,  "HOVER WEEKLY EXPLORATION TO READ THE WEEK’S LINE WHILE A THIN BORDER LOOPS. HOVER BREATHE FOR A BLANK FIELD WITH A THICKER LOOPING BORDER.");
+      sticky(what, "OMEN IS A MINIMAL ORACLE—PART RITUAL, PART TOOL. ONE PRECISE PROMPT PER WEEK AND A BREATHING FRAME TO HOLD YOUR ATTENTION.");
+      sticky(book, "COMING SOON");
+
+      document.addEventListener("touchstart",function(ev){
+        var t=ev.target;
+        if(!(topLeft&&topLeft.contains(t)) && !(hud&&hud.contains(t))) closeHud();
+      },{passive:true});
+      document.addEventListener("click",function(ev){
+        var t=ev.target;
+        if(!(topLeft&&topLeft.contains(t)) && !(hud&&hud.contains(t))) closeHud();
+      });
     }
 
     /* ================= ORACLE ================= */
-    var MOMENTS = window.MOMENTS || [];
+    var MOMENTS=window.MOMENTS||[];
     function getDailyIndex(len){
-      var K_DATE='omen_oracle_date', K_IDX='omen_oracle_idx';
+      var K_DATE='omen_oracle_date',K_IDX='omen_oracle_idx';
       var today=(new Date()).toISOString().slice(0,10);
       var sd=localStorage.getItem(K_DATE), si=localStorage.getItem(K_IDX);
       if(sd===today && si!=null) return Number(si);
@@ -139,18 +125,37 @@
       var lines=getLines(m).slice(0,3);
       for(var i=0;i<lines.length;i++){
         (function(line,delay){
-          setTimeout(function(){ var p=document.createElement('div'); p.className='hud-line'; p.textContent=line; holder.appendChild(p); requestAnimationFrame(function(){ p.style.opacity='1'; }); }, delay);
-        })(lines[i], (i+1)*1000);
+          setTimeout(function(){
+            var p=document.createElement('div'); p.className='hud-line'; p.textContent=line; holder.appendChild(p);
+            requestAnimationFrame(function(){ p.style.opacity='1'; });
+          },delay);
+        })(lines[i],(i+1)*1000);
       }
     }
-    oracle.addEventListener('mouseenter',function(){ over=true; showOracle(MOMENTS[getDailyIndex(MOMENTS.length)]||{}); });
-    oracle.addEventListener('mouseleave',function(){ over=false; armHide(); });
-    if(isTouch){
-      oracle.addEventListener('touchstart',function(e){ e.preventDefault(); e.stopPropagation(); showOracle(MOMENTS[getDailyIndex(MOMENTS.length)]||{}); },{passive:false});
-      oracle.addEventListener('click',function(e){ e.preventDefault(); e.stopPropagation(); showOracle(MOMENTS[getDailyIndex(MOMENTS.length)]||{}); });
+
+    // Also close Weekly when opening Oracle (desktop + mobile)
+    if(oracle){
+      oracle.addEventListener('mouseenter',function(){
+        over=true;
+        hideWeekly();  // consistency
+        showOracle(MOMENTS[getDailyIndex(MOMENTS.length)]||{});
+      });
+      oracle.addEventListener('mouseleave',function(){ over=false; armHide(); });
+      if(isTouch){
+        oracle.addEventListener('touchstart',function(e){
+          e.preventDefault(); e.stopPropagation();
+          hideWeekly();
+          showOracle(MOMENTS[getDailyIndex(MOMENTS.length)]||{});
+        },{passive:false});
+        oracle.addEventListener('click',function(e){
+          e.preventDefault(); e.stopPropagation();
+          hideWeekly();
+          showOracle(MOMENTS[getDailyIndex(MOMENTS.length)]||{});
+        });
+      }
     }
 
-    /* ================= Snake (double buffer; reliable first start) ================= */
+    /* ================= Snake (double buffer, robust first start) ================= */
     var timers=[], loopInt=null, startBto=null, barRunning=false;
 
     function clearTimers(){ while(timers.length) clearTimeout(timers.pop()); }
@@ -160,11 +165,11 @@
       layer.classList.remove('run');
       layer.querySelectorAll('.seg').forEach(function(seg){
         seg.classList.remove('is-fading');
-        seg.style.animation = 'none';
+        seg.style.animation='none';
       });
-      // reflow to apply 'none', then clear so keyframes can restart
-      layer.offsetWidth;
-      layer.querySelectorAll('.seg').forEach(function(seg){ seg.style.animation = ''; });
+      // reflow to apply 'none', then clear to let CSS keyframes re-attach
+      layer.offsetWidth;  // force reflow
+      layer.querySelectorAll('.seg').forEach(function(seg){ seg.style.animation=''; });
     }
 
     function fadeAll(layer){
@@ -176,31 +181,33 @@
     function startLayer(layer){
       if(!layer) return;
       resetLayer(layer);
-      // Two RAFs avoid the “first run doesn’t start” issue
+      // delay by two RAFs so browsers treat it as a fresh start (prevents first-run stall)
       requestAnimationFrame(function(){
         requestAnimationFrame(function(){
           layer.classList.add('run');
-          timers.push(setTimeout(function(){ fadeAll(layer); }, 16000)); // all 4 fade together @16s
+          timers.push(setTimeout(function(){ fadeAll(layer); }, 16000)); // fade all sides together at 16s
         });
       });
     }
 
     function barStart(thick){
       if(barRunning) return;
-      barRunning = true;
+      barRunning=true;
 
       document.body.classList.toggle('small-bar', !thick);
       document.body.classList.toggle('big-bar',  !!thick);
       breathingBar.classList.add('is-active');
 
       clearTimers(); if(loopInt) clearInterval(loopInt); if(startBto) clearTimeout(startBto);
+
+      // Hard reset both layers before first start
       resetLayer(layerA); resetLayer(layerB);
 
-      // Start A now; B at 16s for seamless overlap (no gap between 3rd & 4th sides)
+      // Start A now; B after 16s for seamless overlap
       startLayer(layerA);
       startBto = setTimeout(function(){ startLayer(layerB); }, 16000);
 
-      // Loop forever, staggered by 16s
+      // Loop every 32s with same staggering
       loopInt = setInterval(function(){
         resetLayer(layerA); startLayer(layerA);
         setTimeout(function(){ resetLayer(layerB); startLayer(layerB); }, 16000);
@@ -215,15 +222,14 @@
       resetLayer(layerA); resetLayer(layerB);
     }
 
-    /* ================= Weekly (ticker + thin snake + label cycle) ================= */
+    /* ================= Weekly (thin snake + ticker + BREATHE label cycle) ================= */
     function weeklyText(){
       var src = window.EXPLORATIONS || window.explorations || {};
       var list = [];
-      if (Array.isArray(src)) list = src;
-      else { for (var k in src) if (Object.prototype.hasOwnProperty.call(src,k) && Array.isArray(src[k])) list = list.concat(src[k]); }
-      if (!list.length) return "NO EXPLORATIONS LOADED";
-      var item = list[0];
-      return (typeof item === "string") ? item : (item.text || item.title || "EXPLORATION");
+      if(Array.isArray(src)) list = src;
+      else { for(var k in src){ if(Object.prototype.hasOwnProperty.call(src,k) && Array.isArray(src[k])) list=list.concat(src[k]); } }
+      if(!list.length) return "NO EXPLORATIONS LOADED";
+      var item=list[0]; return (typeof item==='string') ? item : (item.text || item.title || "EXPLORATION");
     }
 
     var weeklyOpen=false, weeklyHideTimer=null, labelLoop=null, labelTs=[];
@@ -231,7 +237,9 @@
     function runWeeklyLabelCycleOnce(){
       var seq=["INHALE","HOLD","EXHALE","HOLD"];
       for(var i=0;i<seq.length;i++){
-        (function(word,delay){ labelTs.push(setTimeout(function(){ if(weeklyOpen && breatheLink) breatheLink.textContent=word; },delay)); })(seq[i], i*4000);
+        (function(word,delay){
+          labelTs.push(setTimeout(function(){ if(weeklyOpen && breatheLink) breatheLink.textContent=word; },delay));
+        })(seq[i], i*4000);
       }
     }
     function restartWeeklyLabels(){ clearWeeklyLabelTimers(); runWeeklyLabelCycleOnce(); labelLoop=setInterval(function(){ clearWeeklyLabelTimers(); runWeeklyLabelCycleOnce(); },16000); }
@@ -249,21 +257,30 @@
       weeklyOpen=false; clearWeeklyLabelTimers(); if(breatheLink) breatheLink.textContent="BREATHE";
       barStop();
     }
+
     var overWeekly=false, overRail=false;
     weeklyLink.addEventListener("mouseenter", function(){ overWeekly=true; showWeekly(); });
     weeklyLink.addEventListener("mouseleave", function(){ overWeekly=false; scheduleHideWeekly(); });
     tickerRail.addEventListener("mouseenter", function(){ overRail=true; clearTimeout(weeklyHideTimer); });
     tickerRail.addEventListener("mouseleave", function(){ overRail=false; scheduleHideWeekly(); });
-    function scheduleHideWeekly(){ clearTimeout(weeklyHideTimer); weeklyHideTimer=setTimeout(function(){ if(!overWeekly && !overRail) hideWeekly(); }, 300); }
 
-    if (isTouch) {
-      weeklyLink.addEventListener("touchstart", function(e){ e.preventDefault(); e.stopPropagation(); showWeekly(); }, {passive:false});
-      weeklyLink.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); showWeekly(); });
-      document.addEventListener("touchstart", function(ev){ var t=ev.target; if(t!==weeklyLink && !(tickerRail && tickerRail.contains(t))) hideWeekly(); }, {passive:true});
-      document.addEventListener("click", function(ev){ var t=ev.target; if(t!==weeklyLink && !(tickerRail && tickerRail.contains(t))) hideWeekly(); });
+    function scheduleHideWeekly(){
+      clearTimeout(weeklyHideTimer);
+      weeklyHideTimer=setTimeout(function(){ if(!overWeekly && !overRail) hideWeekly(); }, 300);
     }
 
-    /* ================= BREATHE (overlay + thick snake) ================= */
+    if(isTouch){
+      weeklyLink.addEventListener("touchstart", function(e){ e.preventDefault(); e.stopPropagation(); showWeekly(); }, {passive:false});
+      weeklyLink.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); showWeekly(); });
+      document.addEventListener("touchstart", function(ev){
+        var t=ev.target; if(t!==weeklyLink && !(tickerRail && tickerRail.contains(t))) hideWeekly();
+      }, {passive:true});
+      document.addEventListener("click", function(ev){
+        var t=ev.target; if(t!==weeklyLink && !(tickerRail && tickerRail.contains(t))) hideWeekly();
+      });
+    }
+
+    /* ================= BREATHE (thick snake + center words) ================= */
     var centerWordsLoop=null;
     function startCenterWords(){
       var words=["INHALE","HOLD","EXHALE","HOLD"], i=0;
@@ -272,22 +289,31 @@
       centerWordsLoop=setInterval(function(){ i=(i+1)%words.length; stopBtn.textContent=words[i]; },4000);
     }
     function stopCenterWords(){ clearInterval(centerWordsLoop); centerWordsLoop=null; }
-    function enterBreathe(){ hideWeekly(); breatheOverlay.classList.add("is-open"); breatheOverlay.setAttribute("aria-hidden","false"); barStart(true); startCenterWords(); }
-    function exitBreathe(){ stopCenterWords(); barStop(); breatheOverlay.classList.remove("is-open"); breatheOverlay.setAttribute("aria-hidden","true"); }
+
+    function enterBreathe(){
+      hideWeekly();
+      breatheOverlay.classList.add("is-open"); breatheOverlay.setAttribute("aria-hidden","false");
+      barStart(true);  // thick snake
+      startCenterWords();
+    }
+    function exitBreathe(){
+      stopCenterWords();
+      barStop();
+      breatheOverlay.classList.remove("is-open"); breatheOverlay.setAttribute("aria-hidden","true");
+    }
 
     breatheLink.addEventListener("mouseenter", enterBreathe);
     breatheLink.addEventListener("mouseleave", exitBreathe);
-    if (isTouch) {
+    if(isTouch){
       breatheLink.addEventListener("touchstart", function(e){ e.preventDefault(); e.stopPropagation(); enterBreathe(); }, {passive:false});
       breatheLink.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); enterBreathe(); });
       document.addEventListener("touchstart", function(ev){ var t=ev.target; if(t!==breatheLink) exitBreathe(); }, {passive:true});
       document.addEventListener("click", function(ev){ var t=ev.target; if(t!==breatheLink) exitBreathe(); });
     }
 
-    /* ESC closes overlays */
-    document.addEventListener("keydown", function(e){ if(e.key==="Escape"){ closeHud(); exitBreathe(); hideWeekly(); } });
-
-    // tiny beacon to confirm script ran
-    console.debug("[OMEN] app booted");
+    /* ---------- ESC key closes overlays ---------- */
+    document.addEventListener("keydown", function(e){
+      if(e.key==="Escape"){ closeHud(); exitBreathe(); hideWeekly(); }
+    });
   });
 })();
