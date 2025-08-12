@@ -179,15 +179,19 @@
       void layer.offsetWidth;
       for(var j=0;j<segs.length;j++){ segs[j].style.animation=""; }
     }
-    function startLayer(layer){
-      if(!layer) return;
-      resetLayer(layer);
-      layer.classList.add("run");
-      timers.push(setTimeout(function(){ var s=layer.querySelector(".right");  if(s) s.classList.add("is-fading"); },12000)); // 12s → 14s
-      timers.push(setTimeout(function(){ var s=layer.querySelector(".bottom"); if(s) s.classList.add("is-fading"); },14000)); // 14s → 16s
-      timers.push(setTimeout(function(){ var s=layer.querySelector(".top");    if(s) s.classList.add("is-fading"); },16000)); // 16s
-      timers.push(setTimeout(function(){ var s=layer.querySelector(".left");   if(s) s.classList.add("is-fading"); },16000));
-    }
+function startLayer(layer){
+  if (!layer) return;
+  resetLayer(layer);
+  layer.classList.add('run');
+
+  // All sides begin fading together at 16s (2s fade handled by CSS)
+  var T = 16000;
+  timers.push(setTimeout(function(){ var s=layer.querySelector('.top');    if(s) s.classList.add('is-fading'); }, T));
+  timers.push(setTimeout(function(){ var s=layer.querySelector('.right');  if(s) s.classList.add('is-fading'); }, T));
+  timers.push(setTimeout(function(){ var s=layer.querySelector('.bottom'); if(s) s.classList.add('is-fading'); }, T));
+  timers.push(setTimeout(function(){ var s=layer.querySelector('.left');   if(s) s.classList.add('is-fading'); }, T));
+}
+
     function barStart(thick){
       if(barRunning) return;
       barRunning=true;
