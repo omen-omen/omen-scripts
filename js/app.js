@@ -1,14 +1,10 @@
-/* ================= OMEN app.js (RTP + OMEN→Instagram) ================= */
+/* ================= OMEN app.js (RTP + bulletproof OMEN→Instagram) ================= */
 (function () {
   "use strict";
 
-  /* ---------- DOM ready ---------- */
   function ready(fn){
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", fn);
-    } else {
-      fn();
-    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn);
+    else fn();
   }
 
   ready(function init(){
@@ -25,30 +21,57 @@
         layerB=breathingBar && breathingBar.querySelector(".layer-b");
     var topLeft=document.querySelector(".top-left");
 
-    // Bail if scaffold missing (Carrd loader injects it)
+    // Bail if scaffold missing
     if(!hudWrap||!hud||!weeklyLink||!tickerWrap||!tickerRail||!tickerText||!breatheLink||!breatheOverlay||!stopBtn||!breathingBar||!layerA||!layerB){
       return;
     }
 
-    /* ---------- Make OMEN title clickable → Instagram ---------- */
+    /* ---------- Make OMEN title clickable → Instagram (robust) ---------- */
     (function(){
       var omenTitle = document.querySelector(".omen");
-      function openIG(){ window.open("https://www.instagram.com/omen___omen/", "_blank", "noopener"); }
+      var IG_URL = "https://www.instagram.com/omen___omen/";
+
+      function openIG(){
+        // Always open a new tab/window
+        window.open(IG_URL, "_blank", "noopener");
+      }
+
       if (omenTitle) {
-        omenTitle.style.pointerEvents = "auto";  // override CSS pointer-events:none
+        // Ensure it can receive pointer events and sits on top of overlays
+        omenTitle.style.pointerEvents = "auto";
         omenTitle.style.cursor = "pointer";
+        omenTitle.style.zIndex = "5000";
         omenTitle.setAttribute("role","link");
         omenTitle.setAttribute("tabindex","0");
-        omenTitle.addEventListener("click", openIG);
+        omenTitle.setAttribute("aria-label","Open OMEN Instagram");
+
+        // Direct handlers
+        omenTitle.addEventListener("click", function(e){
+          openIG(); e.preventDefault(); e.stopPropagation();
+        });
+
+        omenTitle.addEventListener("touchstart", function(e){
+          openIG(); e.preventDefault(); e.stopPropagation();
+        }, {passive:false});
+
         omenTitle.addEventListener("keydown", function(e){
           if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openIG(); }
         });
+
+        // Capturing fallback: if anything else tries to intercept, we still win
+        document.addEventListener("click", function(e){
+          if (e.target && e.target.closest(".omen")) {
+            openIG(); e.preventDefault(); e.stopPropagation();
+          }
+        }, true);
       }
     })();
 
     /* ---------- Prevent clicks (hover-only UX on desktop) ---------- */
     if(!isTouch){
       document.querySelectorAll("a").forEach(function(a){
+        // leave room in case you later wrap OMEN in an <a>
+        if (a.classList.contains("omen-link") || a.id === "omenLink") return;
         a.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); });
       });
     }
@@ -67,7 +90,6 @@
     var over=false, hideT=null;
     function armHide(){ clearTimeout(hideT); hideT=setTimeout(function(){ if(!over) closeHud(); },180); }
 
-    // Close Weekly whenever a top-left item opens
     function wireHud(el, text){
       if(!el) return;
       el.addEventListener("mouseenter",function(){
@@ -86,19 +108,16 @@
     hud.addEventListener("mouseenter",function(){ over=true; clearTimeout(hideT); });
     hud.addEventListener("mouseleave",function(){ over=false; armHide(); });
 
-    // Mobile sticky HUD (also closes Weekly)
     if(isTouch){
       function sticky(el,text){
         if(!el) return;
         el.addEventListener("touchstart",function(e){
           e.preventDefault(); e.stopPropagation();
-          hideWeekly();
-          openHud(text);
+          hideWeekly(); openHud(text);
         },{passive:false});
         el.addEventListener("click",function(e){
           e.preventDefault(); e.stopPropagation();
-          hideWeekly();
-          openHud(text);
+          hideWeekly(); openHud(text);
         });
       }
       sticky(why,  "LIFE DRIFTS US OFF-CENTER. THIS IS A LIGHTHOUSE. SO WE CAN FACE WHAT’S REAL.");
@@ -148,21 +167,18 @@
     }
     if(oracle){
       oracle.addEventListener('mouseenter',function(){
-        over=true;
-        hideWeekly();  // consistency
+        over=true; hideWeekly();
         showOracle(MOMENTS[getDailyIndex(MOMENTS.length)]||{});
       });
       oracle.addEventListener('mouseleave',function(){ over=false; armHide(); });
       if(isTouch){
         oracle.addEventListener('touchstart',function(e){
           e.preventDefault(); e.stopPropagation();
-          hideWeekly();
-          showOracle(MOMENTS[getDailyIndex(MOMENTS.length)]||{});
+          hideWeekly(); showOracle(MOMENTS[getDailyIndex(MOMENTS.length)]||{});
         },{passive:false});
         oracle.addEventListener('click',function(e){
           e.preventDefault(); e.stopPropagation();
-          hideWeekly();
-          showOracle(MOMENTS[getDailyIndex(MOMENTS.length)]||{});
+          hideWeekly(); showOracle(MOMENTS[getDailyIndex(MOMENTS.length)]||{});
         });
       }
     }
@@ -192,11 +208,10 @@
     function startLayer(layer){
       if(!layer) return;
       resetLayer(layer);
-      // two RAFs ensure first run starts cleanly (prevents stall)
       requestAnimationFrame(function(){
         requestAnimationFrame(function(){
           layer.classList.add('run');
-          timers.push(setTimeout(function(){ fadeAll(layer); }, 16000)); // fade all sides together at 16s
+          timers.push(setTimeout(function(){ fadeAll(layer); }, 16000));
         });
       });
     }
@@ -211,14 +226,10 @@
 
       clearTimers(); if(loopInt) clearInterval(loopInt); if(startBto) clearTimeout(startBto);
 
-      // Hard reset both layers before first start
       resetLayer(layerA); resetLayer(layerB);
-
-      // Start A now; B after 16s for seamless overlap
       startLayer(layerA);
       startBto = setTimeout(function(){ startLayer(layerB); }, 16000);
 
-      // Loop every 32s with same staggering
       loopInt = setInterval(function(){
         resetLayer(layerA); startLayer(layerA);
         setTimeout(function(){ resetLayer(layerB); startLayer(layerB); }, 16000);
@@ -260,7 +271,7 @@
       tickerText.textContent = weeklyText();
       tickerWrap.classList.add("is-visible"); tickerWrap.setAttribute("aria-hidden","false");
       weeklyOpen = true;
-      barStart(false);      // thin snake
+      barStart(false);
       restartWeeklyLabels();
     }
     function hideWeekly(){
@@ -304,7 +315,7 @@
     function enterBreathe(){
       hideWeekly();
       breatheOverlay.classList.add("is-open"); breatheOverlay.setAttribute("aria-hidden","false");
-      barStart(true);  // thick snake
+      barStart(true);
       startCenterWords();
     }
     function exitBreathe(){
@@ -322,7 +333,6 @@
       document.addEventListener("click", function(ev){ var t=ev.target; if(t!==breatheLink) exitBreathe(); });
     }
 
-    /* ---------- ESC key closes overlays ---------- */
     document.addEventListener("keydown", function(e){
       if(e.key==="Escape"){ closeHud(); exitBreathe(); hideWeekly(); }
     });
