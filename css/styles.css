@@ -140,3 +140,28 @@ body.big-bar  { --bar:var(--bar-thick); }
   #weekly{ white-space:normal; display:inline-block; text-align: right; }
   #weekly .mbr{ display:block; height:0; text-align: right;}
 }
+/* --- MOBILE: keep 1/6 gutter left and right (text spans 4/6) --- */
+@media (max-width: 640px) {
+  .hud {
+    /* center box that occupies 4/6 of the viewport width */
+    width: 66.6667vw;
+    min-width: 0;
+    max-width: none;
+    box-sizing: border-box;
+
+    /* keep your larger mobile font size */
+    font-size: calc(var(--hud-font) * 1.5);
+
+    /* comfortable padding; safe-area aware for notches */
+    padding: 1rem;
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+
+  /* allow long words to wrap instead of overflowing */
+  .hud-content {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+  }
+}
