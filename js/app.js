@@ -1,4 +1,4 @@
-/* ================= OMEN app.js (RTP + bulletproof OMEN→Instagram) ================= */
+/* ================= OMEN app.js — click-to-toggle nav + devices overlay ================= */
 (function () {
   "use strict";
 
@@ -13,26 +13,23 @@
 
     /* ---------- Elements ---------- */
     var hudWrap=$("#hudWrap"), hud=$("#hud");
-    var why=$("#why"), how=$("#how"), what=$("#what"), devices=$("#devices"), oracle=$("#oracle");
+    var why=$("#why"), how=$("#how"), what=$("#what"),
+        devices=$("#devices"), oracle=$("#oracle");
     var weeklyLink=$("#weekly"), tickerWrap=$("#tickerWrap"), tickerRail=$("#tickerRail"), tickerText=$("#tickerText");
     var breatheLink=$("#breathe"), breatheOverlay=$("#breatheOverlay"), stopBtn=$("#stopBtn");
     var breathingBar=$("#breathingBar"),
         layerA=breathingBar && breathingBar.querySelector(".layer-a"),
         layerB=breathingBar && breathingBar.querySelector(".layer-b");
-    var topLeft=document.querySelector(".top-left");
 
-    // Bail if scaffold missing
     if(!hudWrap||!hud||!weeklyLink||!tickerWrap||!tickerRail||!tickerText||!breatheLink||!breatheOverlay||!stopBtn||!breathingBar||!layerA||!layerB){
-      return;
+      return; // scaffold missing; fail quietly
     }
 
-    /* ---------- Make OMEN title clickable → Instagram (robust) ---------- */
+    /* ---------- OMEN title → Instagram (robust) ---------- */
     (function(){
       var omenTitle = document.querySelector(".omen");
       var IG_URL = "https://www.instagram.com/omen___omen/";
-
       function openIG(){ window.open(IG_URL, "_blank", "noopener"); }
-
       if (omenTitle) {
         omenTitle.style.pointerEvents = "auto";
         omenTitle.style.cursor = "pointer";
@@ -40,26 +37,16 @@
         omenTitle.setAttribute("role","link");
         omenTitle.setAttribute("tabindex","0");
         omenTitle.setAttribute("aria-label","Open OMEN Instagram");
-
         omenTitle.addEventListener("click", function(e){ openIG(); e.preventDefault(); e.stopPropagation(); });
         omenTitle.addEventListener("touchstart", function(e){ openIG(); e.preventDefault(); e.stopPropagation(); }, {passive:false});
         omenTitle.addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openIG(); } });
-
         document.addEventListener("click", function(e){
           if (e.target && e.target.closest(".omen")) { openIG(); e.preventDefault(); e.stopPropagation(); }
         }, true);
       }
     })();
 
-    /* ---------- Prevent clicks (hover-only UX on desktop) ---------- */
-    if(!isTouch){
-      document.querySelectorAll("a").forEach(function(a){
-        if (a.classList.contains("omen-link") || a.id === "omenLink") return;
-        a.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); });
-      });
-    }
-
-    /* ================= HUD (WHY/HOW/WHAT) ================= */
+    /* ================= Shared HUD helpers ================= */
     function openHud(text){
       hud.textContent = text || "";
       hudWrap.classList.add("is-visible");
@@ -70,53 +57,8 @@
       hudWrap.setAttribute("aria-hidden","true");
       hud.textContent = "";
     }
-    var over=false, hideT=null;
-    function armHide(){ clearTimeout(hideT); hideT=setTimeout(function(){ if(!over) closeHud(); },180); }
 
-    function wireHud(el, text){
-      if(!el) return;
-      el.addEventListener("mouseenter",function(){
-        over=true;
-        hideWeekly();
-        openHud(text);
-        clearTimeout(hideT);
-      });
-      el.addEventListener("mouseleave",function(){ over=false; armHide(); });
-    }
-    wireHud(why,  "SOMETIMES WE DRIFT OFF-CENTER. THIS IS NOT FAILURE BUT SIGNAL. REALITY-CHECKS ARE KEYS TO REMEMBER WHAT IS REAL.");
-    wireHud(how,  "MOVING THROUGH A SPECIFIC EXPLORATION EACH WEEK. VISITING THE ORACLE FOR DAILY SIGNAL. BREATHING RE-CALIBRATES. JOURNAL WHEN YOU DESIRE UNITY.");
-    wireHud(what, "MINIMAL INSTRUMENTS DESIGNED FOR ATTENTION. TUNING DEVICES FOR REALIGNMENT. THROUGH PURE COMMITMENT AND DEVOTION TO YOUR SELF. A PRACTICE OF SOVEREIGNTY, REDEMPTION, AND SELF-RELIANCE.");
-
-    hud.addEventListener("mouseenter",function(){ over=true; clearTimeout(hideT); });
-    hud.addEventListener("mouseleave",function(){ over=false; armHide(); });
-
-    if(isTouch){
-      function sticky(el,text){
-        if(!el) return;
-        el.addEventListener("touchstart",function(e){
-          e.preventDefault(); e.stopPropagation();
-          hideWeekly(); openHud(text);
-        },{passive:false});
-        el.addEventListener("click",function(e){
-          e.preventDefault(); e.stopPropagation();
-          hideWeekly(); openHud(text);
-        });
-      }
-      sticky(why,  "SOMETIMES WE DRIFT OFF-CENTER. THIS IS NOT FAILURE BUT SIGNAL. REALITY-CHECKS ARE KEYS TO REMEMBER WHAT IS REAL.");
-      sticky(how,  "MOVING THROUGH A SPECIFIC EXPLORATION EACH WEEK. VISITING THE ORACLE FOR DAILY SIGNAL. BREATHING RE-CALIBRATES. JOURNAL WHEN YOU DESIRE UNITY.");
-      sticky(what, "MINIMAL INSTRUMENTS DESIGNED FOR ATTENTION. TUNING DEVICES FOR REALIGNMENT. THROUGH PURE COMMITMENT AND DEVOTION TO YOUR SELF. A PRACTICE OF SOVEREIGNTY, REDEMPTION, AND SELF-RELIANCE.");
-
-      document.addEventListener("touchstart",function(ev){
-        var t=ev.target;
-        if(!(topLeft&&topLeft.contains(t)) && !(hud&&hud.contains(t))) closeHud();
-      },{passive:true});
-      document.addEventListener("click",function(ev){
-        var t=ev.target;
-        if(!(topLeft&&topLeft.contains(t)) && !(hud&&hud.contains(t))) closeHud();
-      });
-    }
-
-    /* ================= ORACLE (unchanged) ================= */
+    /* ================= Oracle ================= */
     var MOMENTS=window.MOMENTS||[];
     function getDailyIndex(len){
       var K_DATE='omen_oracle_date',K_IDX='omen_oracle_idx';
@@ -146,25 +88,8 @@
         })(lines[i],(i+1)*1000);
       }
     }
-    if(oracle){
-      oracle.addEventListener('mouseenter',function(){
-        over=true; hideWeekly();
-        showOracle(MOMENTS[getDailyIndex(MOMENTS.length)]||{});
-      });
-      oracle.addEventListener('mouseleave',function(){ over=false; armHide(); });
-      if(isTouch){
-        oracle.addEventListener('touchstart',function(e){
-          e.preventDefault(); e.stopPropagation();
-          hideWeekly(); showOracle(MOMENTS[getDailyIndex(MOMENTS.length)]||{});
-        },{passive:false});
-        oracle.addEventListener('click',function(e){
-          e.preventDefault(); e.stopPropagation();
-          hideWeekly(); showOracle(MOMENTS[getDailyIndex(MOMENTS.length)]||{});
-        });
-      }
-    }
 
-    /* ================= Snake / Weekly / BREATHE (unchanged) ================= */
+    /* ================= Weekly ticker + breathing bar ================= */
     var timers=[], loopInt=null, startBto=null, barRunning=false;
 
     function clearTimers(){ while(timers.length) clearTimeout(timers.pop()); }
@@ -200,17 +125,13 @@
     function barStart(thick){
       if(barRunning) return;
       barRunning=true;
-
       document.body.classList.toggle('small-bar', !thick);
       document.body.classList.toggle('big-bar',  !!thick);
       breathingBar.classList.add('is-active');
-
       clearTimers(); if(loopInt) clearInterval(loopInt); if(startBto) clearTimeout(startBto);
-
       resetLayer(layerA); resetLayer(layerB);
       startLayer(layerA);
       startBto = setTimeout(function(){ startLayer(layerB); }, 16000);
-
       loopInt = setInterval(function(){
         resetLayer(layerA); startLayer(layerA);
         setTimeout(function(){ resetLayer(layerB); startLayer(layerB); }, 16000);
@@ -260,29 +181,7 @@
       barStop();
     }
 
-    var overWeekly=false, overRail=false;
-    weeklyLink.addEventListener("mouseenter", function(){ overWeekly=true; showWeekly(); });
-    weeklyLink.addEventListener("mouseleave", function(){ overWeekly=false; scheduleHideWeekly(); });
-    tickerRail.addEventListener("mouseenter", function(){ overRail=true; clearTimeout(weeklyHideTimer); });
-    tickerRail.addEventListener("mouseleave", function(){ overRail=false; scheduleHideWeekly(); });
-
-    function scheduleHideWeekly(){
-      clearTimeout(weeklyHideTimer);
-      weeklyHideTimer=setTimeout(function(){ if(!overWeekly && !overRail) hideWeekly(); }, 300);
-    }
-
-    if(isTouch){
-      weeklyLink.addEventListener("touchstart", function(e){ e.preventDefault(); e.stopPropagation(); showWeekly(); }, {passive:false});
-      weeklyLink.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); showWeekly(); });
-      document.addEventListener("touchstart", function(ev){
-        var t=ev.target; if(t!==weeklyLink && !(tickerRail && tickerRail.contains(t))) hideWeekly();
-      }, {passive:true});
-      document.addEventListener("click", function(ev){
-        var t=ev.target; if(t!==weeklyLink && !(tickerRail && tickerRail.contains(t))) hideWeekly();
-      });
-    }
-
-    /* ================= BREATHE (thick snake + center words) ================= */
+    /* ================= BREATHE overlay ================= */
     var centerWordsLoop=null;
     function startCenterWords(){
       var words=["INHALE","HOLD","EXHALE","HOLD"], i=0;
@@ -304,19 +203,6 @@
       breatheOverlay.classList.remove("is-open"); breatheOverlay.setAttribute("aria-hidden","true");
     }
 
-    breatheLink.addEventListener("mouseenter", enterBreathe);
-    breatheLink.addEventListener("mouseleave", exitBreathe);
-    if(isTouch){
-      breatheLink.addEventListener("touchstart", function(e){ e.preventDefault(); e.stopPropagation(); enterBreathe(); }, {passive:false});
-      breatheLink.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); enterBreathe(); });
-      document.addEventListener("touchstart", function(ev){ var t=ev.target; if(t!==breatheLink) exitBreathe(); }, {passive:true});
-      document.addEventListener("click", function(ev){ var t=ev.target; if(t!==breatheLink) exitBreathe(); });
-    }
-
-    document.addEventListener("keydown", function(e){
-      if(e.key==="Escape"){ closeHud(); exitBreathe(); hideWeekly(); closeDevicesOverlay(); }
-    });
-
     /* ================= DEVICES — full-blank overlay with framed form ================= */
     var devicesOverlay=null;
     function ensureDevicesOverlay(){
@@ -326,7 +212,7 @@
       devicesOverlay = document.createElement("div");
       devicesOverlay.id = "devicesOverlay";
       Object.assign(devicesOverlay.style, {
-        position:"fixed", inset:"0", background:"transparent", zIndex:"6000",
+        position:"fixed", inset:"0", background:"var(--bg, #f6f3ef)", zIndex:"6000",
         display:"none"
       });
 
@@ -338,7 +224,7 @@
         maxWidth:"520px", width:"min(90vw,520px)",
         border:"1px solid #000", padding:"24px", boxSizing:"border-box",
         textAlign:"center", textTransform:"uppercase", fontWeight:"800",
-        letterSpacing:".06em", lineHeight:"1.4"
+        letterSpacing:".06em", lineHeight:"1.4", background:"transparent"
       });
 
       // content
@@ -350,17 +236,17 @@
       var form = document.createElement("form");
       form.id = "form01";
       form.setAttribute("novalidate","novalidate");
-form.innerHTML = [
-  '<label style="display:block;margin:0 0 .8em;">Devices are forming.<br>Signal will be sent when ready.</label>',
-  '<div style="display:flex; gap:.6em; justify-content:center; flex-wrap:wrap;">',
-    '<input type="text" name="name" placeholder="Name" required ',
-      'style="border:1px solid #000;padding:.6em 1em;outline:none;background:transparent;min-width:10ch;">',
-    '<input type="email" name="email" placeholder="Email" required ',
-      'style="border:1px solid #000;padding:.6em 1em;outline:none;background:transparent;min-width:16ch;">',
-    '<button type="submit" ',
-      'style="border:1px solid #000;padding:.6em 1.4em;cursor:pointer;background:#000;color:#fff;">submit</button>',
-  '</div>'
-].join("");
+      form.innerHTML = [
+        '<label style="display:block;margin:0 0 .8em;">Devices are forming.<br>Signal will be sent when ready.</label>',
+        '<div style="display:flex; gap:.6em; justify-content:center; flex-wrap:wrap;">',
+          '<input type="text" name="name" placeholder="Name" required ',
+            'style="border:1px solid #000;padding:.6em 1em;outline:none;background:transparent;min-width:10ch;">',
+          '<input type="email" name="email" placeholder="Email" required ',
+            'style="border:1px solid #000;padding:.6em 1em;outline:none;background:transparent;min-width:16ch;">',
+          '<button type="submit" ',
+            'style="border:1px solid #000;padding:.6em 1.4em;cursor:pointer;background:#000;color:#fff;">submit</button>',
+        '</div>'
+      ].join("");
       frame.appendChild(form);
 
       devicesOverlay.appendChild(frame);
@@ -372,39 +258,83 @@ form.innerHTML = [
         if(frameEl && !frameEl.contains(e.target)) closeDevicesOverlay();
       }, true);
 
-      // basic submit (prevent navigation; you’ll hook to Buttondown later)
+      // basic submit (prevent navigation; hook to Buttondown later)
       form.addEventListener("submit", function(e){
         e.preventDefault();
-        // TODO: integrate Buttondown fetch() here if desired.
+        // TODO: integrate Buttondown via fetch()
         closeDevicesOverlay();
       });
 
       return devicesOverlay;
     }
 
-    function openDevicesOverlay(){
-      ensureDevicesOverlay();
-      devicesOverlay.style.display = "block";
-    }
-    function closeDevicesOverlay(){
-      if(devicesOverlay) devicesOverlay.style.display = "none";
+    function openDevicesOverlay(){ ensureDevicesOverlay(); devicesOverlay.style.display = "block"; }
+    function closeDevicesOverlay(){ if(devicesOverlay) devicesOverlay.style.display = "none"; }
+
+    /* ================= CLICK-TO-TOGGLE NAV ================= */
+    let active = null; // 'hud:why' | 'hud:how' | 'hud:what' | 'oracle' | 'weekly' | 'breathe' | 'devices'
+
+    function closeAllUI(){
+      closeHud();
+      hideWeekly();
+      exitBreathe();
+      closeDevicesOverlay();
     }
 
-    if(devices){
-      // Use capture so our handler fires even with the global click-preventer on <a>
-      devices.addEventListener("click", function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        hideWeekly(); closeHud(); // clear any other UI
-        openDevicesOverlay();
+    function wireHudClick(el, text, key){
+      if(!el) return;
+      el.addEventListener("click", function(e){
+        e.preventDefault(); e.stopPropagation();
+        if(active === ('hud:'+key)) { closeHud(); active = null; return; }
+        closeAllUI(); openHud(text); active = 'hud:'+key;
       }, true);
-      if(isTouch){
-        devices.addEventListener("touchstart", function(e){
-          e.preventDefault(); e.stopPropagation();
-          hideWeekly(); closeHud();
-          openDevicesOverlay();
-        }, {passive:false, capture:true});
-      }
     }
+
+    wireHudClick(why,  "SOMETIMES WE DRIFT OFF-CENTER. THIS IS NOT FAILURE BUT SIGNAL. REALITY-CHECKS ARE KEYS TO REMEMBER WHAT IS REAL.", "why");
+    wireHudClick(how,  "MOVING THROUGH A SPECIFIC EXPLORATION EACH WEEK. VISITING THE ORACLE FOR DAILY SIGNAL. BREATHING RE-CALIBRATES. JOURNAL WHEN YOU DESIRE UNITY.", "how");
+    wireHudClick(what, "MINIMAL INSTRUMENTS DESIGNED FOR ATTENTION. TUNING DEVICES FOR REALIGNMENT. THROUGH PURE COMMITMENT AND DEVOTION TO YOUR SELF. A PRACTICE OF SOVEREIGNTY, REDEMPTION, AND SELF-RELIANCE.", "what");
+
+    if (oracle) {
+      oracle.addEventListener('click', function(e){
+        e.preventDefault(); e.stopPropagation();
+        if(active === 'oracle'){ closeHud(); active = null; return; }
+        closeAllUI(); showOracle(MOMENTS[getDailyIndex(MOMENTS.length)] || {}); active = 'oracle';
+      }, true);
+    }
+
+    if (weeklyLink) {
+      weeklyLink.addEventListener("click", function(e){
+        e.preventDefault(); e.stopPropagation();
+        if(active === 'weekly'){ hideWeekly(); active = null; return; }
+        closeAllUI(); showWeekly(); active = 'weekly';
+      }, true);
+    }
+
+    if (breatheLink) {
+      breatheLink.addEventListener("click", function(e){
+        e.preventDefault(); e.stopPropagation();
+        if(active === 'breathe'){ exitBreathe(); active = null; return; }
+        closeAllUI(); enterBreathe(); active = 'breathe';
+      }, true);
+    }
+
+    if (devices) {
+      devices.addEventListener("click", function(e){
+        e.preventDefault(); e.stopPropagation();
+        if(active === 'devices'){ closeDevicesOverlay(); active = null; return; }
+        closeAllUI(); openDevicesOverlay(); active = 'devices';
+      }, true);
+    }
+
+    /* ================= Global ESC to close ================= */
+    document.addEventListener("keydown", function(e){
+      if(e.key==="Escape"){ closeAllUI(); active = null; }
+    });
+
+    /* ============= NOTE =============
+       We intentionally REMOVED the old
+       "hover-only UX on desktop" blocker.
+       All interactions are click-based now.
+    ================================== */
   });
 })();
