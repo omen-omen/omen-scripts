@@ -1,4 +1,4 @@
-/* ================= OMEN app.js — click-to-toggle nav + devices overlay ================= */
+/* ================= OMEN app.js — click-to-toggle nav + Carrd Form overlay (form01) ================= */
 (function () {
   "use strict";
 
@@ -9,7 +9,6 @@
 
   ready(function init(){
     var $ = function(q){ return document.querySelector(q); };
-    var isTouch = ("ontouchstart" in window) || (navigator.maxTouchPoints>0) || (navigator.msMaxTouchPoints>0);
 
     /* ---------- Elements ---------- */
     var hudWrap=$("#hudWrap"), hud=$("#hud");
@@ -21,8 +20,9 @@
         layerA=breathingBar && breathingBar.querySelector(".layer-a"),
         layerB=breathingBar && breathingBar.querySelector(".layer-b");
 
+    // Bail if key scaffold missing; fail quietly
     if(!hudWrap||!hud||!weeklyLink||!tickerWrap||!tickerRail||!tickerText||!breatheLink||!breatheOverlay||!stopBtn||!breathingBar||!layerA||!layerB){
-      return; // scaffold missing; fail quietly
+      return;
     }
 
     /* ---------- OMEN title → Instagram (robust) ---------- */
@@ -203,92 +203,108 @@
       breatheOverlay.classList.remove("is-open"); breatheOverlay.setAttribute("aria-hidden","true");
     }
 
-    /* ================= DEVICES — full-blank overlay with framed form ================= */
-    var devicesOverlay=null;
-    function ensureDevicesOverlay(){
-      if(devicesOverlay) return devicesOverlay;
+    // Close BREATHE by clicking anywhere on the overlay background
+    breatheOverlay.addEventListener("click", function (e) {
+      if (e.target === breatheOverlay) { exitBreathe(); if (typeof active!=="undefined") active=null; }
+    }, true);
+    breatheOverlay.addEventListener("touchstart", function (e) {
+      if (e.target === breatheOverlay) { exitBreathe(); if (typeof active!=="undefined") active=null; }
+    }, { passive: true, capture: true });
 
-      // overlay
+    /* ================= DEVICES — overlay that uses the real Carrd Form (#form01) ================= */
+    var devicesOverlay = null, devicesContent = null, formPark = null, extForm = $("#form01");
+
+    // Create an invisible parking spot to hold the form when hidden
+    formPark = document.createElement("div");
+    formPark.id = "form01-park";
+    formPark.style.display = "none";
+    if (extForm && extForm.parentNode) { extForm.parentNode.insertBefore(formPark, extForm); formPark.appendChild(extForm); }
+
+    function ensureDevicesOverlay(){
+      if (devicesOverlay) return devicesOverlay;
+
+      // Fullscreen overlay that centers content but allows scrolling on small screens
       devicesOverlay = document.createElement("div");
       devicesOverlay.id = "devicesOverlay";
       Object.assign(devicesOverlay.style, {
-        position:"fixed", inset:"0", background:"var(--bg, #f6f3ef)", zIndex:"6000",
-        display:"none"
+        position: "fixed",
+        inset: "0",
+        zIndex: "6000",
+        display: "none",
+        background: "var(--bg, #f6f3ef)",
+        display: "grid",
+        placeItems: "center",
+        padding: "6vh 6vw",
+        overflowY: "auto"
       });
 
-      // center container (frame)
-      var frame = document.createElement("div");
-      frame.id = "devicesFrame";
-      Object.assign(frame.style, {
-        position:"absolute", left:"50%", top:"50%", transform:"translate(-50%,-50%)",
-        maxWidth:"520px", width:"min(90vw,520px)",
-        border:"0", padding:"24px", boxSizing:"border-box",
-        textAlign:"center", textTransform:"uppercase", fontWeight:"800",
-        letterSpacing:".06em", lineHeight:"1.4", background:"transparent"
+      // Content (no container box) — natural width, centered text
+      devicesContent = document.createElement("div");
+      devicesContent.id = "devicesContent";
+      Object.assign(devicesContent.style, {
+        textAlign: "center",
+        textTransform: "uppercase",
+        fontWeight: "800",
+        letterSpacing: ".06em",
+        margin: "0 auto",
+        maxWidth: "100%"
       });
 
-// content (title lines)
-var title = document.createElement("div");
-title.style.marginBottom = "1.2em";
-title.style.textTransform = "uppercase";
-title.style.textAlign = "center";
+      // Title lines
+      var line1 = document.createElement("div");
+      line1.textContent = "DEVICES ARE FORMING";
+      line1.style.fontSize = "50px";
+      line1.style.fontWeight = "800";
+      line1.style.letterSpacing = "0";
+      devicesContent.appendChild(line1);
 
-var line1 = document.createElement("div");
-line1.textContent = "Devices are forming";
-line1.style.fontSize = "50px";
-line1.style.fontWeight = "800";
-line1.style.letterSpacing = "0"; // crisp
-title.appendChild(line1);
+      var line2 = document.createElement("div");
+      line2.textContent = "Signal will be sent when ready";
+      line2.style.fontSize = "25px";
+      line2.style.fontWeight = "800";
+      line2.style.letterSpacing = "1px";
+      line2.style.marginTop = ".2em";
+      devicesContent.appendChild(line2);
 
-var line2 = document.createElement("div");
-line2.textContent = "Signal will be sent when ready";
-line2.style.fontSize = "25px";
-line2.style.fontWeight = "800";
-line2.style.letterSpacing = "1px";
-line2.style.marginTop = ".2em";
-title.appendChild(line2);
-
-frame.appendChild(title);
-
-// form
-var form = document.createElement("form");
-form.id = "form01";
-form.setAttribute("novalidate","novalidate");
-form.innerHTML = [
-  '<div style="display:flex; gap:.6em; justify-content:center; flex-wrap:wrap;">',
-    '<input type="text" name="name" placeholder="NAME" required ',
-      'style="border:1px solid #000;padding:.6em 1em;outline:none;background:transparent;min-width:10ch;text-transform:uppercase;">',
-    '<input type="email" name="email" placeholder="EMAIL" required ',
-      'style="border:1px solid #000;padding:.6em 1em;outline:none;background:transparent;min-width:16ch;text-transform:uppercase;">',
-    '<button type="submit" ',
-      // match input height: same padding and 1px border; no background fill
-      'style="border:1px solid #000;padding:.6em 1.4em;cursor:pointer;background:transparent;color:#000;text-transform:uppercase;font-weight:800;">submit</button>',
-  '</div>'
-].join("");
-frame.appendChild(form);
-
-
-      devicesOverlay.appendChild(frame);
+      // Attach overlay
+      devicesOverlay.appendChild(devicesContent);
       document.body.appendChild(devicesOverlay);
 
-      // close on outside click
+      // Close on background click (not when clicking content or form)
       devicesOverlay.addEventListener("click", function(e){
-        var frameEl = document.getElementById("devicesFrame");
-        if(frameEl && !frameEl.contains(e.target)) closeDevicesOverlay();
+        if (e.target === devicesOverlay) closeDevicesOverlay();
       }, true);
-
-      // basic submit (prevent navigation; hook to Buttondown later)
-      form.addEventListener("submit", function(e){
-        e.preventDefault();
-        // TODO: integrate Buttondown via fetch()
-        closeDevicesOverlay();
-      });
+      devicesOverlay.addEventListener("touchstart", function(e){
+        if (e.target === devicesOverlay) closeDevicesOverlay();
+      }, { passive: true, capture: true });
 
       return devicesOverlay;
     }
 
-    function openDevicesOverlay(){ ensureDevicesOverlay(); devicesOverlay.style.display = "block"; }
-    function closeDevicesOverlay(){ if(devicesOverlay) devicesOverlay.style.display = "none"; }
+    function openDevicesOverlay(){
+      ensureDevicesOverlay();
+      // Move the external Carrd form into the overlay and show it
+      if (extForm) {
+        devicesContent.appendChild(extForm);
+        extForm.style.display = "block";
+        // optional spacing above inputs
+        if (!extForm.style.marginTop) extForm.style.marginTop = "1.2em";
+        // optional: make the input row wrap nicely
+        extForm.style.textTransform = "uppercase";
+        extForm.style.fontWeight = "800";
+      }
+      devicesOverlay.style.display = "block";
+    }
+
+    function closeDevicesOverlay(){
+      if (!devicesOverlay) return;
+      // Move the form back to its hidden parking div and hide it
+      if (extForm && formPark) {
+        formPark.appendChild(extForm);
+        extForm.style.display = "none";
+      }
+      devicesOverlay.style.display = "none";
+    }
 
     /* ================= CLICK-TO-TOGGLE NAV ================= */
     let active = null; // 'hud:why' | 'hud:how' | 'hud:what' | 'oracle' | 'weekly' | 'breathe' | 'devices'
@@ -350,10 +366,6 @@ frame.appendChild(form);
       if(e.key==="Escape"){ closeAllUI(); active = null; }
     });
 
-    /* ============= NOTE =============
-       We intentionally REMOVED the old
-       "hover-only UX on desktop" blocker.
-       All interactions are click-based now.
-    ================================== */
+    /* NOTE: Hover-only blockers removed; everything is click-based now. */
   });
 })();
