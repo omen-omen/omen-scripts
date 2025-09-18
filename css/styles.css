@@ -46,6 +46,20 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
   transform:translateY(var(--weekly-nudge));
 }
 
+/* Hide the Carrd form on page load */
+#form01 { display: none; }
+
+/* Optional: match our earlier clean aesthetic */
+#form01 input[type="text"],
+#form01 input[type="email"] {
+  border:1px solid #000; padding:.6em 1em; background:transparent; outline:none;
+  text-transform:uppercase; min-width:10ch;
+}
+#form01 button[type="submit"] {
+  border:1px solid #000; padding:.6em 1.4em; background:transparent; color:#000;
+  text-transform:uppercase; font-weight:800; cursor:pointer;
+}
+
 /* HUD */
 .hud-wrap{
   position:fixed; inset:0; display:none; z-index:900; pointer-events:none;
