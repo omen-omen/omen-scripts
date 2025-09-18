@@ -227,20 +227,27 @@
         letterSpacing:".06em", lineHeight:"1.4", background:"transparent"
       });
 
-// content (title)
+// content (title lines)
 var title = document.createElement("div");
 title.style.marginBottom = "1.2em";
 title.style.textTransform = "uppercase";
-title.style.fontWeight = "800";
-title.style.letterSpacing = ".06em";
-// Match the DEVICES nav label size if present
-if (devices) {
-  var cs = getComputedStyle(devices);
-  title.style.fontSize = cs.fontSize || "inherit";
-  title.style.letterSpacing = cs.letterSpacing || title.style.letterSpacing;
-  title.style.fontWeight = cs.fontWeight || title.style.fontWeight;
-}
-title.innerHTML = "Devices are forming<br>Signal will be sent when ready";
+title.style.textAlign = "center";
+
+var line1 = document.createElement("div");
+line1.textContent = "Devices are forming";
+line1.style.fontSize = "50px";
+line1.style.fontWeight = "800";
+line1.style.letterSpacing = "0"; // crisp
+title.appendChild(line1);
+
+var line2 = document.createElement("div");
+line2.textContent = "Signal will be sent when ready";
+line2.style.fontSize = "25px";
+line2.style.fontWeight = "800";
+line2.style.letterSpacing = "1px";
+line2.style.marginTop = ".2em";
+title.appendChild(line2);
+
 frame.appendChild(title);
 
 // form
@@ -254,10 +261,12 @@ form.innerHTML = [
     '<input type="email" name="email" placeholder="EMAIL" required ',
       'style="border:1px solid #000;padding:.6em 1em;outline:none;background:transparent;min-width:16ch;text-transform:uppercase;">',
     '<button type="submit" ',
-      'style="border:1px solid #000;padding:.6em 1.4em;cursor:pointer;background:#000;color:#fff;text-transform:uppercase;">submit</button>',
+      // match input height: same padding and 1px border; no background fill
+      'style="border:1px solid #000;padding:.6em 1.4em;cursor:pointer;background:transparent;color:#000;text-transform:uppercase;font-weight:800;">submit</button>',
   '</div>'
 ].join("");
 frame.appendChild(form);
+
 
       devicesOverlay.appendChild(frame);
       document.body.appendChild(devicesOverlay);
