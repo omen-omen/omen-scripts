@@ -59,6 +59,54 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
   border:1px solid #000; padding:.6em 1.4em; background:transparent; color:#000;
   text-transform:uppercase; font-weight:800; cursor:pointer;
 }
+/* ===== DEVICES overlay: bold, centered, no boxes ===== */
+
+/* Make sure the overlay uses the beige */
+#devicesOverlay { background: var(--bg, #f6f3ef) !important; }
+
+/* Center the content vertically/horizontally and make all text 50px */
+#devicesContent {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+#devicesContent, #devicesContent * {
+  font-size: 50px;   /* headings + inputs + button = same size */
+  line-height: 1.1;
+}
+
+/* Form layout: a clean centered stack that wraps nicely on small screens */
+#form01 {
+  display: grid;
+  place-items: center;
+  gap: 0.6em;
+  margin-top: 0.8em;
+  text-transform: uppercase;
+}
+
+/* Nuke Carrd defaults and any boxes on inputs */
+#form01 input[type="text"],
+#form01 input[type="email"] {
+  all: unset;                       /* wipe borders, bg, shadows, etc. */
+  text-align: center;
+  width: min(90vw, 900px);          /* wide but responsive */
+  padding: 0.2em 0.4em;             /* breathing room without a box */
+  caret-color: #000;
+}
+#form01 ::placeholder { opacity: 0.45; }
+
+/* Button = pure word, no box */
+#form01 button[type="submit"] {
+  all: unset;                       /* no border, no bg, no default button chrome */
+  text-transform: uppercase;
+  font-weight: 800;
+  cursor: pointer;
+}
+#form01 button[type="submit"]:hover { opacity: 0.7; }
+
+/* Optional: when overlay opens, prevent page scroll behind it */
+body:has(#devicesOverlay[style*="display: block"]) { overflow: hidden; }
 
 /* HUD */
 .hud-wrap{
