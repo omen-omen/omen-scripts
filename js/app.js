@@ -1,4 +1,4 @@
-/* ================= OMEN app.js — click-to-toggle nav + Carrd Form overlay (form01) ================= */
+/* ================= OMEN app.js — click-to-toggle + Carrd form overlay (no DOM moves) ================= */
 (function () {
   "use strict";
 
@@ -19,13 +19,14 @@
     var breathingBar=$("#breathingBar"),
         layerA=breathingBar && breathingBar.querySelector(".layer-a"),
         layerB=breathingBar && breathingBar.querySelector(".layer-b");
+    var form01=$("#form01"); // Carrd Form element (hidden by CSS on load)
 
-    // Bail if key scaffold missing; fail quietly
+    // Bail if core scaffold missing; fail quietly
     if(!hudWrap||!hud||!weeklyLink||!tickerWrap||!tickerRail||!tickerText||!breatheLink||!breatheOverlay||!stopBtn||!breathingBar||!layerA||!layerB){
       return;
     }
 
-    /* ---------- OMEN title → Instagram (robust) ---------- */
+    /* ---------- OMEN title → Instagram ---------- */
     (function(){
       var omenTitle = document.querySelector(".omen");
       var IG_URL = "https://www.instagram.com/omen___omen/";
@@ -211,19 +212,13 @@
       if (e.target === breatheOverlay) { exitBreathe(); if (typeof active!=="undefined") active=null; }
     }, { passive: true, capture: true });
 
-    /* ================= DEVICES — overlay that uses the real Carrd Form (#form01) ================= */
-    var devicesOverlay = null, devicesContent = null, formPark = null, extForm = $("#form01");
-
-    // Create an invisible parking spot to hold the form when hidden
-    formPark = document.createElement("div");
-    formPark.id = "form01-park";
-    formPark.style.display = "none";
-    if (extForm && extForm.parentNode) { extForm.parentNode.insertBefore(formPark, extForm); formPark.appendChild(extForm); }
+    /* ================= DEVICES — overlay using the real Carrd Form (#form01) ================= */
+    var devicesOverlay = null, devicesContent = null;
 
     function ensureDevicesOverlay(){
       if (devicesOverlay) return devicesOverlay;
 
-      // Fullscreen overlay that centers content but allows scrolling on small screens
+      // Fullscreen overlay (beige) — we do NOT move the form; we just reveal it via class hooks
       devicesOverlay = document.createElement("div");
       devicesOverlay.id = "devicesOverlay";
       Object.assign(devicesOverlay.style, {
@@ -238,7 +233,7 @@
         overflowY: "auto"
       });
 
-      // Content (no container box) — natural width, centered text
+      // Content wrapper for the two title lines (the form will be styled/positioned by CSS when body.devices-open)
       devicesContent = document.createElement("div");
       devicesContent.id = "devicesContent";
       Object.assign(devicesContent.style, {
@@ -250,7 +245,6 @@
         maxWidth: "100%"
       });
 
-      // Title lines
       var line1 = document.createElement("div");
       line1.textContent = "DEVICES ARE FORMING";
       line1.style.fontSize = "50px";
@@ -259,18 +253,17 @@
       devicesContent.appendChild(line1);
 
       var line2 = document.createElement("div");
-      line2.textContent = "Signal will be sent when ready";
-      line2.style.fontSize = "25px";
+      line2.textContent = "SIGNAL WILL BE SENT WHEN READY";
+      line2.style.fontSize = "50px";
       line2.style.fontWeight = "800";
       line2.style.letterSpacing = "1px";
       line2.style.marginTop = ".2em";
       devicesContent.appendChild(line2);
 
-      // Attach overlay
       devicesOverlay.appendChild(devicesContent);
       document.body.appendChild(devicesOverlay);
 
-      // Close on background click (not when clicking content or form)
+      // Close on background click
       devicesOverlay.addEventListener("click", function(e){
         if (e.target === devicesOverlay) closeDevicesOverlay();
       }, true);
@@ -283,27 +276,18 @@
 
     function openDevicesOverlay(){
       ensureDevicesOverlay();
-      // Move the external Carrd form into the overlay and show it
-      if (extForm) {
-        devicesContent.appendChild(extForm);
-        extForm.style.display = "block";
-        // optional spacing above inputs
-        if (!extForm.style.marginTop) extForm.style.marginTop = "1.2em";
-        // optional: make the input row wrap nicely
-        extForm.style.textTransform = "uppercase";
-        extForm.style.fontWeight = "800";
-      }
+      document.body.classList.add("devices-open");
+      if (form01) form01.style.display = "block"; // reveal (CSS will position/size)
       devicesOverlay.style.display = "block";
+      document.documentElement.style.overflow = "hidden"; // lock page scroll behind overlay
     }
 
     function closeDevicesOverlay(){
       if (!devicesOverlay) return;
-      // Move the form back to its hidden parking div and hide it
-      if (extForm && formPark) {
-        formPark.appendChild(extForm);
-        extForm.style.display = "none";
-      }
+      document.body.classList.remove("devices-open");
+      if (form01) form01.style.display = "none"; // hide again (Carrd stays happy)
       devicesOverlay.style.display = "none";
+      document.documentElement.style.overflow = ""; // restore scroll
     }
 
     /* ================= CLICK-TO-TOGGLE NAV ================= */
@@ -366,6 +350,6 @@
       if(e.key==="Escape"){ closeAllUI(); active = null; }
     });
 
-    /* NOTE: Hover-only blockers removed; everything is click-based now. */
+    /* NOTE: All interactions are click-based (old hover blockers removed). */
   });
 })();
