@@ -350,18 +350,17 @@
       var form = document.createElement("form");
       form.id = "form01";
       form.setAttribute("novalidate","novalidate");
-      form.innerHTML = [
-        '<label style="display:block;margin:0 0 .8em;">Want to feel the first pulse?<br>Enter your field signature:</label>',
-        '<div style="display:flex; gap:.6em; justify-content:center; flex-wrap:wrap;">',
-          '<input type="text" name="name" placeholder="NAME" required ',
-            'style="border:1px solid #000;padding:.6em 1em;outline:none;background:transparent;min-width:10ch;">',
-          '<input type="email" name="email" placeholder="EMAIL" required ',
-            'style="border:1px solid #000;padding:.6em 1em;outline:none;background:transparent;min-width:16ch;">',
-          '<button type="submit" ',
-            'style="border:1px solid #000;padding:.6em 1.4em;cursor:pointer;background:#000;color:#fff;">OK</button>',
-        '</div>',
-        '<div style="margin-top:.9em;font-size:.8em;font-weight:700;">We’ll ping you the moment alignment occurs.</div>'
-      ].join("");
+form.innerHTML = [
+  '<label style="display:block;margin:0 0 .8em;">Devices are forming.<br>Signal will be sent when ready.</label>',
+  '<div style="display:flex; gap:.6em; justify-content:center; flex-wrap:wrap;">',
+    '<input type="text" name="name" placeholder="Name" required ',
+      'style="border:1px solid #000;padding:.6em 1em;outline:none;background:transparent;min-width:10ch;">',
+    '<input type="email" name="email" placeholder="Email" required ',
+      'style="border:1px solid #000;padding:.6em 1em;outline:none;background:transparent;min-width:16ch;">',
+    '<button type="submit" ',
+      'style="border:1px solid #000;padding:.6em 1.4em;cursor:pointer;background:#000;color:#fff;">submit</button>',
+  '</div>'
+].join("");
       frame.appendChild(form);
 
       devicesOverlay.appendChild(frame);
