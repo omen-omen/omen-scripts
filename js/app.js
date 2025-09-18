@@ -222,32 +222,42 @@
       Object.assign(frame.style, {
         position:"absolute", left:"50%", top:"50%", transform:"translate(-50%,-50%)",
         maxWidth:"520px", width:"min(90vw,520px)",
-        border:"1px solid #000", padding:"24px", boxSizing:"border-box",
+        border:"0", padding:"24px", boxSizing:"border-box",
         textAlign:"center", textTransform:"uppercase", fontWeight:"800",
         letterSpacing:".06em", lineHeight:"1.4", background:"transparent"
       });
 
-      // content
-      var title = document.createElement("div");
-      title.style.marginBottom = "1.2em";
-      title.innerHTML = "DEVICES ARE INCOMING.<br>Tools for self-tuning, realignment, and sovereign devotion.<br>Minimal instruments. Maximal signal.<br><br>We release nothing until it rings true.";
-      frame.appendChild(title);
+// content (title)
+var title = document.createElement("div");
+title.style.marginBottom = "1.2em";
+title.style.textTransform = "uppercase";
+title.style.fontWeight = "800";
+title.style.letterSpacing = ".06em";
+// Match the DEVICES nav label size if present
+if (devices) {
+  var cs = getComputedStyle(devices);
+  title.style.fontSize = cs.fontSize || "inherit";
+  title.style.letterSpacing = cs.letterSpacing || title.style.letterSpacing;
+  title.style.fontWeight = cs.fontWeight || title.style.fontWeight;
+}
+title.innerHTML = "Devices are forming<br>Signal will be sent when ready";
+frame.appendChild(title);
 
-      var form = document.createElement("form");
-      form.id = "form01";
-      form.setAttribute("novalidate","novalidate");
-      form.innerHTML = [
-        '<label style="display:block;margin:0 0 .8em;">Devices are forming.<br>Signal will be sent when ready.</label>',
-        '<div style="display:flex; gap:.6em; justify-content:center; flex-wrap:wrap;">',
-          '<input type="text" name="name" placeholder="Name" required ',
-            'style="border:1px solid #000;padding:.6em 1em;outline:none;background:transparent;min-width:10ch;">',
-          '<input type="email" name="email" placeholder="Email" required ',
-            'style="border:1px solid #000;padding:.6em 1em;outline:none;background:transparent;min-width:16ch;">',
-          '<button type="submit" ',
-            'style="border:1px solid #000;padding:.6em 1.4em;cursor:pointer;background:#000;color:#fff;">submit</button>',
-        '</div>'
-      ].join("");
-      frame.appendChild(form);
+// form
+var form = document.createElement("form");
+form.id = "form01";
+form.setAttribute("novalidate","novalidate");
+form.innerHTML = [
+  '<div style="display:flex; gap:.6em; justify-content:center; flex-wrap:wrap;">',
+    '<input type="text" name="name" placeholder="NAME" required ',
+      'style="border:1px solid #000;padding:.6em 1em;outline:none;background:transparent;min-width:10ch;text-transform:uppercase;">',
+    '<input type="email" name="email" placeholder="EMAIL" required ',
+      'style="border:1px solid #000;padding:.6em 1em;outline:none;background:transparent;min-width:16ch;text-transform:uppercase;">',
+    '<button type="submit" ',
+      'style="border:1px solid #000;padding:.6em 1.4em;cursor:pointer;background:#000;color:#fff;text-transform:uppercase;">submit</button>',
+  '</div>'
+].join("");
+frame.appendChild(form);
 
       devicesOverlay.appendChild(frame);
       document.body.appendChild(devicesOverlay);
