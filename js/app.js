@@ -326,7 +326,7 @@
       devicesOverlay = document.createElement("div");
       devicesOverlay.id = "devicesOverlay";
       Object.assign(devicesOverlay.style, {
-        position:"fixed", inset:"0", background:"#fff", zIndex:"6000",
+        position:"fixed", inset:"0", background:"transparent", zIndex:"6000",
         display:"none"
       });
 
