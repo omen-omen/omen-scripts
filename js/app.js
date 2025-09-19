@@ -19,6 +19,7 @@
     var breathingBar=$("#breathingBar"),
         layerA=breathingBar && breathingBar.querySelector(".layer-a"),
         layerB=breathingBar && breathingBar.querySelector(".layer-b");
+    var form01 = $("#form01"); // Carrd form (we never move it)
 
     // Bail if core scaffold missing; fail quietly
     if(!hudWrap||!hud||!weeklyLink||!tickerWrap||!tickerRail||!tickerText||!breatheLink||!breatheOverlay||!stopBtn||!breathingBar||!layerA||!layerB){
@@ -203,20 +204,18 @@
       breatheOverlay.classList.remove("is-open"); breatheOverlay.setAttribute("aria-hidden","true");
     }
 
-// Close BREATHE by clicking anywhere on the overlay
-breatheOverlay.addEventListener("click", function () {
-  exitBreathe();
-  if (typeof active !== "undefined") active = null;
-}, true);
-
-breatheOverlay.addEventListener("touchstart", function () {
-  exitBreathe();
-  if (typeof active !== "undefined") active = null;
-}, { passive: true, capture: true });
+    // Close BREATHE by clicking ANYWHERE on the overlay
+    breatheOverlay.addEventListener("click", function () {
+      exitBreathe();
+      if (typeof active !== "undefined") active = null;
+    }, true);
+    breatheOverlay.addEventListener("touchstart", function () {
+      exitBreathe();
+      if (typeof active !== "undefined") active = null;
+    }, { passive: true, capture: true });
 
     /* ================= DEVICES — overlay using the real Carrd Form (#form01) ================= */
     var devicesOverlay = null, devicesContent = null;
-    var form01 = document.querySelector("#form01");
     var formWrap = null;       // a higher wrapper around the form
     var prevFormStyles = null; // to restore on close
 
@@ -231,26 +230,25 @@ breatheOverlay.addEventListener("touchstart", function () {
       form01.style.display = "none";
     }
 
+    // Place the form directly under the DEVICES title block
+    function positionFormUnderTitle(){
+      if (!devicesOverlay || !devicesContent || !formWrap) return;
+      var rect = devicesContent.getBoundingClientRect();
+      Object.assign(formWrap.style, {
+        position: "fixed",
+        left: "50%",
+        top: (rect.bottom + 24) + "px",   // 24px gap under the title
+        transform: "translateX(-50%)",
+        zIndex: "7000",
+        width: "min(90vw, 1000px)",
+        maxWidth: "100%",
+        padding: "0",
+        display: "block"
+      });
+    }
+
     function ensureDevicesOverlay(){
       if (devicesOverlay) return devicesOverlay;
-
-      // Form under title
-      function positionFormUnderTitle(){
-  if (!devicesOverlay || !devicesContent || !formWrap) return;
-  const rect = devicesContent.getBoundingClientRect();
-  // put the form wrapper just under the title block (24px gap)
-  Object.assign(formWrap.style, {
-    position: "fixed",
-    left: "50%",
-    top: (rect.bottom + 24) + "px",
-    transform: "translateX(-50%)",
-    zIndex: "7000",
-    width: "min(90vw, 1000px)",
-    maxWidth: "100%",
-    padding: "0",
-    display: "block"
-  });
-}
 
       // Fullscreen overlay (beige)
       devicesOverlay = document.createElement("div");
@@ -284,7 +282,7 @@ breatheOverlay.addEventListener("touchstart", function () {
 
       var line2 = document.createElement("div");
       line2.textContent = "SIGNAL WILL BE SENT WHEN READY";
-      line2.style.fontSize = "50px";     // same size as requested
+      line2.style.fontSize = "50px";     // same size as rest
       line2.style.fontWeight = "800";
       line2.style.letterSpacing = "1px"; // 1px tracking
       line2.style.marginTop = ".2em";
@@ -304,75 +302,28 @@ breatheOverlay.addEventListener("touchstart", function () {
       return devicesOverlay;
     }
 
-    // Float the form's WRAPPER to the viewport center (no DOM move)
-    function styleFormForOverlay(){
-      if (!form01 || !formWrap) return;
-
-      prevFormStyles = {
-        display: formWrap.style.display || "",
-        position: formWrap.style.position || "",
-        left: formWrap.style.left || "",
-        top: formWrap.style.top || "",
-        transform: formWrap.style.transform || "",
-        zIndex: formWrap.style.zIndex || "",
-        width: formWrap.style.width || "",
-        maxWidth: formWrap.style.maxWidth || "",
-        padding: formWrap.style.padding || "",
-        formDisplay: form01.style.display || ""
-      };
-
-      formWrap.style.display = "block";
-      form01.style.display = "block";
-
-      Object.assign(formWrap.style, {
-        position: "fixed",
-        left: "50%",
-        top: "55%",                          // sit a bit below the headings
-        transform: "translate(-50%, -50%)",
-        zIndex: "7000",
-        width: "min(90vw, 1000px)",
-        maxWidth: "100%",
-        padding: "0"
-      });
-      // internal styling (50px, borderless, centered) is handled via your CSS
+    function openDevicesOverlay(){
+      ensureDevicesOverlay();
+      devicesOverlay.style.display = "grid";
+      document.documentElement.style.overflow = "hidden";
+      document.body.classList.add("devices-open"); // CSS hook for 50px, black, borderless
+      if (formWrap) formWrap.style.display = "block";
+      if (form01)  form01.style.display  = "block";
+      // Wait a tick so layout is painted, then position the form exactly under the title
+      requestAnimationFrame(positionFormUnderTitle);
+      window.addEventListener("resize", positionFormUnderTitle);
     }
 
-    function restoreFormPosition(){
-      if (!form01 || !formWrap || !prevFormStyles) return;
-      formWrap.style.display  = prevFormStyles.display;
-      formWrap.style.position = prevFormStyles.position;
-      formWrap.style.left     = prevFormStyles.left;
-      formWrap.style.top      = prevFormStyles.top;
-      formWrap.style.transform= prevFormStyles.transform;
-      formWrap.style.zIndex   = prevFormStyles.zIndex;
-      formWrap.style.width    = prevFormStyles.width;
-      formWrap.style.maxWidth = prevFormStyles.maxWidth;
-      formWrap.style.padding  = prevFormStyles.padding;
-      form01.style.display    = prevFormStyles.formDisplay;
-      prevFormStyles = null;
+    function closeDevicesOverlay(){
+      if (!devicesOverlay) return;
+      devicesOverlay.style.display = "none";
+      document.documentElement.style.overflow = "";
+      document.body.classList.remove("devices-open");
+      window.removeEventListener("resize", positionFormUnderTitle);
+      // hide again so nothing leaks onto the base page
+      if (formWrap) formWrap.style.display = "none";
+      if (form01)  form01.style.display  = "none";
     }
-
-function openDevicesOverlay(){
-  ensureDevicesOverlay();
-  devicesOverlay.style.display = "grid";
-  document.documentElement.style.overflow = "hidden";
-  document.body.classList.add("devices-open");        // <-- add this
-  if (formWrap) formWrap.style.display = "block";
-  if (form01)  form01.style.display  = "block";
-  positionFormUnderTitle();                           // <-- position under titles
-  window.addEventListener("resize", positionFormUnderTitle);
-}
-
-function closeDevicesOverlay(){
-  if (!devicesOverlay) return;
-  devicesOverlay.style.display = "none";
-  document.documentElement.style.overflow = "";
-  document.body.classList.remove("devices-open");     // <-- remove hook
-  window.removeEventListener("resize", positionFormUnderTitle);
-  // hide again so nothing leaks onto the base page
-  if (formWrap) formWrap.style.display = "none";
-  if (form01)  form01.style.display  = "none";
-}
 
     /* ================= CLICK-TO-TOGGLE NAV ================= */
     let active = null; // 'hud:why' | 'hud:how' | 'hud:what' | 'oracle' | 'weekly' | 'breathe' | 'devices'
