@@ -1,5 +1,5 @@
 /* =========================
-   OMEN — styles.css (final)
+   OMEN — styles.css (fixed)
    ========================= */
 
 :root{
@@ -45,8 +45,11 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
    DEVICES overlay + Carrd form (#form01)
    ========================================= */
 
-/* Hide on base page */
-#form01 { display: none !important; }
+/* Hide on base page, but WITHOUT !important so JS can show if needed */
+#form01 { display: none; }
+
+/* When overlay is open, force the form to be visible */
+body.devices-open #form01 { display: block !important; }
 
 #devicesOverlay { background: var(--bg, #f6f3ef) !important; }
 
@@ -56,7 +59,7 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
 #devicesContent > div:first-child { font-size:50px; line-height:1.1; }
 #devicesContent > div:nth-child(2){ font-size:50px; line-height:1.1; letter-spacing:1px; }
 
-/* While overlay is open, enforce clean centered layout */
+/* Centered grid layout while open */
 body.devices-open form#form01{
   width: min(90vw, 1000px) !important;
   max-width: 100% !important;
@@ -110,7 +113,7 @@ body.devices-open form#form01 input[type="submit"]{
   box-shadow: none !important;
 }
 body.devices-open form#form01 button[type="submit"]:hover,
-body.devices-open form#form01 input[type="submit"]::hover{ opacity:.75; }
+body.devices-open form#form01 input[type="submit"]:hover{ opacity:.75; }
 
 /* Hide any honeypot/URL fields if Carrd injects them */
 body.devices-open form#form01 input[type="url"],
@@ -163,7 +166,7 @@ body.devices-open { overflow: hidden; }
 
 /* =============== BREATHE overlay =============== */
 .breathe{ position:fixed; inset:0; display:none; background:var(--bg); z-index:1200; pointer-events:none; }
-.breathe.is-open{ display:block; pointer-events:auto; } /* click anywhere to close */
+.breathe.is-open{ display:block; pointer-events:auto; }
 #stopBtn{
   position:absolute; inset:0; display:grid; place-items:center;
   font-weight:800; letter-spacing:.06em; user-select:none;
