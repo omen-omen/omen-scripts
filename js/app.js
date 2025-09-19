@@ -171,17 +171,6 @@
       return iframe;
     }
 
-    // Autosize inputs based on character count (min→max ch)
-    function autosizeInput(el, minCh, maxCh){
-      const measure = ()=>{
-        const base = (el.value || el.placeholder || "").toString().length;
-        const ch = Math.max(minCh, Math.min(maxCh, base));
-        el.style.width = ch + "ch";
-      };
-      ["input","change","focus"].forEach(evt=>el.addEventListener(evt, measure));
-      measure();
-    }
-
     function buildDevicesForm(){
       if (devicesForm) return devicesForm;
       ensureBDIframe();
@@ -196,14 +185,12 @@
       nameI.type = "text";
       nameI.name = "metadata__name";
       nameI.placeholder = "NAME";
-      nameI.className = "fld-name";
 
       const emailI = document.createElement("input");
       emailI.type = "email";
       emailI.name = "email";
       emailI.placeholder = "EMAIL";
       emailI.required = true;
-      emailI.className = "fld-email";
 
       const embedI = document.createElement("input");
       embedI.type = "hidden";
@@ -218,10 +205,6 @@
       const btn = document.createElement("button");
       btn.type = "submit";
       btn.textContent = "SUBMIT";
-
-      // Autosize now that elements exist
-      autosizeInput(nameI, 8, 18);   // 8–18ch
-      autosizeInput(emailI, 12, 30); // 12–30ch (longer emails expand)
 
       form.addEventListener("submit", function(){
         btn.disabled = true;
@@ -239,15 +222,23 @@
 
       devicesOverlay = document.createElement("div");
       devicesOverlay.id = "devicesOverlay";
-      devicesOverlay.innerHTML = "";
       Object.assign(devicesOverlay.style, {
         position: "fixed",
         inset: "0",
         zIndex: "6000",
+        background: "var(--bg, #f6f3ef)",
         display: "grid",
-        gridTemplateRows: "1fr auto 1fr",
-        background: "var(--bg, #f6f3ef)"
+        placeItems: "center",
+        padding: "6vh 6vw",
+        overflowY: "auto",
+        textAlign: "center",
+        textTransform: "uppercase",
+        fontWeight: "800",
+        letterSpacing: ".06em"
       });
+
+      // 🟢 Fix: start hidden so it doesn't block clicks
+      devicesOverlay.style.display = "none";
 
       devicesContent = document.createElement("div");
       devicesContent.id = "devicesContent";
@@ -261,16 +252,8 @@
       devicesContent.appendChild(line1);
       devicesContent.appendChild(line2);
 
-      devicesContent.style.alignSelf = "end";
-      devicesContent.style.justifySelf = "center";
-
-      const formEl = buildDevicesForm();
-      formEl.style.alignSelf = "center";
-      formEl.style.justifySelf = "center";
-
       devicesOverlay.appendChild(devicesContent);
-      devicesOverlay.appendChild(formEl);
-
+      devicesOverlay.appendChild(buildDevicesForm());
       document.body.appendChild(devicesOverlay);
 
       devicesOverlay.addEventListener("click", (e)=>{
