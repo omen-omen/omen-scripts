@@ -236,24 +236,16 @@
       var rect = devicesContent.getBoundingClientRect();
 Object.assign(formWrap.style, {
   position: "fixed",
-  /* center horizontally without transforms */
   left: "0",
   right: "0",
   margin: "0 auto",
-
-  /* sit directly under the titles (24px gap) */
   top: (rect.bottom + 24) + "px",
-
-  /* layer above overlay text */
   zIndex: "7000",
-
-  /* responsive width */
   width: "min(90vw, 1000px)",
   maxWidth: "100%",
-
   padding: "0",
   display: "block",
-  transform: "none"   // important: kill previous translateX
+  transform: "none"
 });
     }
 
