@@ -1,5 +1,5 @@
 /* =========================
-   OMEN — styles.css
+   OMEN — styles.css (final)
    ========================= */
 
 :root{
@@ -20,14 +20,12 @@ body{
   text-transform:uppercase;
 }
 
-/* Links (hover-only UX in old builds; JS handles clicks) */
 a{
   color:inherit; text-decoration:none; font-weight:700; letter-spacing:.06em;
   cursor:pointer; transition:opacity .15s ease, transform .15s ease;
 }
 a:hover{ opacity:.85; transform:translateY(-1px); }
 
-/* App chrome */
 .app{ position:relative; z-index:10; }
 .omen{
   position:fixed; top:var(--pad); right:var(--pad);
@@ -41,104 +39,64 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
 .corner{ font-size:calc(var(--omen-size) * var(--item-scale)); }
 
 .bottom-right{ position:fixed; bottom:var(--pad); right:var(--pad); z-index:20; }
-.bottom-right a{
-  font-size:calc(var(--omen-size) * var(--item-scale));
-  transform:translateY(var(--weekly-nudge));
-}
+.bottom-right a{ font-size:calc(var(--omen-size) * var(--item-scale)); transform:translateY(var(--weekly-nudge)); }
 
-/* =========================================
-   DEVICES overlay + Carrd form (#form01)
-   ========================================= */
+/* ===== DEVICES overlay ===== */
 
-/* Hidden by default so nothing leaks onto the base page */
-#form01 { display: none !important; }
-
-/* Overlay background stays beige */
+#form01 { display: none !important; }                 /* hide on base page */
 #devicesOverlay { background: var(--bg, #f6f3ef) !important; }
 
-/* Titles block */
-#devicesContent {
-  text-align:center;
-  text-transform:uppercase;
-  font-weight:800;
-  letter-spacing:0;
+#devicesContent{
+  text-align:center; text-transform:uppercase; font-weight:800; letter-spacing:0;
 }
 #devicesContent > div:first-child { font-size:50px; line-height:1.1; }
-#devicesContent > div:nth-child(2) { font-size:50px; line-height:1.1; letter-spacing:1px; }
+#devicesContent > div:nth-child(2){ font-size:50px; line-height:1.1; letter-spacing:1px; }
 
-/* When DEVICES is open, take full control of Carrd's form layout */
+/* take control while open */
 body.devices-open form#form01,
-body.devices-open form#form01 .inner {
-  width: min(90vw, 1000px) !important;
-  max-width: 100% !important;
-  margin: 0 auto !important;          /* center the stack */
-  display: grid !important;
-  place-items: center !important;
-  gap: 0.6em !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
+body.devices-open form#form01 .inner{
+  width:min(90vw,1000px) !important;
+  max-width:100% !important;
+  margin:0 auto !important;
+  display:grid !important;
+  place-items:center !important;
+  gap:.6em !important;
+  background:transparent !important; border:0 !important; box-shadow:none !important;
+}
+body.devices-open form#form01 .field{
+  width:100% !important; text-align:center !important;
+  background:transparent !important; border:0 !important; box-shadow:none !important;
 }
 
-/* Carrd wraps inputs in .field; make them full-width and centered */
-body.devices-open form#form01 .field {
-  width: 100% !important;
-  display: block !important;
-  text-align: center !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-}
-
-/* Inputs: 50px, pure black, centered, borderless, BOLD */
+/* inputs: text, email, url — 50px, bold, black, centered, no borders */
 body.devices-open form#form01 input[type="text"],
-body.devices-open form#form01 input[type="email"] {
-  all: unset !important;
-  width: 100% !important;
-  text-align: center !important;
-  font-size: 50px !important;
-  font-weight: 800 !important;         /* <-- fix the thin look */
-  line-height: 1.1 !important;
-  letter-spacing: 0 !important;
-  color: #000 !important;
-  padding: 0.1em 0 !important;
-  box-shadow: none !important;
+body.devices-open form#form01 input[type="email"],
+body.devices-open form#form01 input[type="url"]{
+  all:unset !important;
+  width:100% !important; text-align:center !important;
+  font-size:50px !important; font-weight:800 !important; line-height:1.1 !important;
+  letter-spacing:0 !important; color:#000 !important; padding:.1em 0 !important;
+  box-shadow:none !important;
 }
 
-/* Placeholders must also be pure black and bold at 50px */
-body.devices-open form#form01 input::placeholder {
-  color: #000 !important;
-  opacity: 1 !important;
-  font-size: 50px !important;
-  font-weight: 800 !important;
-  line-height: 1.1 !important;
-  letter-spacing: 0 !important;
+/* placeholders: same look */
+body.devices-open form#form01 input::placeholder{
+  color:#000 !important; opacity:1 !important;
+  font-size:50px !important; font-weight:800 !important; line-height:1.1 !important; letter-spacing:0 !important;
 }
 
-/* Submit: word only, 50px, bold, black */
-body.devices-open form#form01 button[type="submit"] {
-  all: unset !important;
-  font-size: 50px !important;
-  font-weight: 800 !important;
-  line-height: 1.1 !important;
-  text-transform: uppercase !important;
-  color: #000 !important;
-  cursor: pointer !important;
+/* submit: just the word */
+body.devices-open form#form01 button[type="submit"]{
+  all:unset !important; cursor:pointer !important;
+  font-size:50px !important; font-weight:800 !important; line-height:1.1 !important; color:#000 !important;
+  text-transform:uppercase !important;
 }
-body.devices-open form#form01 button[type="submit"]:hover { opacity:.75; }
+body.devices-open form#form01 button[type="submit"]:hover{ opacity:.75; }
 
-/* Prevent page scroll behind DEVICES overlay */
-body.devices-open { overflow: hidden; }
+body.devices-open{ overflow:hidden; }
 
-/* Make BREATHE overlay clickable everywhere to close */
-.breathe { pointer-events: none; }
-.breathe.is-open { pointer-events: auto; }
-
-
-/* ================= HUD ================= */
-.hud-wrap{
-  position:fixed; inset:0; display:none; z-index:900; pointer-events:none;
-}
+/* ===== HUD ===== */
+.hud-wrap{ position:fixed; inset:0; display:none; z-index:900; pointer-events:none; }
 .hud-wrap.is-visible{ display:block; }
 .hud{
   position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
@@ -151,118 +109,60 @@ body.devices-open { overflow: hidden; }
 .hud-title{ font-size:calc(var(--hud-font)*1.25); font-weight:900; margin:0 0 2em 0; }
 .hud-line{ margin:.3em 0 0 0; font-size:var(--hud-font); opacity:0; transition:opacity 2s ease; }
 
-/* =============== Weekly ticker =============== */
+/* ===== Weekly ticker ===== */
 .ticker-wrap{ position:fixed; inset:0; display:none; z-index:800; pointer-events:none; }
 .ticker-wrap.is-visible{ display:block; }
-.ticker-rail{
-  position:absolute; left:0; right:0; top:50%; transform:translateY(-50%);
-  overflow:hidden; height:var(--ticker-h); pointer-events:auto;
-}
-.ticker{
-  position:absolute; white-space:nowrap; font-weight:700; letter-spacing:.08em;
-  font-size:clamp(1.1rem,3.2vw,2.2rem);
-  animation:slide-left var(--ticker-duration) linear infinite;
-}
-@keyframes slide-left{
-  from{ transform:translateX(100vw); }
-  to  { transform:translateX(-110%); }
-}
+.ticker-rail{ position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); overflow:hidden; height:var(--ticker-h); pointer-events:auto; }
+.ticker{ position:absolute; white-space:nowrap; font-weight:700; letter-spacing:.08em; font-size:clamp(1.1rem,3.2vw,2.2rem); animation:slide-left var(--ticker-duration) linear infinite; }
+@keyframes slide-left{ from{transform:translateX(100vw)} to{transform:translateX(-110%)} }
 
-/* =============== BREATHE overlay =============== */
-.breathe{
-  position:fixed; inset:0; display:none; background:var(--bg); z-index:1200;
-  /* while closed we don't catch clicks */
-  pointer-events:none;
-}
-.breathe.is-open{
-  display:block;
-  /* when open, allow clicks anywhere to reach JS and close */
-  pointer-events:auto;
-}
+/* ===== BREATHE overlay ===== */
+.breathe{ position:fixed; inset:0; display:none; background:var(--bg); z-index:1200; pointer-events:none; }
+.breathe.is-open{ display:block; pointer-events:auto; } /* allow clicks anywhere */
 #stopBtn{
   position:absolute; inset:0; display:grid; place-items:center;
   font-weight:800; letter-spacing:.06em; user-select:none;
   font-size:calc(var(--omen-size) * var(--item-scale));
 }
 
-/* Snake / Breathing bar (double buffer) */
+/* Snake / Breathing bar */
 #breathingBar{ position:fixed; inset:0; display:none; z-index:1300; pointer-events:none; }
 #breathingBar.is-active{ display:block; }
 #breathingBar .layer{ position:absolute; inset:0; }
 #breathingBar .layer.run{ z-index:2; }
 #breathingBar .layer:not(.run){ z-index:1; }
-
-/* Segments */
 .seg{
-  position:absolute; background:#000;
-  opacity:1; transition:opacity 2s linear;
-  will-change:width,height,opacity;
-  animation-duration:16s; animation-timing-function:linear;
-  animation-fill-mode:both; animation-iteration-count:1;
-  animation-play-state:paused;
+  position:absolute; background:#000; opacity:1; transition:opacity 2s linear;
+  will-change:width,height,opacity; animation-duration:16s; animation-timing-function:linear;
+  animation-fill-mode:both; animation-iteration-count:1; animation-play-state:paused;
 }
 #breathingBar .layer.run .seg{ animation-play-state:running; }
 #breathingBar .seg.is-fading{ opacity:0; }
-
-/* Segment geometry + keyframes */
-.top   { top:0; left:0; height:var(--bar); width:0; animation-name:topSnake; }
-.right { top:var(--bar); right:0; width:var(--bar); height:0; animation-name:rightSnake; }
+.top{ top:0; left:0; height:var(--bar); width:0; animation-name:topSnake; }
+.right{ top:var(--bar); right:0; width:var(--bar); height:0; animation-name:rightSnake; }
 .bottom{ bottom:0; right:var(--bar); height:var(--bar); width:0; animation-name:bottomSnake; }
-.left  { bottom:var(--bar); left:0; width:var(--bar); height:0; animation-name:leftSnake; }
+.left{ bottom:var(--bar); left:0; width:var(--bar); height:0; animation-name:leftSnake; }
+@keyframes topSnake{0%{width:0}25%{width:100%}100%{width:100%}}
+@keyframes rightSnake{0%{height:0}25%{height:0}50%{height:calc(100% - var(--bar))}100%{height:calc(100% - var(--bar))}}
+@keyframes bottomSnake{0%{width:0}50%{width:0}75%{width:calc(100% - var(--bar))}100%{width:calc(100% - var(--bar))}}
+@keyframes leftSnake{0%{height:0}75%{height:0}100%{height:calc(100% - (var(--bar) * 2))}}
 
-@keyframes topSnake    { 0%{width:0} 25%{width:100%}                                  100%{width:100%} }
-@keyframes rightSnake  { 0%{height:0} 25%{height:0} 50%{height:calc(100% - var(--bar))} 100%{height:calc(100% - var(--bar))} }
-@keyframes bottomSnake { 0%{width:0} 50%{width:0} 75%{width:calc(100% - var(--bar))}    100%{width:calc(100% - var(--bar))} }
-@keyframes leftSnake   { 0%{height:0} 75%{height:0} 100%{height:calc(100% - (var(--bar) * 2))} }
-
-/* Thickness modes */
 body.small-bar{ --bar:var(--bar-thin); }
 body.big-bar  { --bar:var(--bar-thick); }
 
-/* Weekly label: two lines on mobile only */
+/* ===== Mobile tweaks ===== */
 #weekly{ text-align:center; line-height:1.2; white-space:nowrap; }
 #weekly .mbr{ display:none; }
 @media (max-width:640px){
   #weekly{ white-space:normal; display:inline-block; }
   #weekly .mbr{ display:block; height:0; }
-}
-
-/* =================
-   MOBILE REFINEMENTS
-   ================= */
-
-/* 1) Weekly Exploration aligned right on mobile */
-@media (max-width: 640px) {
-  .bottom-right {
-    right: var(--pad);
-    left: auto;
-    text-align: right;
+  .bottom-right{ right:var(--pad); left:auto; text-align:right; }
+  .hud{
+    width:100vw; max-width:none; min-width:0; box-sizing:border-box;
+    padding-left:max(16.6667vw,1rem,env(safe-area-inset-left));
+    padding-right:max(16.6667vw,1rem,env(safe-area-inset-right));
+    padding-top:1rem; padding-bottom:1rem;
+    font-size:calc(var(--hud-font) * 1.5);
   }
-  #weekly {
-    display: inline-block;
-    text-align: right;
-  }
-}
-
-/* 2) HUD gutters: keep 1/6 viewport empty on each side (content spans middle 4/6) */
-@media (max-width: 640px) {
-  .hud {
-    width: 100vw;
-    max-width: none;
-    min-width: 0;
-    box-sizing: border-box;
-
-    padding-left: max(16.6667vw, 1rem, env(safe-area-inset-left));
-    padding-right: max(16.6667vw, 1rem, env(safe-area-inset-right));
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-
-    font-size: calc(var(--hud-font) * 1.5);
-  }
-
-  .hud-content {
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    hyphens: auto;
-  }
+  .hud-content{ overflow-wrap:anywhere; word-break:break-word; hyphens:auto; }
 }
