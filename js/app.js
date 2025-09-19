@@ -1,4 +1,4 @@
-/* ================= OMEN app.js — click-to-toggle + Carrd form overlay (no DOM moves) ================= */
+/* ================= OMEN app.js — click-to-toggle + Carrd form overlay (scoped to #form01) ================= */
 (function () {
   "use strict";
 
@@ -19,7 +19,9 @@
     var breathingBar=$("#breathingBar"),
         layerA=breathingBar && breathingBar.querySelector(".layer-a"),
         layerB=breathingBar && breathingBar.querySelector(".layer-b");
-    var form01 = $("#form01"); // Carrd form (we never remove it from the DOM)
+
+    var form01 = $("#form01");                // Carrd form element (we only style THIS)
+    var savedFormStyles = null;               // to restore on close
 
     // Bail if core scaffold missing; fail quietly
     if(!hudWrap||!hud||!weeklyLink||!tickerWrap||!tickerRail||!tickerText||!breatheLink||!breatheOverlay||!stopBtn||!breathingBar||!layerA||!layerB){
@@ -197,7 +199,7 @@
       breatheOverlay.classList.add("is-open"); breatheOverlay.setAttribute("aria-hidden","false");
       barStart(true);
       startCenterWords();
-      // global click-to-close
+      // close by clicking anywhere
       setTimeout(function(){ document.addEventListener("click", globalBreatheClose, true); }, 0);
       setTimeout(function(){ document.addEventListener("touchstart", globalBreatheClose, {passive:true, capture:true}); }, 0);
     }
@@ -209,29 +211,19 @@
       document.removeEventListener("touchstart", globalBreatheClose, true);
     }
     function globalBreatheClose(){ if (breatheOverlay.classList.contains("is-open")) exitBreathe(); }
-
-    // Also close if you click directly on the overlay element
     breatheOverlay.addEventListener("click", function(){ exitBreathe(); }, true);
     breatheOverlay.addEventListener("touchstart", function(){ exitBreathe(); }, { passive: true, capture: true });
 
-    /* ================= DEVICES — overlay using the real Carrd Form (#form01) ================= */
-    var devicesOverlay = null, devicesContent = null;
-    var formWrap = null; // a higher wrapper around the form
+    /* ================= DEVICES — overlay using #form01 directly ================= */
 
-    // Find & hide the wrapper + form on load so nothing leaks on base page
-    if (form01) {
-      var p = form01;
-      for (var i = 0; i < 3 && p && p.parentElement; i++) p = p.parentElement;
-      formWrap = p || form01.parentElement;
-      if (formWrap) formWrap.style.display = "none";
-      form01.style.display = "none";
-    }
+    // Hide the form on the base page so nothing leaks
+    if (form01) form01.style.display = "none";
 
-    // Normalize Carrd form before first paint (prevents WEB URL & right-shift)
+    // Normalize Carrd form before first paint (prevents right-shift and traps)
     function normalizeCarrdForm(){
       if (!form01) return;
 
-      // 1) Hide honeypot/URL fields (Carrd often injects one)
+      // Hide honeypots/URL traps if Carrd injects any
       [
         'input[type="url"]',
         'input[name*="url" i]',
@@ -243,28 +235,13 @@
       ].forEach(function(sel){
         var trap = form01.querySelector(sel);
         if (trap) {
-          var field = trap.closest('.field') || trap.parentElement;
-          if (field) field.style.display = 'none';
+          var f = trap.closest('.field') || trap.parentElement;
+          if (f) f.style.display = 'none';
           trap.style.display = 'none';
         }
       });
 
-      // 2) Force wrappers to centered, full-width grid
-      var inner = form01.querySelector('.inner');
-      if (inner) {
-        Object.assign(inner.style, {
-          width: '100%', maxWidth: '100%', margin: '0 auto',
-          display: 'grid', placeItems: 'center', gap: '0.6em'
-        });
-      }
-      form01.querySelectorAll('.field').forEach(function(f){
-        Object.assign(f.style, {
-          width: '100%', display: 'block', textAlign: 'center',
-          background: 'transparent', border: '0', boxShadow: 'none'
-        });
-      });
-
-      // 3) Inputs/submit: 50px, bold, black, centered (no all:unset)
+      // Typography: 50px, bold, black, centered
       var inputs = form01.querySelectorAll('input[type="text"], input[type="email"]');
       inputs.forEach(function(inp){
         Object.assign(inp.style, {
@@ -285,33 +262,15 @@
         });
       }
 
-      // 4) Force reflow now (prevents the jump on first focus)
+      // Force reflow now
       void form01.offsetHeight;
     }
 
-    // Place the form directly under the DEVICES title block
-    function positionFormUnderTitle(){
-      if (!devicesOverlay || !devicesContent || !formWrap) return;
-      var rect = devicesContent.getBoundingClientRect();
-      Object.assign(formWrap.style, {
-        position: "fixed",
-        left: "0",
-        right: "0",
-        margin: "0 auto",
-        top: (rect.bottom + 24) + "px",   // 24px gap under the title
-        zIndex: "7000",
-        width: "min(90vw, 1000px)",
-        maxWidth: "100%",
-        padding: "0",
-        display: "block",
-        transform: "none"
-      });
-    }
+    var devicesOverlay = null, devicesContent = null;
 
     function ensureDevicesOverlay(){
       if (devicesOverlay) return devicesOverlay;
 
-      // Fullscreen overlay (beige)
       devicesOverlay = document.createElement("div");
       devicesOverlay.id = "devicesOverlay";
       Object.assign(devicesOverlay.style, {
@@ -321,14 +280,14 @@
         display: "none",
         background: "var(--bg, #f6f3ef)",
         display: "grid",
-        placeItems: "start center",   // headings at top-center
+        placeItems: "start center",
         padding: "10vh 6vw 6vh",
         overflowY: "auto",
         textAlign: "center",
         textTransform: "uppercase",
         fontWeight: "800",
         letterSpacing: ".06em",
-        visibility: "hidden"          // we’ll reveal after normalization
+        visibility: "hidden"
       });
 
       // Titles
@@ -353,7 +312,7 @@
       devicesOverlay.appendChild(devicesContent);
       document.body.appendChild(devicesOverlay);
 
-      // Close on background click
+      // background click to close
       devicesOverlay.addEventListener("click", function(e){
         if (e.target === devicesOverlay) closeDevicesOverlay();
       }, true);
@@ -364,23 +323,51 @@
       return devicesOverlay;
     }
 
+    function positionFormUnderTitle(){
+      if (!devicesOverlay || !devicesContent || !form01) return;
+      var rect = devicesContent.getBoundingClientRect();
+      Object.assign(form01.style, {
+        position: "fixed",
+        left: "0",
+        right: "0",
+        margin: "0 auto",
+        top: (rect.bottom + 24) + "px",
+        zIndex: "7000",
+        width: "min(90vw, 1000px)",
+        maxWidth: "100%",
+        padding: "0",
+        transform: "none",
+        display: "block"
+      });
+    }
+
     function openDevicesOverlay(){
       ensureDevicesOverlay();
       devicesOverlay.style.display = "grid";
       document.documentElement.style.overflow = "hidden";
       document.body.classList.add("devices-open");
 
-      if (formWrap) { formWrap.style.display = "block"; formWrap.style.visibility = "hidden"; }
-      if (form01)  { form01.style.display  = "block"; }
+      // show form but keep invisible until styled
+      if (form01) {
+        savedFormStyles = {
+          display: form01.style.display, position: form01.style.position,
+          left: form01.style.left, right: form01.style.right, top: form01.style.top,
+          margin: form01.style.margin, transform: form01.style.transform, zIndex: form01.style.zIndex,
+          width: form01.style.width, maxWidth: form01.style.maxWidth, padding: form01.style.padding,
+          visibility: form01.style.visibility
+        };
+        form01.style.display = "block";
+        form01.style.visibility = "hidden";
+      }
 
       normalizeCarrdForm();          // style before first paint
       positionFormUnderTitle();      // initial placement
 
-      // Reveal after two frames to beat Carrd's late reflow
+      // reveal after two frames to beat Carrd late reflow
       requestAnimationFrame(function(){
         positionFormUnderTitle();
         requestAnimationFrame(function(){
-          if (formWrap) formWrap.style.visibility = "visible";
+          if (form01) form01.style.visibility = "visible";
           devicesOverlay.style.visibility = "visible";
         });
       });
@@ -395,8 +382,12 @@
       document.documentElement.style.overflow = "";
       document.body.classList.remove("devices-open");
       window.removeEventListener("resize", positionFormUnderTitle);
-      if (formWrap) { formWrap.style.visibility = ""; formWrap.style.display = "none"; }
-      if (form01)  { form01.style.display  = "none"; }
+
+      if (form01 && savedFormStyles) {
+        Object.assign(form01.style, savedFormStyles);
+        savedFormStyles = null;
+      }
+      if (form01) form01.style.display = "none";
     }
 
     /* ================= CLICK-TO-TOGGLE NAV ================= */
