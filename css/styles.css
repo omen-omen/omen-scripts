@@ -44,60 +44,55 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
 #devicesContent > div:first-child{ font-size:50px; line-height:1.1; }
 #devicesContent > div:nth-child(2){ font-size:50px; line-height:1.1; letter-spacing:1px; }
 
-/* Form container injected by JS */
-#inlineDevicesForm{
-  width:min(90vw,1000px);
-  max-width:100%;
-  margin:0 auto;
-  display:grid;
-  place-items:center;
-  gap:.6em;
-  background:transparent;
-  border:0;
-  box-shadow:none;
-  text-align:center;
+/* DEVICES FORM STYLING */
+#inlineDevicesForm {
+  display: flex;
+  flex-direction: row;         /* horizontal line */
+  justify-content: center;     /* centered horizontally */
+  align-items: center;         /* vertically align items */
+  gap: 1em;                    /* spacing between inputs */
+  position: fixed;
+  top: 50%;                    /* vertical center */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-transform: uppercase;   /* all caps */
+  font-size: 50px;             /* uniform font size */
+  font-weight: 800;
+  color: #000;
+  z-index: 7000;
 }
 
-/* Inputs: 50px, bold, black, centered, borderless */
 #inlineDevicesForm input[type="text"],
-#inlineDevicesForm input[type="email"]{
-  width:100%;
-  text-align:center;
-  font-size:50px;
-  font-weight:800;
-  line-height:1.1;
-  letter-spacing:0;
-  color:#000;
-  padding:.1em 0;
-  border:none;
-  outline:none;
-  background:transparent;
-  box-shadow:none;
-}
-#inlineDevicesForm input::placeholder{
-  color:#000;
-  opacity:1;
-  font-size:50px;
-  font-weight:800;
-  line-height:1.1;
-  letter-spacing:0;
+#inlineDevicesForm input[type="email"] {
+  all: unset;                  /* wipe Carrd defaults */
+  font-size: 50px;
+  font-weight: 800;
+  color: #000;
+  text-align: center;
+  text-transform: uppercase;
+  border-bottom: 2px solid #000; /* simple underline, no box */
+  padding: 0.2em 0.4em;
+  min-width: 10ch;
+  caret-color: #000;
 }
 
-/* Submit: word only */
-#inlineDevicesForm button[type="submit"],
-#inlineDevicesForm input[type="submit"]{
-  cursor:pointer;
-  font-size:50px;
-  font-weight:800;
-  line-height:1.1;
-  color:#000;
-  text-transform:uppercase;
-  border:none;
-  outline:none;
-  background:transparent;
-  box-shadow:none;
+#inlineDevicesForm ::placeholder {
+  opacity: 0.4;
+  color: #000;
 }
-#inlineDevicesForm button[type="submit"]:hover{ opacity:.75; }
+
+#inlineDevicesForm button[type="submit"] {
+  all: unset;
+  font-size: 50px;
+  font-weight: 800;
+  color: #000;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+#inlineDevicesForm button[type="submit"]:hover {
+  opacity: 0.6;
+}
 
 /* Hidden iframe for API response */
 #bd_iframe{ display:none !important; width:0 !important; height:0 !important; }
