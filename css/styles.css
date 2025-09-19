@@ -71,7 +71,7 @@ body.devices-open form#form01,
 body.devices-open form#form01 .inner {
   width: min(90vw, 1000px) !important;
   max-width: 100% !important;
-  margin: 0 auto !important;
+  margin: 0 auto !important;          /* center the stack */
   display: grid !important;
   place-items: center !important;
   gap: 0.6em !important;
@@ -90,33 +90,37 @@ body.devices-open form#form01 .field {
   box-shadow: none !important;
 }
 
-/* Inputs: 50px, pure black, centered, borderless */
+/* Inputs: 50px, pure black, centered, borderless, BOLD */
 body.devices-open form#form01 input[type="text"],
 body.devices-open form#form01 input[type="email"] {
   all: unset !important;
   width: 100% !important;
   text-align: center !important;
   font-size: 50px !important;
+  font-weight: 800 !important;         /* <-- fix the thin look */
   line-height: 1.1 !important;
+  letter-spacing: 0 !important;
   color: #000 !important;
   padding: 0.1em 0 !important;
   box-shadow: none !important;
 }
 
-/* Placeholders also pure black at same size */
+/* Placeholders must also be pure black and bold at 50px */
 body.devices-open form#form01 input::placeholder {
   color: #000 !important;
   opacity: 1 !important;
   font-size: 50px !important;
+  font-weight: 800 !important;
   line-height: 1.1 !important;
+  letter-spacing: 0 !important;
 }
 
-/* Submit: just the word, no box, 50px black */
+/* Submit: word only, 50px, bold, black */
 body.devices-open form#form01 button[type="submit"] {
   all: unset !important;
   font-size: 50px !important;
-  line-height: 1.1 !important;
   font-weight: 800 !important;
+  line-height: 1.1 !important;
   text-transform: uppercase !important;
   color: #000 !important;
   cursor: pointer !important;
@@ -125,6 +129,11 @@ body.devices-open form#form01 button[type="submit"]:hover { opacity:.75; }
 
 /* Prevent page scroll behind DEVICES overlay */
 body.devices-open { overflow: hidden; }
+
+/* Make BREATHE overlay clickable everywhere to close */
+.breathe { pointer-events: none; }
+.breathe.is-open { pointer-events: auto; }
+
 
 /* ================= HUD ================= */
 .hud-wrap{
