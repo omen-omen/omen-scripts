@@ -19,7 +19,6 @@
     var breathingBar=$("#breathingBar"),
         layerA=breathingBar && breathingBar.querySelector(".layer-a"),
         layerB=breathingBar && breathingBar.querySelector(".layer-b");
-    var form01=$("#form01"); // Carrd Form element (hidden by CSS on load)
 
     // Bail if core scaffold missing; fail quietly
     if(!hudWrap||!hud||!weeklyLink||!tickerWrap||!tickerRail||!tickerText||!breatheLink||!breatheOverlay||!stopBtn||!breathingBar||!layerA||!layerB){
@@ -156,7 +155,7 @@
       var item=list[0]; return (typeof item==='string') ? item : (item.text || item.title || "EXPLORATION");
     }
 
-    var weeklyOpen=false, weeklyHideTimer=null, labelLoop=null, labelTs=[];
+    var weeklyOpen=false, labelLoop=null, labelTs=[];
     function clearWeeklyLabelTimers(){ for(var i=0;i<labelTs.length;i++) clearTimeout(labelTs[i]); labelTs=[]; if(labelLoop){ clearInterval(labelLoop); labelLoop=null; } }
     function runWeeklyLabelCycleOnce(){
       var seq=["INHALE","HOLD","EXHALE","HOLD"];
@@ -214,11 +213,25 @@
 
     /* ================= DEVICES — overlay using the real Carrd Form (#form01) ================= */
     var devicesOverlay = null, devicesContent = null;
+    var form01 = document.querySelector("#form01");
+    var formWrap = null;       // a higher wrapper around the form
+    var prevFormStyles = null; // to restore on close
+
+    // Find & hide the wrapper + form on load so nothing leaks on base page
+    if (form01) {
+      // climb up to catch Carrd's container (3 levels is usually enough)
+      var p = form01;
+      for (var i = 0; i < 3 && p && p.parentElement; i++) p = p.parentElement;
+      formWrap = p || form01.parentElement;
+
+      if (formWrap) formWrap.style.display = "none";
+      form01.style.display = "none";
+    }
 
     function ensureDevicesOverlay(){
       if (devicesOverlay) return devicesOverlay;
 
-      // Fullscreen overlay (beige) — we do NOT move the form; we just reveal it via class hooks
+      // Fullscreen overlay (beige)
       devicesOverlay = document.createElement("div");
       devicesOverlay.id = "devicesOverlay";
       Object.assign(devicesOverlay.style, {
@@ -230,20 +243,16 @@
         display: "grid",
         placeItems: "center",
         padding: "6vh 6vw",
-        overflowY: "auto"
-      });
-
-      // Content wrapper for the two title lines (the form will be styled/positioned by CSS when body.devices-open)
-      devicesContent = document.createElement("div");
-      devicesContent.id = "devicesContent";
-      Object.assign(devicesContent.style, {
+        overflowY: "auto",
         textAlign: "center",
         textTransform: "uppercase",
         fontWeight: "800",
-        letterSpacing: ".06em",
-        margin: "0 auto",
-        maxWidth: "100%"
+        letterSpacing: ".06em"
       });
+
+      // Titles
+      devicesContent = document.createElement("div");
+      devicesContent.id = "devicesContent";
 
       var line1 = document.createElement("div");
       line1.textContent = "DEVICES ARE FORMING";
@@ -254,9 +263,9 @@
 
       var line2 = document.createElement("div");
       line2.textContent = "SIGNAL WILL BE SENT WHEN READY";
-      line2.style.fontSize = "50px";
+      line2.style.fontSize = "50px";     // same size as requested
       line2.style.fontWeight = "800";
-      line2.style.letterSpacing = "1px";
+      line2.style.letterSpacing = "1px"; // 1px tracking
       line2.style.marginTop = ".2em";
       devicesContent.appendChild(line2);
 
@@ -274,20 +283,68 @@
       return devicesOverlay;
     }
 
+    // Float the form's WRAPPER to the viewport center (no DOM move)
+    function styleFormForOverlay(){
+      if (!form01 || !formWrap) return;
+
+      prevFormStyles = {
+        display: formWrap.style.display || "",
+        position: formWrap.style.position || "",
+        left: formWrap.style.left || "",
+        top: formWrap.style.top || "",
+        transform: formWrap.style.transform || "",
+        zIndex: formWrap.style.zIndex || "",
+        width: formWrap.style.width || "",
+        maxWidth: formWrap.style.maxWidth || "",
+        padding: formWrap.style.padding || "",
+        formDisplay: form01.style.display || ""
+      };
+
+      formWrap.style.display = "block";
+      form01.style.display = "block";
+
+      Object.assign(formWrap.style, {
+        position: "fixed",
+        left: "50%",
+        top: "55%",                          // sit a bit below the headings
+        transform: "translate(-50%, -50%)",
+        zIndex: "7000",
+        width: "min(90vw, 1000px)",
+        maxWidth: "100%",
+        padding: "0"
+      });
+      // internal styling (50px, borderless, centered) is handled via your CSS
+    }
+
+    function restoreFormPosition(){
+      if (!form01 || !formWrap || !prevFormStyles) return;
+      formWrap.style.display  = prevFormStyles.display;
+      formWrap.style.position = prevFormStyles.position;
+      formWrap.style.left     = prevFormStyles.left;
+      formWrap.style.top      = prevFormStyles.top;
+      formWrap.style.transform= prevFormStyles.transform;
+      formWrap.style.zIndex   = prevFormStyles.zIndex;
+      formWrap.style.width    = prevFormStyles.width;
+      formWrap.style.maxWidth = prevFormStyles.maxWidth;
+      formWrap.style.padding  = prevFormStyles.padding;
+      form01.style.display    = prevFormStyles.formDisplay;
+      prevFormStyles = null;
+    }
+
     function openDevicesOverlay(){
       ensureDevicesOverlay();
-      document.body.classList.add("devices-open");
-      if (form01) form01.style.display = "block"; // reveal (CSS will position/size)
-      devicesOverlay.style.display = "block";
-      document.documentElement.style.overflow = "hidden"; // lock page scroll behind overlay
+      devicesOverlay.style.display = "grid";
+      document.documentElement.style.overflow = "hidden";
+      styleFormForOverlay();
     }
 
     function closeDevicesOverlay(){
       if (!devicesOverlay) return;
-      document.body.classList.remove("devices-open");
-      if (form01) form01.style.display = "none"; // hide again (Carrd stays happy)
       devicesOverlay.style.display = "none";
-      document.documentElement.style.overflow = ""; // restore scroll
+      document.documentElement.style.overflow = "";
+      restoreFormPosition();
+      if (formWrap) formWrap.style.display = "none"; // keep hidden on base page
+      if (form01)  form01.style.display  = "none";
     }
 
     /* ================= CLICK-TO-TOGGLE NAV ================= */
@@ -350,6 +407,6 @@
       if(e.key==="Escape"){ closeAllUI(); active = null; }
     });
 
-    /* NOTE: All interactions are click-based (old hover blockers removed). */
+    /* NOTE: All interactions are click-based (hover blockers removed). */
   });
 })();
