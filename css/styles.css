@@ -80,7 +80,7 @@ body.devices-open form#form01 .field{
   box-shadow: none !important;
 }
 
-/* Inputs: 50px, bold, black, centered, borderless */
+/* Inputs: 50px, bold, black, centered, no borders */
 body.devices-open form#form01 input[type="text"],
 body.devices-open form#form01 input[type="email"],
 body.devices-open form#form01 input[type="url"]{
@@ -107,7 +107,8 @@ body.devices-open form#form01 input::placeholder{
 }
 
 /* Submit: just the word */
-body.devices-open form#form01 button[type="submit"]{
+body.devices-open form#form01 button[type="submit"],
+body.devices-open form#form01 input[type="submit"]{
   all: unset !important;
   cursor: pointer !important;
   font-size: 50px !important;
@@ -116,7 +117,8 @@ body.devices-open form#form01 button[type="submit"]{
   color: #000 !important;
   text-transform: uppercase !important;
 }
-body.devices-open form#form01 button[type="submit"]:hover{ opacity:.75; }
+body.devices-open form#form01 button[type="submit"]:hover,
+body.devices-open form#form01 input[type="submit"]:hover{ opacity:.75; }
 
 /* Hide any URL field (and wrapper) if Carrd added one */
 body.devices-open form#form01 input[type="url"],
