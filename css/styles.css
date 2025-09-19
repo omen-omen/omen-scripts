@@ -1,5 +1,5 @@
 /* =========================
-   OMEN — styles.css (fixed)
+   OMEN — styles.css
    ========================= */
 
 :root{
@@ -20,97 +20,93 @@ body{
   text-transform:uppercase;
 }
 
-a{
-  color:inherit; text-decoration:none; font-weight:700; letter-spacing:.06em;
-  cursor:pointer; transition:opacity .15s ease, transform .15s ease;
-}
+a{ color:inherit; text-decoration:none; font-weight:700; letter-spacing:.06em; cursor:pointer; transition:opacity .15s ease, transform .15s ease; }
 a:hover{ opacity:.85; transform:translateY(-1px); }
 
 .app{ position:relative; z-index:10; }
-.omen{
-  position:fixed; top:var(--pad); right:var(--pad);
-  font-size:var(--omen-size); font-weight:800; letter-spacing:.06em; line-height:.9;
-  pointer-events:none;
-}
+.omen{ position:fixed; top:var(--pad); right:var(--pad); font-size:var(--omen-size); font-weight:800; letter-spacing:.06em; line-height:.9; pointer-events:none; }
 
 .top-left,.bottom-left{ display:flex; flex-direction:column; gap:var(--gap); }
 .top-left{ position:fixed; top:var(--pad); left:var(--pad); z-index:20; }
 .bottom-left{ position:fixed; bottom:var(--pad); left:var(--pad); z-index:20; }
 .corner{ font-size:calc(var(--omen-size) * var(--item-scale)); }
-
 .bottom-right{ position:fixed; bottom:var(--pad); right:var(--pad); z-index:20; }
 .bottom-right a{ font-size:calc(var(--omen-size) * var(--item-scale)); transform:translateY(var(--weekly-nudge)); }
 
-/* =========================================
-   DEVICES overlay + Carrd form (#form01)
-   ========================================= */
+/* =========================
+   DEVICES overlay + #form01
+   ========================= */
 
-/* Hide on base page, but WITHOUT !important so JS can show if needed */
-#form01 { display: none; }
+/* Hide form on base page (no !important) */
+#form01 { display:none; }
 
-/* When overlay is open, force the form to be visible */
-body.devices-open #form01 { display: block !important; }
+/* When overlay is open, force the form and its children to be visible */
+body.devices-open #form01,
+body.devices-open #form01 *{
+  display:unset !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  pointer-events:auto !important;
+}
 
 #devicesOverlay { background: var(--bg, #f6f3ef) !important; }
 
-#devicesContent{
-  text-align:center; text-transform:uppercase; font-weight:800; letter-spacing:0;
-}
-#devicesContent > div:first-child { font-size:50px; line-height:1.1; }
+#devicesContent{ text-align:center; text-transform:uppercase; font-weight:800; letter-spacing:0; }
+#devicesContent > div:first-child{ font-size:50px; line-height:1.1; }
 #devicesContent > div:nth-child(2){ font-size:50px; line-height:1.1; letter-spacing:1px; }
 
-/* Centered grid layout while open */
+/* Centered grid */
 body.devices-open form#form01{
-  width: min(90vw, 1000px) !important;
-  max-width: 100% !important;
-  margin: 0 auto !important;
-  display: grid !important;
-  place-items: center !important;
-  gap: 0.6em !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  text-align: center !important;
+  width:min(90vw,1000px) !important;
+  max-width:100% !important;
+  margin:0 auto !important;
+  display:grid !important;
+  place-items:center !important;
+  gap:.6em !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  text-align:center !important;
 }
 
 /* Inputs: 50px, bold, black, centered, borderless */
 body.devices-open form#form01 input[type="text"],
 body.devices-open form#form01 input[type="email"]{
-  width: 100% !important;
-  text-align: center !important;
-  font-size: 50px !important;
-  font-weight: 800 !important;
-  line-height: 1.1 !important;
-  letter-spacing: 0 !important;
-  color: #000 !important;
-  padding: .1em 0 !important;
-  border: none !important;
-  outline: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
+  width:100% !important;
+  text-align:center !important;
+  font-size:50px !important;
+  font-weight:800 !important;
+  line-height:1.1 !important;
+  letter-spacing:0 !important;
+  color:#000 !important;
+  padding:.1em 0 !important;
+  border:none !important;
+  outline:none !important;
+  background:transparent !important;
+  box-shadow:none !important;
 }
 body.devices-open form#form01 input::placeholder{
-  color: #000 !important;
-  opacity: 1 !important;
-  font-size: 50px !important;
-  font-weight: 800 !important;
-  line-height: 1.1 !important;
-  letter-spacing: 0 !important;
+  color:#000 !important;
+  opacity:1 !important;
+  font-size:50px !important;
+  font-weight:800 !important;
+  line-height:1.1 !important;
+  letter-spacing:0 !important;
 }
 
 /* Submit: word only */
 body.devices-open form#form01 button[type="submit"],
 body.devices-open form#form01 input[type="submit"]{
-  cursor: pointer !important;
-  font-size: 50px !important;
-  font-weight: 800 !important;
-  line-height: 1.1 !important;
-  color: #000 !important;
-  text-transform: uppercase !important;
-  border: none !important;
-  outline: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
+  cursor:pointer !important;
+  font-size:50px !important;
+  font-weight:800 !important;
+  line-height:1.1 !important;
+  color:#000 !important;
+  text-transform:uppercase !important;
+  border:none !important;
+  outline:none !important;
+  background:transparent !important;
+  box-shadow:none !important;
 }
 body.devices-open form#form01 button[type="submit"]:hover,
 body.devices-open form#form01 input[type="submit"]:hover{ opacity:.75; }
@@ -122,19 +118,21 @@ body.devices-open form#form01 input[id*="url" i],
 body.devices-open form#form01 input[name*="website" i],
 body.devices-open form#form01 input[id*="website" i],
 body.devices-open form#form01 input[aria-hidden="true"],
-body.devices-open form#form01 input[tabindex="-1"],
+body.devices-open form#form01 input[tabindex="-1"]{
+  display:none !important;
+}
 body.devices-open form#form01 .field:has(input[type="url"]),
 body.devices-open form#form01 .field:has(input[name*="url" i]),
 body.devices-open form#form01 .field:has(input[id*="url" i]),
 body.devices-open form#form01 .field:has(input[name*="website" i]),
 body.devices-open form#form01 .field:has(input[id*="website" i]),
 body.devices-open form#form01 .field:has(input[aria-hidden="true"]),
-body.devices-open form#form01 .field:has(input[tabindex="-1"]) {
-  display: none !important;
+body.devices-open form#form01 .field:has(input[tabindex="-1"]){
+  display:none !important;
 }
 
-/* Prevent page scroll behind DEVICES overlay */
-body.devices-open { overflow: hidden; }
+/* Prevent page scroll behind overlay */
+body.devices-open{ overflow:hidden; }
 
 /* ================= HUD ================= */
 .hud-wrap{ position:fixed; inset:0; display:none; z-index:900; pointer-events:none; }
@@ -150,28 +148,17 @@ body.devices-open { overflow: hidden; }
 .hud-title{ font-size:calc(var(--hud-font)*1.25); font-weight:900; margin:0 0 2em 0; }
 .hud-line{ margin:.3em 0 0 0; font-size:var(--hud-font); opacity:0; transition:opacity 2s ease; }
 
-/* =============== Weekly ticker =============== */
+/* Weekly ticker */
 .ticker-wrap{ position:fixed; inset:0; display:none; z-index:800; pointer-events:none; }
 .ticker-wrap.is-visible{ display:block; }
-.ticker-rail{
-  position:absolute; left:0; right:0; top:50%; transform:translateY(-50%);
-  overflow:hidden; height:var(--ticker-h); pointer-events:auto;
-}
-.ticker{
-  position:absolute; white-space:nowrap; font-weight:700; letter-spacing:.08em;
-  font-size:clamp(1.1rem,3.2vw,2.2rem);
-  animation:slide-left var(--ticker-duration) linear infinite;
-}
+.ticker-rail{ position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); overflow:hidden; height:var(--ticker-h); pointer-events:auto; }
+.ticker{ position:absolute; white-space:nowrap; font-weight:700; letter-spacing:.08em; font-size:clamp(1.1rem,3.2vw,2.2rem); animation:slide-left var(--ticker-duration) linear infinite; }
 @keyframes slide-left{ from{ transform:translateX(100vw); } to{ transform:translateX(-110%); } }
 
-/* =============== BREATHE overlay =============== */
+/* BREATHE overlay */
 .breathe{ position:fixed; inset:0; display:none; background:var(--bg); z-index:1200; pointer-events:none; }
 .breathe.is-open{ display:block; pointer-events:auto; }
-#stopBtn{
-  position:absolute; inset:0; display:grid; place-items:center;
-  font-weight:800; letter-spacing:.06em; user-select:none;
-  font-size:calc(var(--omen-size) * var(--item-scale));
-}
+#stopBtn{ position:absolute; inset:0; display:grid; place-items:center; font-weight:800; letter-spacing:.06em; user-select:none; font-size:calc(var(--omen-size) * var(--item-scale)); }
 
 /* Snake / Breathing bar */
 #breathingBar{ position:fixed; inset:0; display:none; z-index:1300; pointer-events:none; }
@@ -179,11 +166,7 @@ body.devices-open { overflow: hidden; }
 #breathingBar .layer{ position:absolute; inset:0; }
 #breathingBar .layer.run{ z-index:2; }
 #breathingBar .layer:not(.run){ z-index:1; }
-.seg{
-  position:absolute; background:#000; opacity:1; transition:opacity 2s linear;
-  will-change:width,height,opacity; animation-duration:16s; animation-timing-function:linear;
-  animation-fill-mode:both; animation-iteration-count:1; animation-play-state:paused;
-}
+.seg{ position:absolute; background:#000; opacity:1; transition:opacity 2s linear; will-change:width,height,opacity; animation-duration:16s; animation-timing-function:linear; animation-fill-mode:both; animation-iteration-count:1; animation-play-state:paused; }
 #breathingBar .layer.run .seg{ animation-play-state:running; }
 #breathingBar .seg.is-fading{ opacity:0; }
 .top{ top:0; left:0; height:var(--bar); width:0; animation-name:topSnake; }
@@ -195,10 +178,7 @@ body.devices-open { overflow: hidden; }
 @keyframes bottomSnake{0%{width:0}50%{width:0}75%{width:calc(100% - var(--bar))}100%{width:calc(100% - var(--bar))}}
 @keyframes leftSnake{0%{height:0}75%{height:0}100%{height:calc(100% - (var(--bar) * 2))}}
 
-body.small-bar{ --bar:var(--bar-thin); }
-body.big-bar  { --bar:var(--bar-thick); }
-
-/* ===== Mobile tweaks ===== */
+/* Mobile tweaks */
 #weekly{ text-align:center; line-height:1.2; white-space:nowrap; }
 #weekly .mbr{ display:none; }
 @media (max-width:640px){
