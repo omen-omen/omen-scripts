@@ -45,22 +45,19 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
    DEVICES overlay + Carrd form (#form01)
    ========================================= */
 
-/* Hidden on base page so nothing leaks */
+/* Hide on base page */
 #form01 { display: none !important; }
 
-/* Overlay background stays beige */
 #devicesOverlay { background: var(--bg, #f6f3ef) !important; }
 
-/* Titles */
 #devicesContent{
   text-align:center; text-transform:uppercase; font-weight:800; letter-spacing:0;
 }
 #devicesContent > div:first-child { font-size:50px; line-height:1.1; }
 #devicesContent > div:nth-child(2){ font-size:50px; line-height:1.1; letter-spacing:1px; }
 
-/* Take control while open */
-body.devices-open form#form01,
-body.devices-open form#form01 .inner{
+/* While overlay is open, enforce clean centered layout */
+body.devices-open form#form01{
   width: min(90vw, 1000px) !important;
   max-width: 100% !important;
   margin: 0 auto !important;
@@ -70,17 +67,10 @@ body.devices-open form#form01 .inner{
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
-}
-body.devices-open form#form01 .field{
-  width: 100% !important;
-  display: block !important;
   text-align: center !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
 }
 
-/* Inputs: 50px, bold, black, centered, borderless (no all:unset) */
+/* Inputs: 50px, bold, black, centered, borderless */
 body.devices-open form#form01 input[type="text"],
 body.devices-open form#form01 input[type="email"]{
   width: 100% !important;
@@ -96,8 +86,6 @@ body.devices-open form#form01 input[type="email"]{
   background: transparent !important;
   box-shadow: none !important;
 }
-
-/* Placeholders: same look */
 body.devices-open form#form01 input::placeholder{
   color: #000 !important;
   opacity: 1 !important;
@@ -107,7 +95,7 @@ body.devices-open form#form01 input::placeholder{
   letter-spacing: 0 !important;
 }
 
-/* Submit: just the word */
+/* Submit: word only */
 body.devices-open form#form01 button[type="submit"],
 body.devices-open form#form01 input[type="submit"]{
   cursor: pointer !important;
@@ -122,9 +110,9 @@ body.devices-open form#form01 input[type="submit"]{
   box-shadow: none !important;
 }
 body.devices-open form#form01 button[type="submit"]:hover,
-body.devices-open form#form01 input[type="submit"]:hover{ opacity:.75; }
+body.devices-open form#form01 input[type="submit"]::hover{ opacity:.75; }
 
-/* Hide any honeypot/URL field + wrapper (extra insurance) */
+/* Hide any honeypot/URL fields if Carrd injects them */
 body.devices-open form#form01 input[type="url"],
 body.devices-open form#form01 input[name*="url" i],
 body.devices-open form#form01 input[id*="url" i],
@@ -171,14 +159,11 @@ body.devices-open { overflow: hidden; }
   font-size:clamp(1.1rem,3.2vw,2.2rem);
   animation:slide-left var(--ticker-duration) linear infinite;
 }
-@keyframes slide-left{
-  from{ transform:translateX(100vw); }
-  to  { transform:translateX(-110%); }
-}
+@keyframes slide-left{ from{ transform:translateX(100vw); } to{ transform:translateX(-110%); } }
 
 /* =============== BREATHE overlay =============== */
 .breathe{ position:fixed; inset:0; display:none; background:var(--bg); z-index:1200; pointer-events:none; }
-.breathe.is-open{ display:block; pointer-events:auto; } /* allow clicks anywhere */
+.breathe.is-open{ display:block; pointer-events:auto; } /* click anywhere to close */
 #stopBtn{
   position:absolute; inset:0; display:grid; place-items:center;
   font-weight:800; letter-spacing:.06em; user-select:none;
