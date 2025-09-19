@@ -203,13 +203,16 @@
       breatheOverlay.classList.remove("is-open"); breatheOverlay.setAttribute("aria-hidden","true");
     }
 
-    // Close BREATHE by clicking anywhere on the overlay background
-    breatheOverlay.addEventListener("click", function (e) {
-      if (e.target === breatheOverlay) { exitBreathe(); if (typeof active!=="undefined") active=null; }
-    }, true);
-    breatheOverlay.addEventListener("touchstart", function (e) {
-      if (e.target === breatheOverlay) { exitBreathe(); if (typeof active!=="undefined") active=null; }
-    }, { passive: true, capture: true });
+// Close BREATHE by clicking anywhere on the overlay
+breatheOverlay.addEventListener("click", function () {
+  exitBreathe();
+  if (typeof active !== "undefined") active = null;
+}, true);
+
+breatheOverlay.addEventListener("touchstart", function () {
+  exitBreathe();
+  if (typeof active !== "undefined") active = null;
+}, { passive: true, capture: true });
 
     /* ================= DEVICES — overlay using the real Carrd Form (#form01) ================= */
     var devicesOverlay = null, devicesContent = null;
@@ -230,6 +233,24 @@
 
     function ensureDevicesOverlay(){
       if (devicesOverlay) return devicesOverlay;
+
+      // Form under title
+      function positionFormUnderTitle(){
+  if (!devicesOverlay || !devicesContent || !formWrap) return;
+  const rect = devicesContent.getBoundingClientRect();
+  // put the form wrapper just under the title block (24px gap)
+  Object.assign(formWrap.style, {
+    position: "fixed",
+    left: "50%",
+    top: (rect.bottom + 24) + "px",
+    transform: "translateX(-50%)",
+    zIndex: "7000",
+    width: "min(90vw, 1000px)",
+    maxWidth: "100%",
+    padding: "0",
+    display: "block"
+  });
+}
 
       // Fullscreen overlay (beige)
       devicesOverlay = document.createElement("div");
@@ -331,21 +352,27 @@
       prevFormStyles = null;
     }
 
-    function openDevicesOverlay(){
-      ensureDevicesOverlay();
-      devicesOverlay.style.display = "grid";
-      document.documentElement.style.overflow = "hidden";
-      styleFormForOverlay();
-    }
+function openDevicesOverlay(){
+  ensureDevicesOverlay();
+  devicesOverlay.style.display = "grid";
+  document.documentElement.style.overflow = "hidden";
+  document.body.classList.add("devices-open");        // <-- add this
+  if (formWrap) formWrap.style.display = "block";
+  if (form01)  form01.style.display  = "block";
+  positionFormUnderTitle();                           // <-- position under titles
+  window.addEventListener("resize", positionFormUnderTitle);
+}
 
-    function closeDevicesOverlay(){
-      if (!devicesOverlay) return;
-      devicesOverlay.style.display = "none";
-      document.documentElement.style.overflow = "";
-      restoreFormPosition();
-      if (formWrap) formWrap.style.display = "none"; // keep hidden on base page
-      if (form01)  form01.style.display  = "none";
-    }
+function closeDevicesOverlay(){
+  if (!devicesOverlay) return;
+  devicesOverlay.style.display = "none";
+  document.documentElement.style.overflow = "";
+  document.body.classList.remove("devices-open");     // <-- remove hook
+  window.removeEventListener("resize", positionFormUnderTitle);
+  // hide again so nothing leaks onto the base page
+  if (formWrap) formWrap.style.display = "none";
+  if (form01)  form01.style.display  = "none";
+}
 
     /* ================= CLICK-TO-TOGGLE NAV ================= */
     let active = null; // 'hud:why' | 'hud:how' | 'hud:what' | 'oracle' | 'weekly' | 'breathe' | 'devices'
