@@ -1,140 +1,324 @@
-/* =========================
-   OMEN — styles.css
-   ========================= */
+/* ================= OMEN app.js — click-to-toggle + inline Buttondown form ================= */
+(function () {
+  "use strict";
 
-:root{
-  --bg:#CCC6AE; --ink:#000;
-  --omen-size: clamp(3.5rem,10vw,9rem);
-  --item-scale:.5;
-  --pad:min(3vw,28px); --gap:.6em;
-  --hud-font: calc(var(--omen-size) * var(--item-scale) * .25);
-  --ticker-h: 3.2em; --ticker-duration: 20s;
-  --bar-thin:10px; --bar-thick:60px; --bar:var(--bar-thin);
-  --weekly-nudge: 2px;
-}
+  function ready(fn){
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn);
+    else fn();
+  }
 
-html,body{height:100%;}
-body{
-  margin:0; background:var(--bg); color:var(--ink);
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-  text-transform:uppercase;
-}
+  ready(function init(){
+    const $ = (q)=>document.querySelector(q);
 
-/* Links */
-a{ color:inherit; text-decoration:none; font-weight:700; letter-spacing:.06em; cursor:pointer; transition:opacity .15s ease, transform .15s ease; }
-a:hover{ opacity:.85; transform:translateY(-1px); }
+    /* ---------- Elements expected on the page ---------- */
+    const hudWrap=$("#hudWrap"), hud=$("#hud");
+    const why=$("#why"), how=$("#how"), what=$("#what"),
+          devices=$("#devices"), oracle=$("#oracle");
+    const weeklyLink=$("#weekly"), tickerWrap=$("#tickerWrap"), tickerText=$("#tickerText");
+    const breatheLink=$("#breathe"), breatheOverlay=$("#breatheOverlay"), stopBtn=$("#stopBtn");
+    const breathingBar=$("#breathingBar"),
+          layerA=breathingBar && breathingBar.querySelector(".layer-a"),
+          layerB=breathingBar && breathingBar.querySelector(".layer-b");
 
-/* App chrome */
-.app{ position:relative; z-index:10; }
-.omen{ position:fixed; top:var(--pad); right:var(--pad); font-size:var(--omen-size); font-weight:800; letter-spacing:.06em; line-height:.9; pointer-events:none; }
+    if(!hudWrap||!hud||!weeklyLink||!tickerWrap||!tickerText||!breatheLink||!breatheOverlay||!stopBtn||!breathingBar||!layerA||!layerB){
+      return;
+    }
 
-.top-left,.bottom-left{ display:flex; flex-direction:column; gap:var(--gap); }
-.top-left{ position:fixed; top:var(--pad); left:var(--pad); z-index:20; }
-.bottom-left{ position:fixed; bottom:var(--pad); left:var(--pad); z-index:20; }
-.corner{ font-size:calc(var(--omen-size) * var(--item-scale)); }
-.bottom-right{ position:fixed; bottom:var(--pad); right:var(--pad); z-index:20; }
-.bottom-right a{ font-size:calc(var(--omen-size) * var(--item-scale)); transform:translateY(var(--weekly-nudge)); }
+    /* ---------- OMEN title → Instagram ---------- */
+    (function(){
+      const omenTitle = document.querySelector(".omen");
+      const IG_URL = "https://www.instagram.com/omen___omen/";
+      const openIG = (e)=>{ window.open(IG_URL, "_blank", "noopener"); e && (e.preventDefault(), e.stopPropagation()); };
+      if (omenTitle) {
+        omenTitle.style.pointerEvents = "auto";
+        omenTitle.style.cursor = "pointer";
+        omenTitle.style.zIndex = "5000";
+        omenTitle.setAttribute("role","link");
+        omenTitle.setAttribute("tabindex","0");
+        omenTitle.addEventListener("click", openIG);
+        omenTitle.addEventListener("touchstart", openIG, {passive:false});
+        omenTitle.addEventListener("keydown", (e)=>{ if (e.key==="Enter"||e.key===" "){ e.preventDefault(); openIG(); }});
+      }
+    })();
 
-/* =========================
-   DEVICES overlay + inline Buttondown form
-   ========================= */
+    /* ================= HUD helpers ================= */
+    function openHud(text){ hud.textContent=text||""; hudWrap.classList.add("is-visible"); hudWrap.setAttribute("aria-hidden","false"); }
+    function closeHud(){ hudWrap.classList.remove("is-visible"); hudWrap.setAttribute("aria-hidden","true"); hud.textContent=""; }
 
-#devicesOverlay{
-  background: var(--bg, #f6f3ef);
-  position: fixed; inset: 0; z-index: 6000;
-  display: grid;
-  grid-template-rows: 1fr auto 1fr;
-}
+    /* ================= Oracle ================= */
+    const MOMENTS=window.MOMENTS||[];
+    function getDailyIndex(len){
+      const K_DATE='omen_oracle_date',K_IDX='omen_oracle_idx';
+      const today=(new Date()).toISOString().slice(0,10);
+      const sd=localStorage.getItem(K_DATE), si=localStorage.getItem(K_IDX);
+      if(sd===today && si!=null) return Number(si);
+      let idx=Math.floor(Math.random()*Math.max(1,len||1));
+      if(si!=null && len>1 && Number(si)===idx) idx=(idx+1)%len;
+      localStorage.setItem(K_DATE,today); localStorage.setItem(K_IDX,String(idx));
+      return idx;
+    }
+    function getTitle(m){ return (m&&m.title)||'UNTITLED'; }
+    function getLines(m){ return (m&&m.levels)||(m&&m.lines)||[]; }
+    function showOracle(m){
+      const wrap=document.createElement('div'); wrap.className='hud-content';
+      const title=document.createElement('div'); title.className='hud-title'; title.textContent=getTitle(m); wrap.appendChild(title);
+      const holder=document.createElement('div'); holder.style.display='flex'; holder.style.flexDirection='column'; holder.style.alignItems='center'; wrap.appendChild(holder);
+      hud.textContent=''; hud.appendChild(wrap);
+      hudWrap.classList.add('is-visible'); hudWrap.setAttribute('aria-hidden','false');
+      const lines=getLines(m).slice(0,3);
+      for(let i=0;i<lines.length;i++){
+        ((line,delay)=>{ setTimeout(()=>{ const p=document.createElement('div'); p.className='hud-line'; p.textContent=line; holder.appendChild(p); requestAnimationFrame(()=>{ p.style.opacity='1'; }); },delay); })(lines[i],(i+1)*1000);
+      }
+    }
 
-#devicesContent{
-  text-align:center; text-transform:uppercase; font-weight:800; letter-spacing:0;
-  justify-self:center; align-self:end;
-}
-#devicesContent > div:first-child{ font-size:50px; line-height:1.1; }
-#devicesContent > div:nth-child(2){ font-size:50px; line-height:1.1; letter-spacing:1px; margin-top:.2em; }
+    /* ================= Weekly ticker + breathing bar ================= */
+    let timers=[], loopInt=null, startBto=null, barRunning=false;
+    function clearTimers(){ while(timers.length) clearTimeout(timers.pop()); }
+    function resetLayer(layer){
+      if(!layer) return;
+      layer.classList.remove('run');
+      layer.querySelectorAll('.seg').forEach(seg=>{ seg.classList.remove('is-fading'); seg.style.animation='none'; });
+      layer.offsetWidth; layer.querySelectorAll('.seg').forEach(seg=>{ seg.style.animation=''; });
+    }
+    function fadeAll(layer){ ['.top','.right','.bottom','.left'].forEach(sel=>{ const s=layer.querySelector(sel); if(s) s.classList.add('is-fading'); }); }
+    function startLayer(layer){
+      if(!layer) return;
+      resetLayer(layer);
+      requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ layer.classList.add('run'); timers.push(setTimeout(()=>fadeAll(layer),16000)); }); });
+    }
+    function barStart(thick){
+      if(barRunning) return; barRunning=true;
+      document.body.classList.toggle('small-bar', !thick);
+      document.body.classList.toggle('big-bar',  !!thick);
+      breathingBar.classList.add('is-active');
+      clearTimers(); if(loopInt) clearInterval(loopInt); if(startBto) clearTimeout(startBto);
+      resetLayer(layerA); resetLayer(layerB);
+      startLayer(layerA);
+      startBto=setTimeout(()=>startLayer(layerB),16000);
+      loopInt=setInterval(()=>{ resetLayer(layerA); startLayer(layerA); setTimeout(()=>{ resetLayer(layerB); startLayer(layerB); },16000); },32000);
+    }
+    function barStop(){
+      if(!barRunning) return; barRunning=false;
+      breathingBar.classList.remove('is-active');
+      clearTimers(); if(loopInt) clearInterval(loopInt); loopInt=null; if(startBto) clearTimeout(startBto); startBto=null;
+      resetLayer(layerA); resetLayer(layerB);
+    }
+    function weeklyText(){
+      const src = window.EXPLORATIONS || window.explorations || {};
+      let list = [];
+      if(Array.isArray(src)) list = src;
+      else { for(const k in src){ if(Object.prototype.hasOwnProperty.call(src,k) && Array.isArray(src[k])) list=list.concat(src[k]); } }
+      if(!list.length) return "NO EXPLORATIONS LOADED";
+      const item=list[0]; return (typeof item==='string') ? item : (item.text || item.title || "EXPLORATION");
+    }
+    let weeklyOpen=false, labelLoop=null, labelTs=[];
+    function clearWeeklyLabelTimers(){ for(let i=0;i<labelTs.length;i++) clearTimeout(labelTs[i]); labelTs=[]; if(labelLoop){ clearInterval(labelLoop); labelLoop=null; } }
+    function runWeeklyLabelCycleOnce(){
+      const seq=["INHALE","HOLD","EXHALE","HOLD"];
+      for(let i=0;i<seq.length;i++){
+        ((word,delay)=>{ labelTs.push(setTimeout(()=>{ if(weeklyOpen && breatheLink) breatheLink.textContent=word; },delay)); })(seq[i], i*4000);
+      }
+    }
+    function restartWeeklyLabels(){ clearWeeklyLabelTimers(); runWeeklyLabelCycleOnce(); labelLoop=setInterval(()=>{ clearWeeklyLabelTimers(); runWeeklyLabelCycleOnce(); },16000); }
+    function showWeekly(){
+      if(weeklyOpen) return;
+      tickerText.textContent = weeklyText();
+      tickerWrap.classList.add("is-visible"); tickerWrap.setAttribute("aria-hidden","false");
+      weeklyOpen = true; barStart(false); restartWeeklyLabels();
+    }
+    function hideWeekly(){
+      tickerWrap.classList.remove("is-visible"); tickerWrap.setAttribute("aria-hidden","true");
+      weeklyOpen=false; clearWeeklyLabelTimers(); if(breatheLink) breatheLink.textContent="BREATHE";
+      barStop();
+    }
 
-/* Horizontal, centered row */
-#inlineDevicesForm{
-  align-self:center; justify-self:center;
-  display:flex; flex-direction:row; align-items:baseline; justify-content:center;
-  gap: 0.8em;
-  text-transform:uppercase;
-  font-size:50px; font-weight:800; color:#000;
-  white-space:nowrap;          /* keep a single line on wide screens */
-}
+    /* ================= BREATHE overlay (click anywhere to close) ================= */
+    let centerWordsLoop=null;
+    function startCenterWords(){ const words=["INHALE","HOLD","EXHALE","HOLD"]; let i=0; stopBtn.textContent=words[0]; clearInterval(centerWordsLoop); centerWordsLoop=setInterval(()=>{ i=(i+1)%words.length; stopBtn.textContent=words[i]; },4000); }
+    function stopCenterWords(){ clearInterval(centerWordsLoop); centerWordsLoop=null; }
+    function enterBreathe(){
+      hideWeekly();
+      breatheOverlay.classList.add("is-open"); breatheOverlay.setAttribute("aria-hidden","false");
+      barStart(true); startCenterWords();
+      setTimeout(()=>{ document.addEventListener("click", globalBreatheClose, true); }, 0);
+      setTimeout(()=>{ document.addEventListener("touchstart", globalBreatheClose, {passive:true, capture:true}); }, 0);
+    }
+    function exitBreathe(){
+      stopCenterWords(); barStop();
+      breatheOverlay.classList.remove("is-open"); breatheOverlay.setAttribute("aria-hidden","true");
+      document.removeEventListener("click", globalBreatheClose, true);
+      document.removeEventListener("touchstart", globalBreatheClose, true);
+    }
+    function globalBreatheClose(){ if (breatheOverlay.classList.contains("is-open")) exitBreathe(); }
+    breatheOverlay.addEventListener("click", ()=>exitBreathe(), true);
+    breatheOverlay.addEventListener("touchstart", ()=>exitBreathe(), { passive: true, capture: true });
 
-#inlineDevicesForm input[type="text"],
-#inlineDevicesForm input[type="email"]{
-  all: unset;
-  text-transform: uppercase;
-  text-align: center;
-  font-size:50px; font-weight:800; line-height:1.1; color:#000;
-  padding: 0.05em 0.25em;
-  caret-color:#000;
-  width: auto;                 /* actual width set by JS autosizer (ch units) */
-}
+    /* ================= DEVICES — overlay with inline Buttondown form ================= */
 
-#inlineDevicesForm ::placeholder{ color:#000; opacity:1; }
+    const BUTTONDOWN_USERNAME = "OMEN"; // ← your list username
 
-/* Submit word only */
-#inlineDevicesForm button[type="submit"]{
-  all: unset;
-  cursor:pointer;
-  font-size:50px; font-weight:800; line-height:1.1; color:#000;
-}
-#inlineDevicesForm button[type="submit"]:hover{ opacity:.75; }
+    let devicesOverlay = null, devicesContent = null, devicesForm = null;
 
-/* Hidden iframe for Buttondown response */
-#bd_iframe{ display:none !important; width:0 !important; height:0 !important; }
+    function ensureBDIframe(){
+      let iframe = document.getElementById("bd_iframe");
+      if (!iframe){
+        iframe = document.createElement("iframe");
+        iframe.name = "bd_iframe";
+        iframe.id = "bd_iframe";
+        iframe.style.display = "none";
+        document.body.appendChild(iframe);
+      }
+      return iframe;
+    }
 
-/* Prevent page scroll behind overlay */
-body.devices-open{ overflow:hidden; }
+    // Autosize inputs based on character count (min→max ch)
+    function autosizeInput(el, minCh, maxCh){
+      const measure = ()=>{
+        const base = (el.value || el.placeholder || "").toString().length;
+        const ch = Math.max(minCh, Math.min(maxCh, base));
+        el.style.width = ch + "ch";
+      };
+      ["input","change","focus"].forEach(evt=>el.addEventListener(evt, measure));
+      measure();
+    }
 
-/* ================= HUD ================= */
-.hud-wrap{ position:fixed; inset:0; display:none; z-index:900; pointer-events:none; }
-.hud-wrap.is-visible{ display:block; }
-.hud{
-  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-  width:50vw; min-width:280px; max-width:66ch;
-  display:flex; align-items:center; justify-content:center; text-align:center;
-  padding:1.2rem; line-height:1.35; font-weight:700; letter-spacing:.05em;
-  font-size:var(--hud-font); color:var(--ink); background:transparent; pointer-events:auto;
-}
-.hud-content{ display:flex; flex-direction:column; align-items:center; width:100%; }
-.hud-title{ font-size:calc(var(--hud-font)*1.25); font-weight:900; margin:0 0 2em 0; }
-.hud-line{ margin:.3em 0 0 0; font-size:var(--hud-font); opacity:0; transition:opacity 2s ease; }
+    function buildDevicesForm(){
+      if (devicesForm) return devicesForm;
+      ensureBDIframe();
 
-/* Weekly ticker */
-.ticker-wrap{ position:fixed; inset:0; display:none; z-index:800; pointer-events:none; }
-.ticker-wrap.is-visible{ display:block; }
-.ticker-rail{ position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); overflow:hidden; height:var(--ticker-h); pointer-events:auto; }
-.ticker{ position:absolute; white-space:nowrap; font-weight:700; letter-spacing:.08em; font-size:clamp(1.1rem,3.2vw,2.2rem); animation:slide-left var(--ticker-duration) linear infinite; }
-@keyframes slide-left{ from{ transform:translateX(100vw); } to{ transform:translateX(-110%); } }
+      const form = document.createElement("form");
+      form.id = "inlineDevicesForm";
+      form.method = "post";
+      form.action = "https://buttondown.email/api/emails/subscribe";
+      form.target = "bd_iframe";
 
-/* BREATHE overlay */
-.breathe{ position:fixed; inset:0; display:none; background:var(--bg); z-index:1200; pointer-events:none; }
-.breathe.is-open{ display:block; pointer-events:auto; }
-#stopBtn{ position:absolute; inset:0; display:grid; place-items:center; font-weight:800; letter-spacing:.06em; user-select:none; font-size:calc(var(--omen-size) * var(--item-scale)); }
+      const nameI = document.createElement("input");
+      nameI.type = "text";
+      nameI.name = "metadata__name";
+      nameI.placeholder = "NAME";
+      nameI.className = "fld-name";
 
-/* Snake / Breathing bar */
-#breathingBar{ position:fixed; inset:0; display:none; z-index:1300; pointer-events:none; }
-#breathingBar.is-active{ display:block; }
-#breathingBar .layer{ position:absolute; inset:0; }
-#breathingBar .layer.run{ z-index:2; }
-#breathingBar .layer:not(.run){ z-index:1; }
-.seg{ position:absolute; background:#000; opacity:1; transition:opacity 2s linear; will-change:width,height,opacity; animation-duration:16s; animation-timing-function:linear; animation-fill-mode:both; animation-iteration-count:1; animation-play-state:paused; }
-#breathingBar .layer.run .seg{ animation-play-state:running; }
-#breathingBar .seg.is-fading{ opacity:0; }
-.top{ top:0; left:0; height:var(--bar); width:0; animation-name:topSnake; }
-.right{ top:var(--bar); right:0; width:var(--bar); height:0; animation-name:rightSnake; }
-.bottom{ bottom:0; right:var(--bar); height:var(--bar); width:0; animation-name:bottomSnake; }
-.left{ bottom:var(--bar); left:0; width:var(--bar); height:0; animation-name:leftSnake; }
-@keyframes topSnake{0%{width:0}25%{width:100%}100%{width:100%}}
-@keyframes rightSnake{0%{height:0}25%{height:0}50%{height:calc(100% - var(--bar))}100%{height:calc(100% - var(--bar))}}
-@keyframes bottomSnake{0%{width:0}50%{width:0}75%{width:calc(100% - var(--bar))}100%{width:calc(100% - var(--bar))}}
-@keyframes leftSnake{0%{height:0}75%{height:0}100%{height:calc(100% - (var(--bar) * 2))}}
+      const emailI = document.createElement("input");
+      emailI.type = "email";
+      emailI.name = "email";
+      emailI.placeholder = "EMAIL";
+      emailI.required = true;
+      emailI.className = "fld-email";
 
-/* Mobile: allow wrap if viewport is narrow */
-@media (max-width: 980px){
-  #inlineDevicesForm{ flex-wrap:wrap; white-space:normal; gap:.5em 1em; }
-}
+      const embedI = document.createElement("input");
+      embedI.type = "hidden";
+      embedI.name = "embed";
+      embedI.value = "1";
+
+      const listI = document.createElement("input");
+      listI.type = "hidden";
+      listI.name = "list";
+      listI.value = BUTTONDOWN_USERNAME;
+
+      const btn = document.createElement("button");
+      btn.type = "submit";
+      btn.textContent = "SUBMIT";
+
+      // Autosize now that elements exist
+      autosizeInput(nameI, 8, 18);   // 8–18ch
+      autosizeInput(emailI, 12, 30); // 12–30ch (longer emails expand)
+
+      form.addEventListener("submit", function(){
+        btn.disabled = true;
+        btn.style.opacity = "0.75";
+        btn.textContent = "SENT";
+      });
+
+      [nameI, emailI, embedI, listI, btn].forEach(el=>form.appendChild(el));
+      devicesForm = form;
+      return form;
+    }
+
+    function ensureDevicesOverlay(){
+      if (devicesOverlay) return devicesOverlay;
+
+      devicesOverlay = document.createElement("div");
+      devicesOverlay.id = "devicesOverlay";
+      devicesOverlay.innerHTML = "";
+      Object.assign(devicesOverlay.style, {
+        position: "fixed",
+        inset: "0",
+        zIndex: "6000",
+        display: "grid",
+        gridTemplateRows: "1fr auto 1fr",
+        background: "var(--bg, #f6f3ef)"
+      });
+
+      devicesContent = document.createElement("div");
+      devicesContent.id = "devicesContent";
+
+      const line1 = document.createElement("div");
+      line1.textContent = "DEVICES ARE FORMING";
+
+      const line2 = document.createElement("div");
+      line2.textContent = "SIGNAL WILL BE SENT WHEN READY";
+
+      devicesContent.appendChild(line1);
+      devicesContent.appendChild(line2);
+
+      devicesContent.style.alignSelf = "end";
+      devicesContent.style.justifySelf = "center";
+
+      const formEl = buildDevicesForm();
+      formEl.style.alignSelf = "center";
+      formEl.style.justifySelf = "center";
+
+      devicesOverlay.appendChild(devicesContent);
+      devicesOverlay.appendChild(formEl);
+
+      document.body.appendChild(devicesOverlay);
+
+      devicesOverlay.addEventListener("click", (e)=>{
+        if (e.target === devicesOverlay) closeDevicesOverlay();
+      }, true);
+      devicesOverlay.addEventListener("touchstart", (e)=>{
+        if (e.target === devicesOverlay) closeDevicesOverlay();
+      }, { passive: true, capture: true });
+
+      return devicesOverlay;
+    }
+
+    function openDevicesOverlay(){
+      ensureDevicesOverlay();
+      devicesOverlay.style.display = "grid";
+      document.documentElement.style.overflow = "hidden";
+      document.body.classList.add("devices-open");
+    }
+
+    function closeDevicesOverlay(){
+      if (!devicesOverlay) return;
+      devicesOverlay.style.display = "none";
+      document.documentElement.style.overflow = "";
+      document.body.classList.remove("devices-open");
+    }
+
+    /* ================= Click-to-toggle NAV ================= */
+    let active = null;
+    function closeAllUI(){ closeHud(); hideWeekly(); exitBreathe(); closeDevicesOverlay(); }
+
+    function wireHudClick(el, text, key){
+      if(!el) return;
+      el.addEventListener("click", function(e){
+        e.preventDefault(); e.stopPropagation();
+        if(active === ('hud:'+key)) { closeHud(); active = null; return; }
+        closeAllUI(); openHud(text); active = 'hud:'+key;
+      }, true);
+    }
+
+    wireHudClick(why,  "SOMETIMES WE DRIFT OFF-CENTER. THIS IS NOT FAILURE BUT SIGNAL. REALITY-CHECKS ARE KEYS TO REMEMBER WHAT IS REAL.", "why");
+    wireHudClick(how,  "MOVING THROUGH A SPECIFIC EXPLORATION EACH WEEK. VISITING THE ORACLE FOR DAILY SIGNAL. BREATHING RE-CALIBRATES. JOURNAL WHEN YOU DESIRE UNITY.", "how");
+    wireHudClick(what, "MINIMAL INSTRUMENTS DESIGNED FOR ATTENTION. TUNING DEVICES FOR REALIGNMENT. THROUGH PURE COMMITMENT AND DEVOTION TO YOUR SELF. A PRACTICE OF SOVEREIGNTY, REDEMPTION, AND SELF-RELIANCE.", "what");
+
+    if (oracle) oracle.addEventListener('click', (e)=>{ e.preventDefault(); e.stopPropagation(); if(active==='oracle'){ closeHud(); active=null; return; } closeAllUI(); showOracle(MOMENTS[getDailyIndex(MOMENTS.length)]||{}); active='oracle'; }, true);
+    if (weeklyLink) weeklyLink.addEventListener("click", (e)=>{ e.preventDefault(); e.stopPropagation(); if(active==='weekly'){ hideWeekly(); active=null; return; } closeAllUI(); showWeekly(); active='weekly'; }, true);
+    if (breatheLink) breatheLink.addEventListener("click", (e)=>{ e.preventDefault(); e.stopPropagation(); if(active==='breathe'){ exitBreathe(); active=null; return; } closeAllUI(); enterBreathe(); active='breathe'; }, true);
+    if (devices) devices.addEventListener("click", (e)=>{ e.preventDefault(); e.stopPropagation(); if(active==='devices'){ closeDevicesOverlay(); active=null; return; } closeAllUI(); openDevicesOverlay(); active='devices'; }, true);
+
+    document.addEventListener("keydown", (e)=>{ if(e.key==="Escape"){ closeAllUI(); active=null; }});
+  });
+})();
