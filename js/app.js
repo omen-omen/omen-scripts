@@ -220,43 +220,64 @@
 
     // Find & hide the wrapper + form on load so nothing leaks on base page
     if (form01) {
-      // climb up to catch Carrd's container (3 levels is usually enough)
       var p = form01;
       for (var i = 0; i < 3 && p && p.parentElement; i++) p = p.parentElement;
       formWrap = p || form01.parentElement;
-
       if (formWrap) formWrap.style.display = "none";
       form01.style.display = "none";
     }
 
-    // Before-first-paint normalization: hide URL field, widen wrappers, force grid
+    // Normalize Carrd form before first paint (kills the right-shift/jump-on-tab)
     function normalizeCarrdForm(){
       if (!form01) return;
 
-      // Hide URL field if present
-      var urlInput = form01.querySelector('input[type="url"], input[name*="url" i], input#form01-url');
+      // Hide URL field (if present)
+      var urlInput = form01.querySelector('input[type="url"], input[name*="url" i]');
       if (urlInput) {
         var urlField = urlInput.closest('.field') || urlInput.parentElement;
         if (urlField) urlField.style.display = 'none';
         urlInput.style.display = 'none';
       }
 
+      // Wrappers to grid + full width
       var inner = form01.querySelector('.inner');
       if (inner) {
-        inner.style.width = '100%';
-        inner.style.maxWidth = '100%';
-        inner.style.margin = '0 auto';
-        inner.style.display = 'grid';
-        inner.style.placeItems = 'center';
-        inner.style.gap = '0.6em';
+        Object.assign(inner.style, {
+          width: '100%', maxWidth: '100%', margin: '0 auto',
+          display: 'grid', placeItems: 'center', gap: '0.6em'
+        });
       }
       form01.querySelectorAll('.field').forEach(function(f){
-        f.style.width = '100%';
-        f.style.display = 'block';
-        f.style.textAlign = 'center';
+        Object.assign(f.style, {
+          width: '100%', display: 'block', textAlign: 'center',
+          background: 'transparent', border: '0', boxShadow: 'none'
+        });
       });
 
-      // Force reflow now (prevents the "jump on Tab")
+      // Inputs -> 50px bold black centered (inline)
+      var inputs = form01.querySelectorAll('input[type="text"], input[type="email"], input[type="url"]');
+      inputs.forEach(function(inp){
+        Object.assign(inp.style, {
+          all: 'unset',
+          width: '100%', textAlign: 'center',
+          fontSize: '50px', fontWeight: '800', lineHeight: '1.1', letterSpacing: '0',
+          color: '#000', padding: '.1em 0', background: 'transparent', border: '0', boxShadow: 'none'
+        });
+        inp.setAttribute('data-omen-typography', 'true'); // for placeholder CSS hook
+      });
+
+      // Submit -> word only, 50px bold black
+      var submit = form01.querySelector('button[type="submit"], input[type="submit"]');
+      if (submit) {
+        Object.assign(submit.style, {
+          all: 'unset',
+          cursor: 'pointer',
+          fontSize: '50px', fontWeight: '800', lineHeight: '1.1',
+          textTransform: 'uppercase', color: '#000'
+        });
+      }
+
+      // Force reflow now (prevents the jump on first focus)
       void form01.offsetHeight;
     }
 
@@ -339,12 +360,18 @@
       devicesOverlay.style.display = "grid";
       document.documentElement.style.overflow = "hidden";
       document.body.classList.add("devices-open");
-      if (formWrap) formWrap.style.display = "block";
-      if (form01)  form01.style.display  = "block";
 
-      normalizeCarrdForm();
-      requestAnimationFrame(positionFormUnderTitle);
-      setTimeout(positionFormUnderTitle, 0);
+      if (formWrap) { formWrap.style.display = "block"; formWrap.style.visibility = "hidden"; }
+      if (form01)  { form01.style.display  = "block"; }
+
+      normalizeCarrdForm();          // style before first paint
+      positionFormUnderTitle();      // initial placement
+
+      requestAnimationFrame(function(){
+        positionFormUnderTitle();    // settle
+        if (formWrap) formWrap.style.visibility = "visible";
+      });
+
       window.addEventListener("resize", positionFormUnderTitle);
     }
 
@@ -354,8 +381,8 @@
       document.documentElement.style.overflow = "";
       document.body.classList.remove("devices-open");
       window.removeEventListener("resize", positionFormUnderTitle);
-      if (formWrap) formWrap.style.display = "none";
-      if (form01)  form01.style.display  = "none";
+      if (formWrap) { formWrap.style.visibility = ""; formWrap.style.display = "none"; }
+      if (form01)  { form01.style.display  = "none"; }
     }
 
     /* ================= CLICK-TO-TOGGLE NAV ================= */
