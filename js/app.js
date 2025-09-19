@@ -157,7 +157,7 @@
 
     /* ================= DEVICES — overlay with inline Buttondown form ================= */
 
-    const BUTTONDOWN_USERNAME = "YOUR_BUTTONDOWN_USERNAME"; // ← set this once
+    const BUTTONDOWN_USERNAME = "OMEN"; // ← set this once
 
     let devicesOverlay = null, devicesContent = null, devicesForm = null;
 
