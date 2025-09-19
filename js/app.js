@@ -1,4 +1,4 @@
-/* ================= OMEN app.js — click-to-toggle + Carrd form overlay (scoped to #form01) ================= */
+/* ================= OMEN app.js — click-to-toggle + Carrd form overlay (with fallback) ================= */
 (function () {
   "use strict";
 
@@ -21,9 +21,11 @@
           layerB=breathingBar && breathingBar.querySelector(".layer-b");
 
     // Carrd form (do not move in DOM)
-    const form01 = $("#form01");
+    const form01 = $("#form01");                 // may be null if Code element is isolated
+    let devicesOverlay = null, devicesContent = null;
+    let inlineFallbackForm = null;               // only built if #form01 is missing
 
-    // Bail if scaffold missing
+    // Bail if core scaffold missing
     if(!hudWrap||!hud||!weeklyLink||!tickerWrap||!tickerRail||!tickerText||!breatheLink||!breatheOverlay||!stopBtn||!breathingBar||!layerA||!layerB){
       return;
     }
@@ -84,14 +86,12 @@
 
     /* ================= Weekly ticker + breathing bar ================= */
     let timers=[], loopInt=null, startBto=null, barRunning=false;
-
     function clearTimers(){ while(timers.length) clearTimeout(timers.pop()); }
     function resetLayer(layer){
       if(!layer) return;
       layer.classList.remove('run');
       layer.querySelectorAll('.seg').forEach(seg=>{ seg.classList.remove('is-fading'); seg.style.animation='none'; });
-      layer.offsetWidth;  // reflow
-      layer.querySelectorAll('.seg').forEach(seg=>{ seg.style.animation=''; });
+      layer.offsetWidth; layer.querySelectorAll('.seg').forEach(seg=>{ seg.style.animation=''; });
     }
     function fadeAll(layer){ ['.top','.right','.bottom','.left'].forEach(sel=>{ const s=layer.querySelector(sel); if(s) s.classList.add('is-fading'); }); }
     function startLayer(layer){
@@ -166,24 +166,18 @@
     breatheOverlay.addEventListener("click", ()=>exitBreathe(), true);
     breatheOverlay.addEventListener("touchstart", ()=>exitBreathe(), { passive: true, capture: true });
 
-    /* ================= DEVICES — overlay using #form01 directly ================= */
+    /* ================= DEVICES — overlay ================= */
 
-    // Keep hidden on base page
+    // Hide Carrd form on base page; show when overlay opens
     if (form01) form01.style.display = "none";
 
-    // Normalize Carrd quirks & style the inputs
     function normalizeCarrdForm(){
       if (!form01) return;
-
       // Hide common honeypots if Carrd injects them
       [
-        'input[type="url"]',
-        'input[name*="url" i]',
-        'input[id*="url" i]',
-        'input[name*="website" i]',
-        'input[id*="website" i]',
-        'input[aria-hidden="true"]',
-        'input[tabindex="-1"]'
+        'input[type="url"]','input[name*="url" i]','input[id*="url" i]',
+        'input[name*="website" i]','input[id*="website" i]',
+        'input[aria-hidden="true"]','input[tabindex="-1"]'
       ].forEach((sel)=>{
         const trap = form01.querySelector(sel);
         if (trap) {
@@ -192,8 +186,7 @@
           trap.style.display = 'none';
         }
       });
-
-      // Typography: 50px, bold, black, centered
+      // Typography: 50px, bold, black, centered, borderless
       const inputs = form01.querySelectorAll('input[type="text"], input[type="email"]');
       inputs.forEach((inp)=>{
         Object.assign(inp.style, {
@@ -203,7 +196,6 @@
           border: 'none', outline: 'none', background: 'transparent', boxShadow: 'none'
         });
       });
-
       const submit = form01.querySelector('button[type="submit"], input[type="submit"]');
       if (submit) {
         Object.assign(submit.style, {
@@ -215,48 +207,68 @@
       }
     }
 
-    let devicesOverlay = null, devicesContent = null;
+    function buildInlineFallbackForm(){
+      if (inlineFallbackForm) return inlineFallbackForm;
+      const FBD_USER = "YOUR_BUTTONDOWN_USERNAME"; // <-- change to your Buttondown username
+      const action = "https://buttondown.email/" + FBD_USER;
+
+      const f = document.createElement("form");
+      f.id = "inlineDevicesForm";
+      f.method = "post";
+      f.action = action;
+      f.target = "popupwindow";
+      f.setAttribute("onsubmit", `window.open('${action}','popupwindow');return true;`);
+
+      const nameI = document.createElement("input");
+      nameI.type = "text";
+      nameI.name = "name";
+      nameI.placeholder = "NAME";
+
+      const emailI = document.createElement("input");
+      emailI.type = "email";
+      emailI.name = "email";
+      emailI.placeholder = "EMAIL";
+      emailI.required = true;
+
+      const embedI = document.createElement("input");
+      embedI.type = "hidden";
+      embedI.name = "embed";
+      embedI.value = "1";
+
+      const btn = document.createElement("button");
+      btn.type = "submit";
+      btn.textContent = "SUBMIT";
+
+      [nameI, emailI, embedI, btn].forEach(el=>f.appendChild(el));
+      inlineFallbackForm = f;
+      return f;
+    }
 
     function ensureDevicesOverlay(){
       if (devicesOverlay) return devicesOverlay;
-
       devicesOverlay = document.createElement("div");
       devicesOverlay.id = "devicesOverlay";
       Object.assign(devicesOverlay.style, {
-        position: "fixed",
-        inset: "0",
-        zIndex: "6000",
-        display: "none",
-        background: "var(--bg, #f6f3ef)",
-        display: "grid",
-        placeItems: "start center",
-        padding: "10vh 6vw 6vh",
-        overflowY: "auto",
-        textAlign: "center",
-        textTransform: "uppercase",
-        fontWeight: "800",
-        letterSpacing: ".06em"
+        position: "fixed", inset: "0", zIndex: "6000",
+        display: "none", background: "var(--bg, #f6f3ef)",
+        display: "grid", placeItems: "start center",
+        padding: "10vh 6vw 6vh", overflowY: "auto",
+        textAlign: "center", textTransform: "uppercase",
+        fontWeight: "800", letterSpacing: ".06em"
       });
 
-      // Titles
       devicesContent = document.createElement("div");
       devicesContent.id = "devicesContent";
 
       const line1 = document.createElement("div");
       line1.textContent = "DEVICES ARE FORMING";
-      line1.style.fontSize = "50px";
-      line1.style.fontWeight = "800";
-      line1.style.letterSpacing = "0";
-      devicesContent.appendChild(line1);
-
+      line1.style.fontSize = "50px"; line1.style.fontWeight = "800"; line1.style.letterSpacing = "0";
       const line2 = document.createElement("div");
       line2.textContent = "SIGNAL WILL BE SENT WHEN READY";
-      line2.style.fontSize = "50px";
-      line2.style.fontWeight = "800";
-      line2.style.letterSpacing = "1px";
-      line2.style.marginTop = ".2em";
-      devicesContent.appendChild(line2);
+      line2.style.fontSize = "50px"; line2.style.fontWeight = "800"; line2.style.letterSpacing = "1px"; line2.style.marginTop = ".2em";
 
+      devicesContent.appendChild(line1);
+      devicesContent.appendChild(line2);
       devicesOverlay.appendChild(devicesContent);
       document.body.appendChild(devicesOverlay);
 
@@ -268,24 +280,29 @@
     }
 
     function positionFormUnderTitle(){
-      if (!devicesOverlay || !devicesContent || !form01) return;
+      if (!devicesOverlay || !devicesContent) return;
       const rect = devicesContent.getBoundingClientRect();
-      Object.assign(form01.style, {
-        position: "fixed",
-        left: "0",
-        right: "0",
-        margin: "0 auto",
-        top: (rect.bottom + 24) + "px",
-        zIndex: "7000",
-        width: "min(90vw, 1000px)",
-        maxWidth: "100%",
-        padding: "0",
-        transform: "none",
-        display: "block",
-        opacity: "1",
-        visibility: "visible",
-        pointerEvents: "auto"
-      });
+
+      const applyPos = (el)=>{
+        Object.assign(el.style, {
+          position: "fixed",
+          left: "0", right: "0", margin: "0 auto",
+          top: (rect.bottom + 24) + "px",
+          zIndex: "7000",
+          width: "min(90vw, 1000px)",
+          maxWidth: "100%",
+          padding: "0",
+          transform: "none",
+          display: "block",
+          opacity: "1",
+          visibility: "visible",
+          pointerEvents: "auto",
+          textAlign: "center"
+        });
+      };
+
+      if (form01) applyPos(form01);
+      else if (inlineFallbackForm) applyPos(inlineFallbackForm);
     }
 
     function openDevicesOverlay(){
@@ -295,14 +312,15 @@
       document.body.classList.add("devices-open");
 
       if (form01) {
-        // Force show immediately (beat any Carrd defaults)
-        form01.style.display = "block";
-        form01.style.opacity = "1";
-        form01.style.visibility = "visible";
-        form01.style.pointerEvents = "auto";
+        form01.style.display = "block";        // force show (overrides base hide)
+        normalizeCarrdForm();
+      } else {
+        // Build and inject fallback if Carrd form isn't reachable (isolation)
+        if (!inlineFallbackForm) {
+          devicesOverlay.appendChild(buildInlineFallbackForm());
+        }
       }
 
-      normalizeCarrdForm();
       positionFormUnderTitle();
       window.addEventListener("resize", positionFormUnderTitle);
     }
@@ -313,13 +331,11 @@
       document.documentElement.style.overflow = "";
       document.body.classList.remove("devices-open");
       window.removeEventListener("resize", positionFormUnderTitle);
-
       if (form01) form01.style.display = "none";
     }
 
     /* ================= Click-to-toggle NAV ================= */
     let active = null;
-
     function closeAllUI(){ closeHud(); hideWeekly(); exitBreathe(); closeDevicesOverlay(); }
 
     function wireHudClick(el, text, key){
