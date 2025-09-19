@@ -197,22 +197,22 @@
       breatheOverlay.classList.add("is-open"); breatheOverlay.setAttribute("aria-hidden","false");
       barStart(true);
       startCenterWords();
+      // enable global click-to-close on next tick to avoid closing from the click that opened it
+      setTimeout(function(){ document.addEventListener("click", globalBreatheClose, true); }, 0);
+      setTimeout(function(){ document.addEventListener("touchstart", globalBreatheClose, {passive:true, capture:true}); }, 0);
     }
     function exitBreathe(){
       stopCenterWords();
       barStop();
       breatheOverlay.classList.remove("is-open"); breatheOverlay.setAttribute("aria-hidden","true");
+      document.removeEventListener("click", globalBreatheClose, true);
+      document.removeEventListener("touchstart", globalBreatheClose, true);
     }
+    function globalBreatheClose(){ if (breatheOverlay.classList.contains("is-open")) exitBreathe(); }
 
-    // Close BREATHE by clicking ANYWHERE on the overlay
-    breatheOverlay.addEventListener("click", function () {
-      exitBreathe();
-      if (typeof active !== "undefined") active = null;
-    }, true);
-    breatheOverlay.addEventListener("touchstart", function () {
-      exitBreathe();
-      if (typeof active !== "undefined") active = null;
-    }, { passive: true, capture: true });
+    // Also close if you click directly on the overlay element
+    breatheOverlay.addEventListener("click", function(){ exitBreathe(); }, true);
+    breatheOverlay.addEventListener("touchstart", function(){ exitBreathe(); }, { passive: true, capture: true });
 
     /* ================= DEVICES — overlay using the real Carrd Form (#form01) ================= */
     var devicesOverlay = null, devicesContent = null;
@@ -309,8 +309,7 @@
       document.body.classList.add("devices-open"); // CSS hook for 50px, black, borderless
       if (formWrap) formWrap.style.display = "block";
       if (form01)  form01.style.display  = "block";
-      // Wait a tick so layout is painted, then position the form exactly under the title
-      requestAnimationFrame(positionFormUnderTitle);
+      requestAnimationFrame(positionFormUnderTitle); // after paint, place under title
       window.addEventListener("resize", positionFormUnderTitle);
     }
 
@@ -384,7 +383,5 @@
     document.addEventListener("keydown", function(e){
       if(e.key==="Escape"){ closeAllUI(); active = null; }
     });
-
-    /* NOTE: All interactions are click-based (hover blockers removed). */
   });
 })();
