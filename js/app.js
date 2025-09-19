@@ -10,7 +10,7 @@
   ready(function init(){
     const $ = (q)=>document.querySelector(q);
 
-    /* ---------- Elements present in Carrd ---------- */
+    /* ---------- Elements expected on the page ---------- */
     const hudWrap=$("#hudWrap"), hud=$("#hud");
     const why=$("#why"), how=$("#how"), what=$("#what"),
           devices=$("#devices"), oracle=$("#oracle");
@@ -20,7 +20,7 @@
           layerA=breathingBar && breathingBar.querySelector(".layer-a"),
           layerB=breathingBar && breathingBar.querySelector(".layer-b");
 
-    // Fail quietly if the site scaffold isn't present (prevents half-rendered states)
+    // Fail quietly if core scaffold missing
     if(!hudWrap||!hud||!weeklyLink||!tickerWrap||!tickerText||!breatheLink||!breatheOverlay||!stopBtn||!breathingBar||!layerA||!layerB){
       return;
     }
@@ -133,7 +133,7 @@
       barStop();
     }
 
-    /* ================= BREATHE overlay (close by clicking anywhere) ================= */
+    /* ================= BREATHE overlay (click anywhere to close) ================= */
     let centerWordsLoop=null;
     function startCenterWords(){ const words=["INHALE","HOLD","EXHALE","HOLD"]; let i=0; stopBtn.textContent=words[0]; clearInterval(centerWordsLoop); centerWordsLoop=setInterval(()=>{ i=(i+1)%words.length; stopBtn.textContent=words[i]; },4000); }
     function stopCenterWords(){ clearInterval(centerWordsLoop); centerWordsLoop=null; }
@@ -158,6 +158,7 @@
     /* ================= DEVICES — overlay with inline Buttondown form ================= */
 
     const BUTTONDOWN_USERNAME = "YOUR_BUTTONDOWN_USERNAME"; // ← set this once
+
     let devicesOverlay = null, devicesContent = null, devicesForm = null;
 
     // Hidden iframe for API response (prevents navigation)
