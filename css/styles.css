@@ -41,61 +41,93 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
 .bottom-right{ position:fixed; bottom:var(--pad); right:var(--pad); z-index:20; }
 .bottom-right a{ font-size:calc(var(--omen-size) * var(--item-scale)); transform:translateY(var(--weekly-nudge)); }
 
-/* ===== DEVICES overlay ===== */
+/* =========================================
+   DEVICES overlay + Carrd form (#form01)
+   ========================================= */
 
-#form01 { display: none !important; }                 /* hide on base page */
+/* Hidden on base page so nothing leaks */
+#form01 { display: none !important; }
+
+/* Overlay background stays beige */
 #devicesOverlay { background: var(--bg, #f6f3ef) !important; }
 
+/* Titles */
 #devicesContent{
   text-align:center; text-transform:uppercase; font-weight:800; letter-spacing:0;
 }
 #devicesContent > div:first-child { font-size:50px; line-height:1.1; }
 #devicesContent > div:nth-child(2){ font-size:50px; line-height:1.1; letter-spacing:1px; }
 
-/* take control while open */
+/* Take control while open */
 body.devices-open form#form01,
 body.devices-open form#form01 .inner{
-  width:min(90vw,1000px) !important;
-  max-width:100% !important;
-  margin:0 auto !important;
-  display:grid !important;
-  place-items:center !important;
-  gap:.6em !important;
-  background:transparent !important; border:0 !important; box-shadow:none !important;
+  width: min(90vw, 1000px) !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  place-items: center !important;
+  gap: 0.6em !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
 }
 body.devices-open form#form01 .field{
-  width:100% !important; text-align:center !important;
-  background:transparent !important; border:0 !important; box-shadow:none !important;
+  width: 100% !important;
+  display: block !important;
+  text-align: center !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
 }
 
-/* inputs: text, email, url — 50px, bold, black, centered, no borders */
+/* Inputs: 50px, bold, black, centered, borderless */
 body.devices-open form#form01 input[type="text"],
 body.devices-open form#form01 input[type="email"],
 body.devices-open form#form01 input[type="url"]{
-  all:unset !important;
-  width:100% !important; text-align:center !important;
-  font-size:50px !important; font-weight:800 !important; line-height:1.1 !important;
-  letter-spacing:0 !important; color:#000 !important; padding:.1em 0 !important;
-  box-shadow:none !important;
+  all: unset !important;
+  width: 100% !important;
+  text-align: center !important;
+  font-size: 50px !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0 !important;
+  color: #000 !important;
+  padding: .1em 0 !important;
+  box-shadow: none !important;
 }
 
-/* placeholders: same look */
+/* Placeholders: same look */
 body.devices-open form#form01 input::placeholder{
-  color:#000 !important; opacity:1 !important;
-  font-size:50px !important; font-weight:800 !important; line-height:1.1 !important; letter-spacing:0 !important;
+  color: #000 !important;
+  opacity: 1 !important;
+  font-size: 50px !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0 !important;
 }
 
-/* submit: just the word */
+/* Submit: just the word */
 body.devices-open form#form01 button[type="submit"]{
-  all:unset !important; cursor:pointer !important;
-  font-size:50px !important; font-weight:800 !important; line-height:1.1 !important; color:#000 !important;
-  text-transform:uppercase !important;
+  all: unset !important;
+  cursor: pointer !important;
+  font-size: 50px !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  color: #000 !important;
+  text-transform: uppercase !important;
 }
 body.devices-open form#form01 button[type="submit"]:hover{ opacity:.75; }
 
-body.devices-open{ overflow:hidden; }
+/* Hide any URL field (and wrapper) if Carrd added one */
+body.devices-open form#form01 input[type="url"],
+body.devices-open form#form01 .field:has(input[type="url"]) {
+  display: none !important;
+}
 
-/* ===== HUD ===== */
+/* Prevent page scroll behind DEVICES overlay */
+body.devices-open { overflow: hidden; }
+
+/* ================= HUD ================= */
 .hud-wrap{ position:fixed; inset:0; display:none; z-index:900; pointer-events:none; }
 .hud-wrap.is-visible{ display:block; }
 .hud{
@@ -109,14 +141,24 @@ body.devices-open{ overflow:hidden; }
 .hud-title{ font-size:calc(var(--hud-font)*1.25); font-weight:900; margin:0 0 2em 0; }
 .hud-line{ margin:.3em 0 0 0; font-size:var(--hud-font); opacity:0; transition:opacity 2s ease; }
 
-/* ===== Weekly ticker ===== */
+/* =============== Weekly ticker =============== */
 .ticker-wrap{ position:fixed; inset:0; display:none; z-index:800; pointer-events:none; }
 .ticker-wrap.is-visible{ display:block; }
-.ticker-rail{ position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); overflow:hidden; height:var(--ticker-h); pointer-events:auto; }
-.ticker{ position:absolute; white-space:nowrap; font-weight:700; letter-spacing:.08em; font-size:clamp(1.1rem,3.2vw,2.2rem); animation:slide-left var(--ticker-duration) linear infinite; }
-@keyframes slide-left{ from{transform:translateX(100vw)} to{transform:translateX(-110%)} }
+.ticker-rail{
+  position:absolute; left:0; right:0; top:50%; transform:translateY(-50%);
+  overflow:hidden; height:var(--ticker-h); pointer-events:auto;
+}
+.ticker{
+  position:absolute; white-space:nowrap; font-weight:700; letter-spacing:.08em;
+  font-size:clamp(1.1rem,3.2vw,2.2rem);
+  animation:slide-left var(--ticker-duration) linear infinite;
+}
+@keyframes slide-left{
+  from{ transform:translateX(100vw); }
+  to  { transform:translateX(-110%); }
+}
 
-/* ===== BREATHE overlay ===== */
+/* =============== BREATHE overlay =============== */
 .breathe{ position:fixed; inset:0; display:none; background:var(--bg); z-index:1200; pointer-events:none; }
 .breathe.is-open{ display:block; pointer-events:auto; } /* allow clicks anywhere */
 #stopBtn{
