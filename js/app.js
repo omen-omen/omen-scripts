@@ -1,4 +1,4 @@
-/* ================= OMEN app.js — click-to-toggle + self-contained Buttondown form ================= */
+/* ================= OMEN app.js — click-to-toggle + inline Buttondown form (API) ================= */
 (function () {
   "use strict";
 
@@ -10,18 +10,18 @@
   ready(function init(){
     const $ = (q)=>document.querySelector(q);
 
-    /* ---------- Elements you already have on the page ---------- */
+    /* ---------- Elements present in Carrd ---------- */
     const hudWrap=$("#hudWrap"), hud=$("#hud");
     const why=$("#why"), how=$("#how"), what=$("#what"),
           devices=$("#devices"), oracle=$("#oracle");
-    const weeklyLink=$("#weekly"), tickerWrap=$("#tickerWrap"), tickerRail=$("#tickerRail"), tickerText=$("#tickerText");
+    const weeklyLink=$("#weekly"), tickerWrap=$("#tickerWrap"), tickerText=$("#tickerText");
     const breatheLink=$("#breathe"), breatheOverlay=$("#breatheOverlay"), stopBtn=$("#stopBtn");
     const breathingBar=$("#breathingBar"),
           layerA=breathingBar && breathingBar.querySelector(".layer-a"),
           layerB=breathingBar && breathingBar.querySelector(".layer-b");
 
-    // Bail if core scaffold missing
-    if(!hudWrap||!hud||!weeklyLink||!tickerWrap||!tickerRail||!tickerText||!breatheLink||!breatheOverlay||!stopBtn||!breathingBar||!layerA||!layerB){
+    // Fail quietly if the site scaffold isn't present (prevents half-rendered states)
+    if(!hudWrap||!hud||!weeklyLink||!tickerWrap||!tickerText||!breatheLink||!breatheOverlay||!stopBtn||!breathingBar||!layerA||!layerB){
       return;
     }
 
@@ -79,8 +79,7 @@
       if(!layer) return;
       layer.classList.remove('run');
       layer.querySelectorAll('.seg').forEach(seg=>{ seg.classList.remove('is-fading'); seg.style.animation='none'; });
-      layer.offsetWidth;  // reflow
-      layer.querySelectorAll('.seg').forEach(seg=>{ seg.style.animation=''; });
+      layer.offsetWidth; layer.querySelectorAll('.seg').forEach(seg=>{ seg.style.animation=''; });
     }
     function fadeAll(layer){ ['.top','.right','.bottom','.left'].forEach(sel=>{ const s=layer.querySelector(sel); if(s) s.classList.add('is-fading'); }); }
     function startLayer(layer){
@@ -142,6 +141,7 @@
       hideWeekly();
       breatheOverlay.classList.add("is-open"); breatheOverlay.setAttribute("aria-hidden","false");
       barStart(true); startCenterWords();
+      // global capture → clicking anywhere closes
       setTimeout(()=>{ document.addEventListener("click", globalBreatheClose, true); }, 0);
       setTimeout(()=>{ document.addEventListener("touchstart", globalBreatheClose, {passive:true, capture:true}); }, 0);
     }
@@ -155,25 +155,38 @@
     breatheOverlay.addEventListener("click", ()=>exitBreathe(), true);
     breatheOverlay.addEventListener("touchstart", ()=>exitBreathe(), { passive: true, capture: true });
 
-    /* ================= DEVICES — self-contained Buttondown form ================= */
+    /* ================= DEVICES — overlay with inline Buttondown form ================= */
 
-    const BUTTONDOWN_USER = "YOUR_BUTTONDOWN_USERNAME";  // <- set this once
-
+    const BUTTONDOWN_USERNAME = "YOUR_BUTTONDOWN_USERNAME"; // ← set this once
     let devicesOverlay = null, devicesContent = null, devicesForm = null;
+
+    // Hidden iframe for API response (prevents navigation)
+    function ensureBDIframe(){
+      let iframe = document.getElementById("bd_iframe");
+      if (!iframe){
+        iframe = document.createElement("iframe");
+        iframe.name = "bd_iframe";
+        iframe.id = "bd_iframe";
+        iframe.style.display = "none";
+        document.body.appendChild(iframe);
+      }
+      return iframe;
+    }
 
     function buildDevicesForm(){
       if (devicesForm) return devicesForm;
+      ensureBDIframe();
+
       const form = document.createElement("form");
       form.id = "inlineDevicesForm";
       form.method = "post";
-      const action = "https://buttondown.email/" + BUTTONDOWN_USER;
-      form.action = action;
-      form.target = "popupwindow";
-      form.setAttribute("onsubmit", `window.open('${action}','popupwindow');return true;`);
+      form.action = "https://buttondown.email/api/emails/subscribe"; // API endpoint (no CSRF)
+      form.target = "bd_iframe";
 
+      // Inputs (typography handled by CSS)
       const nameI = document.createElement("input");
       nameI.type = "text";
-      nameI.name = "name";
+      nameI.name = "metadata__name";     // stored as metadata
       nameI.placeholder = "NAME";
 
       const emailI = document.createElement("input");
@@ -182,16 +195,30 @@
       emailI.placeholder = "EMAIL";
       emailI.required = true;
 
+      // Required flags
       const embedI = document.createElement("input");
       embedI.type = "hidden";
       embedI.name = "embed";
       embedI.value = "1";
 
+      const listI = document.createElement("input");
+      listI.type = "hidden";
+      listI.name = "list";
+      listI.value = BUTTONDOWN_USERNAME; // explicit routing to your newsletter
+
       const btn = document.createElement("button");
       btn.type = "submit";
       btn.textContent = "SUBMIT";
 
-      [nameI, emailI, embedI, btn].forEach(el=>form.appendChild(el));
+      form.addEventListener("submit", function(){
+        btn.disabled = true;
+        btn.style.opacity = "0.75";
+        btn.textContent = "SENT";
+        // optional: auto-close after a beat
+        // setTimeout(closeDevicesOverlay, 1200);
+      });
+
+      [nameI, emailI, embedI, listI, btn].forEach(el=>form.appendChild(el));
       devicesForm = form;
       return form;
     }
@@ -228,7 +255,7 @@
       devicesOverlay.appendChild(buildDevicesForm());
       document.body.appendChild(devicesOverlay);
 
-      // Close on background click
+      // Click outside to close
       devicesOverlay.addEventListener("click", (e)=>{ if (e.target === devicesOverlay) closeDevicesOverlay(); }, true);
       devicesOverlay.addEventListener("touchstart", (e)=>{ if (e.target === devicesOverlay) closeDevicesOverlay(); }, { passive: true, capture: true });
 
