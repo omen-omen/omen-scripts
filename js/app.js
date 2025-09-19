@@ -1,4 +1,4 @@
-/* ================= OMEN app.js — click-to-toggle + inline Buttondown form (API) ================= */
+/* ================= OMEN app.js — click-to-toggle + inline Buttondown form ================= */
 (function () {
   "use strict";
 
@@ -141,7 +141,6 @@
       hideWeekly();
       breatheOverlay.classList.add("is-open"); breatheOverlay.setAttribute("aria-hidden","false");
       barStart(true); startCenterWords();
-      // global capture → clicking anywhere closes
       setTimeout(()=>{ document.addEventListener("click", globalBreatheClose, true); }, 0);
       setTimeout(()=>{ document.addEventListener("touchstart", globalBreatheClose, {passive:true, capture:true}); }, 0);
     }
@@ -157,11 +156,10 @@
 
     /* ================= DEVICES — overlay with inline Buttondown form ================= */
 
-    const BUTTONDOWN_USERNAME = "OMEN"; // ← set this once
+    const BUTTONDOWN_USERNAME = "OMEN"; // ← set this
 
     let devicesOverlay = null, devicesContent = null, devicesForm = null;
 
-    // Hidden iframe for API response (prevents navigation)
     function ensureBDIframe(){
       let iframe = document.getElementById("bd_iframe");
       if (!iframe){
@@ -181,22 +179,22 @@
       const form = document.createElement("form");
       form.id = "inlineDevicesForm";
       form.method = "post";
-      form.action = "https://buttondown.email/api/emails/subscribe"; // API endpoint (no CSRF)
+      form.action = "https://buttondown.email/api/emails/subscribe";
       form.target = "bd_iframe";
 
-      // Inputs (typography handled by CSS)
       const nameI = document.createElement("input");
       nameI.type = "text";
-      nameI.name = "metadata__name";     // stored as metadata
+      nameI.name = "metadata__name";
       nameI.placeholder = "NAME";
+      nameI.className = "fld-name";
 
       const emailI = document.createElement("input");
       emailI.type = "email";
       emailI.name = "email";
       emailI.placeholder = "EMAIL";
       emailI.required = true;
+      emailI.className = "fld-email";
 
-      // Required flags
       const embedI = document.createElement("input");
       embedI.type = "hidden";
       embedI.name = "embed";
@@ -205,7 +203,7 @@
       const listI = document.createElement("input");
       listI.type = "hidden";
       listI.name = "list";
-      listI.value = BUTTONDOWN_USERNAME; // explicit routing to your newsletter
+      listI.value = BUTTONDOWN_USERNAME;
 
       const btn = document.createElement("button");
       btn.type = "submit";
@@ -215,8 +213,6 @@
         btn.disabled = true;
         btn.style.opacity = "0.75";
         btn.textContent = "SENT";
-        // optional: auto-close after a beat
-        // setTimeout(closeDevicesOverlay, 1200);
       });
 
       [nameI, emailI, embedI, listI, btn].forEach(el=>form.appendChild(el));
@@ -229,13 +225,16 @@
 
       devicesOverlay = document.createElement("div");
       devicesOverlay.id = "devicesOverlay";
+
+      // Grid: [top spacer] [titles] [centered form] [bottom spacer]
+      devicesOverlay.innerHTML = "";
       Object.assign(devicesOverlay.style, {
-        position: "fixed", inset: "0", zIndex: "6000",
-        display: "none", background: "var(--bg, #f6f3ef)",
-        display: "grid", placeItems: "start center",
-        padding: "10vh 6vw 6vh", overflowY: "auto",
-        textAlign: "center", textTransform: "uppercase",
-        fontWeight: "800", letterSpacing: ".06em"
+        position: "fixed",
+        inset: "0",
+        zIndex: "6000",
+        display: "grid",
+        gridTemplateRows: "1fr auto 1fr",
+        background: "var(--bg, #f6f3ef)"
       });
 
       devicesContent = document.createElement("div");
@@ -243,41 +242,35 @@
 
       const line1 = document.createElement("div");
       line1.textContent = "DEVICES ARE FORMING";
-      line1.style.fontSize = "50px"; line1.style.fontWeight = "800"; line1.style.letterSpacing = "0";
 
       const line2 = document.createElement("div");
       line2.textContent = "SIGNAL WILL BE SENT WHEN READY";
-      line2.style.fontSize = "50px"; line2.style.fontWeight = "800"; line2.style.letterSpacing = "1px"; line2.style.marginTop = ".2em";
 
       devicesContent.appendChild(line1);
       devicesContent.appendChild(line2);
 
-      devicesOverlay.appendChild(devicesContent);
-      devicesOverlay.appendChild(buildDevicesForm());
+      // Row placement
+      devicesContent.style.alignSelf = "end";       // titles sit above the center
+      devicesContent.style.justifySelf = "center";
+
+      const formEl = buildDevicesForm();
+      formEl.style.alignSelf = "center";            // form is exactly centered
+      formEl.style.justifySelf = "center";
+
+      devicesOverlay.appendChild(devicesContent);   // row 2
+      devicesOverlay.appendChild(formEl);           // row 3 (auto center because of grid rows)
+
       document.body.appendChild(devicesOverlay);
 
-      // Click outside to close
-      devicesOverlay.addEventListener("click", (e)=>{ if (e.target === devicesOverlay) closeDevicesOverlay(); }, true);
-      devicesOverlay.addEventListener("touchstart", (e)=>{ if (e.target === devicesOverlay) closeDevicesOverlay(); }, { passive: true, capture: true });
+      // Click background to close
+      devicesOverlay.addEventListener("click", (e)=>{
+        if (e.target === devicesOverlay) closeDevicesOverlay();
+      }, true);
+      devicesOverlay.addEventListener("touchstart", (e)=>{
+        if (e.target === devicesOverlay) closeDevicesOverlay();
+      }, { passive: true, capture: true });
 
       return devicesOverlay;
-    }
-
-    function positionFormUnderTitle(){
-      if (!devicesOverlay || !devicesContent || !devicesForm) return;
-      const rect = devicesContent.getBoundingClientRect();
-      Object.assign(devicesForm.style, {
-        position: "fixed",
-        left: "0", right: "0",
-        margin: "0 auto",
-        top: (rect.bottom + 24) + "px",
-        zIndex: "7000",
-        width: "min(90vw, 1000px)",
-        maxWidth: "100%",
-        padding: "0",
-        transform: "none",
-        display: "grid"
-      });
     }
 
     function openDevicesOverlay(){
@@ -285,8 +278,6 @@
       devicesOverlay.style.display = "grid";
       document.documentElement.style.overflow = "hidden";
       document.body.classList.add("devices-open");
-      positionFormUnderTitle();
-      window.addEventListener("resize", positionFormUnderTitle);
     }
 
     function closeDevicesOverlay(){
@@ -294,7 +285,6 @@
       devicesOverlay.style.display = "none";
       document.documentElement.style.overflow = "";
       document.body.classList.remove("devices-open");
-      window.removeEventListener("resize", positionFormUnderTitle);
     }
 
     /* ================= Click-to-toggle NAV ================= */
