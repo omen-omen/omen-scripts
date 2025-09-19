@@ -20,9 +20,11 @@ body{
   text-transform:uppercase;
 }
 
+/* Links */
 a{ color:inherit; text-decoration:none; font-weight:700; letter-spacing:.06em; cursor:pointer; transition:opacity .15s ease, transform .15s ease; }
 a:hover{ opacity:.85; transform:translateY(-1px); }
 
+/* App chrome */
 .app{ position:relative; z-index:10; }
 .omen{ position:fixed; top:var(--pad); right:var(--pad); font-size:var(--omen-size); font-weight:800; letter-spacing:.06em; line-height:.9; pointer-events:none; }
 
@@ -34,7 +36,7 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
 .bottom-right a{ font-size:calc(var(--omen-size) * var(--item-scale)); transform:translateY(var(--weekly-nudge)); }
 
 /* =========================
-   DEVICES overlay + inline form
+   DEVICES overlay + inline Buttondown form
    ========================= */
 
 #devicesOverlay { background: var(--bg, #f6f3ef) !important; }
@@ -42,7 +44,7 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
 #devicesContent > div:first-child{ font-size:50px; line-height:1.1; }
 #devicesContent > div:nth-child(2){ font-size:50px; line-height:1.1; letter-spacing:1px; }
 
-/* Form container (the one JS injects) */
+/* Form container injected by JS */
 #inlineDevicesForm{
   width:min(90vw,1000px);
   max-width:100%;
@@ -96,6 +98,9 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
   box-shadow:none;
 }
 #inlineDevicesForm button[type="submit"]:hover{ opacity:.75; }
+
+/* Hidden iframe for API response */
+#bd_iframe{ display:none !important; width:0 !important; height:0 !important; }
 
 /* Prevent page scroll behind overlay */
 body.devices-open{ overflow:hidden; }
