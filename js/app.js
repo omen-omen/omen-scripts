@@ -19,7 +19,7 @@
     var breathingBar=$("#breathingBar"),
         layerA=breathingBar && breathingBar.querySelector(".layer-a"),
         layerB=breathingBar && breathingBar.querySelector(".layer-b");
-    var form01 = $("#form01"); // Carrd form (we never move it)
+    var form01 = $("#form01"); // Carrd form (we never remove it from the DOM)
 
     // Bail if core scaffold missing; fail quietly
     if(!hudWrap||!hud||!weeklyLink||!tickerWrap||!tickerRail||!tickerText||!breatheLink||!breatheOverlay||!stopBtn||!breathingBar||!layerA||!layerB){
@@ -197,7 +197,7 @@
       breatheOverlay.classList.add("is-open"); breatheOverlay.setAttribute("aria-hidden","false");
       barStart(true);
       startCenterWords();
-      // enable global click-to-close on next tick to avoid closing from the click that opened it
+      // global click-to-close
       setTimeout(function(){ document.addEventListener("click", globalBreatheClose, true); }, 0);
       setTimeout(function(){ document.addEventListener("touchstart", globalBreatheClose, {passive:true, capture:true}); }, 0);
     }
@@ -216,8 +216,7 @@
 
     /* ================= DEVICES — overlay using the real Carrd Form (#form01) ================= */
     var devicesOverlay = null, devicesContent = null;
-    var formWrap = null;       // a higher wrapper around the form
-    var prevFormStyles = null; // to restore on close
+    var formWrap = null; // a higher wrapper around the form
 
     // Find & hide the wrapper + form on load so nothing leaks on base page
     if (form01) {
@@ -230,23 +229,54 @@
       form01.style.display = "none";
     }
 
+    // Before-first-paint normalization: hide URL field, widen wrappers, force grid
+    function normalizeCarrdForm(){
+      if (!form01) return;
+
+      // Hide URL field if present
+      var urlInput = form01.querySelector('input[type="url"], input[name*="url" i], input#form01-url');
+      if (urlInput) {
+        var urlField = urlInput.closest('.field') || urlInput.parentElement;
+        if (urlField) urlField.style.display = 'none';
+        urlInput.style.display = 'none';
+      }
+
+      var inner = form01.querySelector('.inner');
+      if (inner) {
+        inner.style.width = '100%';
+        inner.style.maxWidth = '100%';
+        inner.style.margin = '0 auto';
+        inner.style.display = 'grid';
+        inner.style.placeItems = 'center';
+        inner.style.gap = '0.6em';
+      }
+      form01.querySelectorAll('.field').forEach(function(f){
+        f.style.width = '100%';
+        f.style.display = 'block';
+        f.style.textAlign = 'center';
+      });
+
+      // Force reflow now (prevents the "jump on Tab")
+      void form01.offsetHeight;
+    }
+
     // Place the form directly under the DEVICES title block
     function positionFormUnderTitle(){
       if (!devicesOverlay || !devicesContent || !formWrap) return;
       var rect = devicesContent.getBoundingClientRect();
-Object.assign(formWrap.style, {
-  position: "fixed",
-  left: "0",
-  right: "0",
-  margin: "0 auto",
-  top: (rect.bottom + 24) + "px",
-  zIndex: "7000",
-  width: "min(90vw, 1000px)",
-  maxWidth: "100%",
-  padding: "0",
-  display: "block",
-  transform: "none"
-});
+      Object.assign(formWrap.style, {
+        position: "fixed",
+        left: "0",
+        right: "0",
+        margin: "0 auto",
+        top: (rect.bottom + 24) + "px",   // 24px gap under the title
+        zIndex: "7000",
+        width: "min(90vw, 1000px)",
+        maxWidth: "100%",
+        padding: "0",
+        display: "block",
+        transform: "none"
+      });
     }
 
     function ensureDevicesOverlay(){
@@ -262,8 +292,8 @@ Object.assign(formWrap.style, {
         display: "none",
         background: "var(--bg, #f6f3ef)",
         display: "grid",
-        placeItems: "center",
-        padding: "6vh 6vw",
+        placeItems: "start center",   // headings at top-center
+        padding: "10vh 6vw 6vh",
         overflowY: "auto",
         textAlign: "center",
         textTransform: "uppercase",
@@ -284,9 +314,9 @@ Object.assign(formWrap.style, {
 
       var line2 = document.createElement("div");
       line2.textContent = "SIGNAL WILL BE SENT WHEN READY";
-      line2.style.fontSize = "50px";     // same size as rest
+      line2.style.fontSize = "50px";
       line2.style.fontWeight = "800";
-      line2.style.letterSpacing = "1px"; // 1px tracking
+      line2.style.letterSpacing = "1px";
       line2.style.marginTop = ".2em";
       devicesContent.appendChild(line2);
 
@@ -308,10 +338,13 @@ Object.assign(formWrap.style, {
       ensureDevicesOverlay();
       devicesOverlay.style.display = "grid";
       document.documentElement.style.overflow = "hidden";
-      document.body.classList.add("devices-open"); // CSS hook for 50px, black, borderless
+      document.body.classList.add("devices-open");
       if (formWrap) formWrap.style.display = "block";
       if (form01)  form01.style.display  = "block";
-      requestAnimationFrame(positionFormUnderTitle); // after paint, place under title
+
+      normalizeCarrdForm();
+      requestAnimationFrame(positionFormUnderTitle);
+      setTimeout(positionFormUnderTitle, 0);
       window.addEventListener("resize", positionFormUnderTitle);
     }
 
@@ -321,7 +354,6 @@ Object.assign(formWrap.style, {
       document.documentElement.style.overflow = "";
       document.body.classList.remove("devices-open");
       window.removeEventListener("resize", positionFormUnderTitle);
-      // hide again so nothing leaks onto the base page
       if (formWrap) formWrap.style.display = "none";
       if (form01)  form01.style.display  = "none";
     }
