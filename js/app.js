@@ -20,10 +20,9 @@
         layerA=breathingBar && breathingBar.querySelector(".layer-a"),
         layerB=breathingBar && breathingBar.querySelector(".layer-b");
 
-    var form01 = $("#form01");                // Carrd form element (we only style THIS)
-    var savedFormStyles = null;               // to restore on close
+    var form01 = $("#form01");
+    var savedFormStyles = null;
 
-    // Bail if core scaffold missing; fail quietly
     if(!hudWrap||!hud||!weeklyLink||!tickerWrap||!tickerRail||!tickerText||!breatheLink||!breatheOverlay||!stopBtn||!breathingBar||!layerA||!layerB){
       return;
     }
@@ -96,7 +95,6 @@
     var timers=[], loopInt=null, startBto=null, barRunning=false;
 
     function clearTimers(){ while(timers.length) clearTimeout(timers.pop()); }
-
     function resetLayer(layer){
       if(!layer) return;
       layer.classList.remove('run');
@@ -104,16 +102,14 @@
         seg.classList.remove('is-fading');
         seg.style.animation='none';
       });
-      layer.offsetWidth;  // reflow
+      layer.offsetWidth;
       layer.querySelectorAll('.seg').forEach(function(seg){ seg.style.animation=''; });
     }
-
     function fadeAll(layer){
       ['.top','.right','.bottom','.left'].forEach(function(sel){
         var s=layer.querySelector(sel); if(s) s.classList.add('is-fading');
       });
     }
-
     function startLayer(layer){
       if(!layer) return;
       resetLayer(layer);
@@ -124,7 +120,6 @@
         });
       });
     }
-
     function barStart(thick){
       if(barRunning) return;
       barRunning=true;
@@ -140,7 +135,6 @@
         setTimeout(function(){ resetLayer(layerB); startLayer(layerB); }, 16000);
       }, 32000);
     }
-
     function barStop(){
       if(!barRunning) return;
       barRunning=false;
@@ -148,7 +142,6 @@
       clearTimers(); if(loopInt) clearInterval(loopInt); loopInt=null; if(startBto) clearTimeout(startBto); startBto=null;
       resetLayer(layerA); resetLayer(layerB);
     }
-
     function weeklyText(){
       var src = window.EXPLORATIONS || window.explorations || {};
       var list = [];
@@ -157,7 +150,6 @@
       if(!list.length) return "NO EXPLORATIONS LOADED";
       var item=list[0]; return (typeof item==='string') ? item : (item.text || item.title || "EXPLORATION");
     }
-
     var weeklyOpen=false, labelLoop=null, labelTs=[];
     function clearWeeklyLabelTimers(){ for(var i=0;i<labelTs.length;i++) clearTimeout(labelTs[i]); labelTs=[]; if(labelLoop){ clearInterval(labelLoop); labelLoop=null; } }
     function runWeeklyLabelCycleOnce(){
@@ -169,7 +161,6 @@
       }
     }
     function restartWeeklyLabels(){ clearWeeklyLabelTimers(); runWeeklyLabelCycleOnce(); labelLoop=setInterval(function(){ clearWeeklyLabelTimers(); runWeeklyLabelCycleOnce(); },16000); }
-
     function showWeekly(){
       if(weeklyOpen) return;
       tickerText.textContent = weeklyText();
@@ -193,13 +184,11 @@
       centerWordsLoop=setInterval(function(){ i=(i+1)%words.length; stopBtn.textContent=words[i]; },4000);
     }
     function stopCenterWords(){ clearInterval(centerWordsLoop); centerWordsLoop=null; }
-
     function enterBreathe(){
       hideWeekly();
       breatheOverlay.classList.add("is-open"); breatheOverlay.setAttribute("aria-hidden","false");
       barStart(true);
       startCenterWords();
-      // close by clicking anywhere
       setTimeout(function(){ document.addEventListener("click", globalBreatheClose, true); }, 0);
       setTimeout(function(){ document.addEventListener("touchstart", globalBreatheClose, {passive:true, capture:true}); }, 0);
     }
@@ -215,15 +204,12 @@
     breatheOverlay.addEventListener("touchstart", function(){ exitBreathe(); }, { passive: true, capture: true });
 
     /* ================= DEVICES — overlay using #form01 directly ================= */
-
-    // Hide the form on the base page so nothing leaks
     if (form01) form01.style.display = "none";
 
-    // Normalize Carrd form before first paint (prevents right-shift and traps)
     function normalizeCarrdForm(){
       if (!form01) return;
 
-      // Hide honeypots/URL traps if Carrd injects any
+      // Hide honeypots if Carrd injects them
       [
         'input[type="url"]',
         'input[name*="url" i]',
@@ -251,7 +237,6 @@
           border: 'none', outline: 'none', background: 'transparent', boxShadow: 'none'
         });
       });
-
       var submit = form01.querySelector('button[type="submit"], input[type="submit"]');
       if (submit) {
         Object.assign(submit.style, {
@@ -261,9 +246,7 @@
           border: 'none', outline: 'none', background: 'transparent', boxShadow: 'none'
         });
       }
-
-      // Force reflow now
-      void form01.offsetHeight;
+      void form01.offsetHeight; // reflow
     }
 
     var devicesOverlay = null, devicesContent = null;
@@ -290,7 +273,6 @@
         visibility: "hidden"
       });
 
-      // Titles
       devicesContent = document.createElement("div");
       devicesContent.id = "devicesContent";
 
@@ -312,7 +294,6 @@
       devicesOverlay.appendChild(devicesContent);
       document.body.appendChild(devicesOverlay);
 
-      // background click to close
       devicesOverlay.addEventListener("click", function(e){
         if (e.target === devicesOverlay) closeDevicesOverlay();
       }, true);
@@ -347,7 +328,6 @@
       document.documentElement.style.overflow = "hidden";
       document.body.classList.add("devices-open");
 
-      // show form but keep invisible until styled
       if (form01) {
         savedFormStyles = {
           display: form01.style.display, position: form01.style.position,
@@ -360,10 +340,9 @@
         form01.style.visibility = "hidden";
       }
 
-      normalizeCarrdForm();          // style before first paint
-      positionFormUnderTitle();      // initial placement
+      normalizeCarrdForm();
+      positionFormUnderTitle();
 
-      // reveal after two frames to beat Carrd late reflow
       requestAnimationFrame(function(){
         positionFormUnderTitle();
         requestAnimationFrame(function(){
@@ -391,7 +370,7 @@
     }
 
     /* ================= CLICK-TO-TOGGLE NAV ================= */
-    let active = null; // 'hud:why' | 'hud:how' | 'hud:what' | 'oracle' | 'weekly' | 'breathe' | 'devices'
+    let active = null;
 
     function closeAllUI(){
       closeHud();
@@ -445,7 +424,6 @@
       }, true);
     }
 
-    /* ================= Global ESC to close ================= */
     document.addEventListener("keydown", function(e){
       if(e.key==="Escape"){ closeAllUI(); active = null; }
     });
