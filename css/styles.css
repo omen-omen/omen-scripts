@@ -20,7 +20,7 @@ body{
   text-transform:uppercase;
 }
 
-/* Links (hover-only UX; JS prevents clicks) */
+/* Links (hover-only UX in old builds; JS handles clicks) */
 a{
   color:inherit; text-decoration:none; font-weight:700; letter-spacing:.06em;
   cursor:pointer; transition:opacity .15s ease, transform .15s ease;
@@ -46,69 +46,87 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
   transform:translateY(var(--weekly-nudge));
 }
 
-/* Hide the Carrd form on page load */
-#form01 { display: none; }
+/* =========================================
+   DEVICES overlay + Carrd form (#form01)
+   ========================================= */
 
-/* Optional: match our earlier clean aesthetic */
-#form01 input[type="text"],
-#form01 input[type="email"] {
-  border:1px solid #000; padding:.6em 1em; background:transparent; outline:none;
-  text-transform:uppercase; min-width:10ch;
-}
-#form01 button[type="submit"] {
-  border:1px solid #000; padding:.6em 1.4em; background:transparent; color:#000;
-  text-transform:uppercase; font-weight:800; cursor:pointer;
-}
-/* ===== DEVICES overlay: bold, centered, no boxes ===== */
+/* Hidden by default so nothing leaks onto the base page */
+#form01 { display: none !important; }
 
-/* Make sure the overlay uses the beige */
+/* Overlay background stays beige */
 #devicesOverlay { background: var(--bg, #f6f3ef) !important; }
 
-/* Center the content vertically/horizontally and make all text 50px */
+/* Titles block */
 #devicesContent {
-  text-align: center;
-  text-transform: uppercase;
-  font-weight: 800;
-  letter-spacing: 0;
+  text-align:center;
+  text-transform:uppercase;
+  font-weight:800;
+  letter-spacing:0;
 }
-#devicesContent, #devicesContent * {
-  font-size: 50px;   /* headings + inputs + button = same size */
-  line-height: 1.1;
+#devicesContent > div:first-child { font-size:50px; line-height:1.1; }
+#devicesContent > div:nth-child(2) { font-size:50px; line-height:1.1; letter-spacing:1px; }
+
+/* When DEVICES is open, take full control of Carrd's form layout */
+body.devices-open form#form01,
+body.devices-open form#form01 .inner {
+  width: min(90vw, 1000px) !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  place-items: center !important;
+  gap: 0.6em !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
 }
 
-/* Form layout: a clean centered stack that wraps nicely on small screens */
-#form01 {
-  display: grid;
-  place-items: center;
-  gap: 0.6em;
-  margin-top: 0.8em;
-  text-transform: uppercase;
+/* Carrd wraps inputs in .field; make them full-width and centered */
+body.devices-open form#form01 .field {
+  width: 100% !important;
+  display: block !important;
+  text-align: center !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
 }
 
-/* Nuke Carrd defaults and any boxes on inputs */
-#form01 input[type="text"],
-#form01 input[type="email"] {
-  all: unset;                       /* wipe borders, bg, shadows, etc. */
-  text-align: center;
-  width: min(90vw, 900px);          /* wide but responsive */
-  padding: 0.2em 0.4em;             /* breathing room without a box */
-  caret-color: #000;
+/* Inputs: 50px, pure black, centered, borderless */
+body.devices-open form#form01 input[type="text"],
+body.devices-open form#form01 input[type="email"] {
+  all: unset !important;
+  width: 100% !important;
+  text-align: center !important;
+  font-size: 50px !important;
+  line-height: 1.1 !important;
+  color: #000 !important;
+  padding: 0.1em 0 !important;
+  box-shadow: none !important;
 }
-#form01 ::placeholder { opacity: 0.45; }
 
-/* Button = pure word, no box */
-#form01 button[type="submit"] {
-  all: unset;                       /* no border, no bg, no default button chrome */
-  text-transform: uppercase;
-  font-weight: 800;
-  cursor: pointer;
+/* Placeholders also pure black at same size */
+body.devices-open form#form01 input::placeholder {
+  color: #000 !important;
+  opacity: 1 !important;
+  font-size: 50px !important;
+  line-height: 1.1 !important;
 }
-#form01 button[type="submit"]:hover { opacity: 0.7; }
 
-/* Optional: when overlay opens, prevent page scroll behind it */
-body:has(#devicesOverlay[style*="display: block"]) { overflow: hidden; }
+/* Submit: just the word, no box, 50px black */
+body.devices-open form#form01 button[type="submit"] {
+  all: unset !important;
+  font-size: 50px !important;
+  line-height: 1.1 !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  color: #000 !important;
+  cursor: pointer !important;
+}
+body.devices-open form#form01 button[type="submit"]:hover { opacity:.75; }
 
-/* HUD */
+/* Prevent page scroll behind DEVICES overlay */
+body.devices-open { overflow: hidden; }
+
+/* ================= HUD ================= */
 .hud-wrap{
   position:fixed; inset:0; display:none; z-index:900; pointer-events:none;
 }
@@ -124,7 +142,7 @@ body:has(#devicesOverlay[style*="display: block"]) { overflow: hidden; }
 .hud-title{ font-size:calc(var(--hud-font)*1.25); font-weight:900; margin:0 0 2em 0; }
 .hud-line{ margin:.3em 0 0 0; font-size:var(--hud-font); opacity:0; transition:opacity 2s ease; }
 
-/* Weekly ticker */
+/* =============== Weekly ticker =============== */
 .ticker-wrap{ position:fixed; inset:0; display:none; z-index:800; pointer-events:none; }
 .ticker-wrap.is-visible{ display:block; }
 .ticker-rail{
@@ -141,9 +159,17 @@ body:has(#devicesOverlay[style*="display: block"]) { overflow: hidden; }
   to  { transform:translateX(-110%); }
 }
 
-/* Breathe overlay */
-.breathe{ position:fixed; inset:0; display:none; background:var(--bg); z-index:1200; pointer-events:none; }
-.breathe.is-open{ display:block; }
+/* =============== BREATHE overlay =============== */
+.breathe{
+  position:fixed; inset:0; display:none; background:var(--bg); z-index:1200;
+  /* while closed we don't catch clicks */
+  pointer-events:none;
+}
+.breathe.is-open{
+  display:block;
+  /* when open, allow clicks anywhere to reach JS and close */
+  pointer-events:auto;
+}
 #stopBtn{
   position:absolute; inset:0; display:grid; place-items:center;
   font-weight:800; letter-spacing:.06em; user-select:none;
@@ -160,28 +186,20 @@ body:has(#devicesOverlay[style*="display: block"]) { overflow: hidden; }
 /* Segments */
 .seg{
   position:absolute; background:#000;
-  opacity:1; transition:opacity 2s linear;           /* fade handled by .is-fading */
+  opacity:1; transition:opacity 2s linear;
   will-change:width,height,opacity;
   animation-duration:16s; animation-timing-function:linear;
   animation-fill-mode:both; animation-iteration-count:1;
-  animation-play-state:paused;                        /* run only when .layer.run */
+  animation-play-state:paused;
 }
 #breathingBar .layer.run .seg{ animation-play-state:running; }
 #breathingBar .seg.is-fading{ opacity:0; }
 
-/* Segment geometry + keyframes (no opacity here) */
+/* Segment geometry + keyframes */
 .top   { top:0; left:0; height:var(--bar); width:0; animation-name:topSnake; }
 .right { top:var(--bar); right:0; width:var(--bar); height:0; animation-name:rightSnake; }
 .bottom{ bottom:0; right:var(--bar); height:var(--bar); width:0; animation-name:bottomSnake; }
-
-/* Left segment: start above bottom bar, grow to just under top bar */
-.left{
-  bottom: var(--bar);
-  left: 0;
-  width: var(--bar);
-  height: 0;
-  animation-name: leftSnake;
-}
+.left  { bottom:var(--bar); left:0; width:var(--bar); height:0; animation-name:leftSnake; }
 
 @keyframes topSnake    { 0%{width:0} 25%{width:100%}                                  100%{width:100%} }
 @keyframes rightSnake  { 0%{height:0} 25%{height:0} 50%{height:calc(100% - var(--bar))} 100%{height:calc(100% - var(--bar))} }
@@ -225,13 +243,11 @@ body.big-bar  { --bar:var(--bar-thick); }
     min-width: 0;
     box-sizing: border-box;
 
-    /* 1/6 viewport gutters left/right; keep at least 1rem; respect safe areas */
     padding-left: max(16.6667vw, 1rem, env(safe-area-inset-left));
     padding-right: max(16.6667vw, 1rem, env(safe-area-inset-right));
     padding-top: 1rem;
     padding-bottom: 1rem;
 
-    /* keep your larger mobile font size */
     font-size: calc(var(--hud-font) * 1.5);
   }
 
