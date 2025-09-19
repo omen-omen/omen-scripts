@@ -38,6 +38,8 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
 /* =========================
    DEVICES overlay + inline Buttondown form
    ========================= */
+/* Hide overlay unless JS opens it */
+#devicesOverlay { display: none; }
 
 #devicesOverlay{
   background: var(--bg, #f6f3ef);
