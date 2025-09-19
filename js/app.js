@@ -227,19 +227,29 @@
       form01.style.display = "none";
     }
 
-    // Normalize Carrd form before first paint (kills the right-shift/jump-on-tab)
+    // Normalize Carrd form before first paint (prevents WEB URL & right-shift)
     function normalizeCarrdForm(){
       if (!form01) return;
 
-      // Hide URL field (if present)
-      var urlInput = form01.querySelector('input[type="url"], input[name*="url" i]');
-      if (urlInput) {
-        var urlField = urlInput.closest('.field') || urlInput.parentElement;
-        if (urlField) urlField.style.display = 'none';
-        urlInput.style.display = 'none';
-      }
+      // 1) Hide honeypot/URL fields (Carrd often injects one)
+      [
+        'input[type="url"]',
+        'input[name*="url" i]',
+        'input[id*="url" i]',
+        'input[name*="website" i]',
+        'input[id*="website" i]',
+        'input[aria-hidden="true"]',
+        'input[tabindex="-1"]'
+      ].forEach(function(sel){
+        var trap = form01.querySelector(sel);
+        if (trap) {
+          var field = trap.closest('.field') || trap.parentElement;
+          if (field) field.style.display = 'none';
+          trap.style.display = 'none';
+        }
+      });
 
-      // Wrappers to grid + full width
+      // 2) Force wrappers to centered, full-width grid
       var inner = form01.querySelector('.inner');
       if (inner) {
         Object.assign(inner.style, {
@@ -254,30 +264,28 @@
         });
       });
 
-      // Inputs -> 50px bold black centered (inline)
-      var inputs = form01.querySelectorAll('input[type="text"], input[type="email"], input[type="url"]');
+      // 3) Inputs/submit: 50px, bold, black, centered (no all:unset)
+      var inputs = form01.querySelectorAll('input[type="text"], input[type="email"]');
       inputs.forEach(function(inp){
         Object.assign(inp.style, {
-          all: 'unset',
           width: '100%', textAlign: 'center',
           fontSize: '50px', fontWeight: '800', lineHeight: '1.1', letterSpacing: '0',
-          color: '#000', padding: '.1em 0', background: 'transparent', border: '0', boxShadow: 'none'
+          color: '#000', padding: '.1em 0',
+          border: 'none', outline: 'none', background: 'transparent', boxShadow: 'none'
         });
-        inp.setAttribute('data-omen-typography', 'true'); // for placeholder CSS hook
       });
 
-      // Submit -> word only, 50px bold black
       var submit = form01.querySelector('button[type="submit"], input[type="submit"]');
       if (submit) {
         Object.assign(submit.style, {
-          all: 'unset',
           cursor: 'pointer',
           fontSize: '50px', fontWeight: '800', lineHeight: '1.1',
-          textTransform: 'uppercase', color: '#000'
+          textTransform: 'uppercase', color: '#000',
+          border: 'none', outline: 'none', background: 'transparent', boxShadow: 'none'
         });
       }
 
-      // Force reflow now (prevents the jump on first focus)
+      // 4) Force reflow now (prevents the jump on first focus)
       void form01.offsetHeight;
     }
 
@@ -319,7 +327,8 @@
         textAlign: "center",
         textTransform: "uppercase",
         fontWeight: "800",
-        letterSpacing: ".06em"
+        letterSpacing: ".06em",
+        visibility: "hidden"          // we’ll reveal after normalization
       });
 
       // Titles
@@ -367,9 +376,13 @@
       normalizeCarrdForm();          // style before first paint
       positionFormUnderTitle();      // initial placement
 
+      // Reveal after two frames to beat Carrd's late reflow
       requestAnimationFrame(function(){
-        positionFormUnderTitle();    // settle
-        if (formWrap) formWrap.style.visibility = "visible";
+        positionFormUnderTitle();
+        requestAnimationFrame(function(){
+          if (formWrap) formWrap.style.visibility = "visible";
+          devicesOverlay.style.visibility = "visible";
+        });
       });
 
       window.addEventListener("resize", positionFormUnderTitle);
@@ -378,6 +391,7 @@
     function closeDevicesOverlay(){
       if (!devicesOverlay) return;
       devicesOverlay.style.display = "none";
+      devicesOverlay.style.visibility = "hidden";
       document.documentElement.style.overflow = "";
       document.body.classList.remove("devices-open");
       window.removeEventListener("resize", positionFormUnderTitle);
