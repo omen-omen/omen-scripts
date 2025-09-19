@@ -34,13 +34,13 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
 .bottom-right a{ font-size:calc(var(--omen-size) * var(--item-scale)); transform:translateY(var(--weekly-nudge)); }
 
 /* =========================
-   DEVICES overlay + #form01
+   DEVICES overlay + forms
    ========================= */
 
-/* Hide form on base page (no !important) */
+/* Hide Carrd form on base page */
 #form01 { display:none; }
 
-/* When overlay is open, force the form and its children to be visible */
+/* Force-show while overlay is open (overrides Carrd) */
 body.devices-open #form01,
 body.devices-open #form01 *{
   display:unset !important;
@@ -50,13 +50,13 @@ body.devices-open #form01 *{
 }
 
 #devicesOverlay { background: var(--bg, #f6f3ef) !important; }
-
 #devicesContent{ text-align:center; text-transform:uppercase; font-weight:800; letter-spacing:0; }
 #devicesContent > div:first-child{ font-size:50px; line-height:1.1; }
 #devicesContent > div:nth-child(2){ font-size:50px; line-height:1.1; letter-spacing:1px; }
 
-/* Centered grid */
-body.devices-open form#form01{
+/* Shared layout for Carrd form and inline fallback */
+body.devices-open form#form01,
+body.devices-open form#inlineDevicesForm{
   width:min(90vw,1000px) !important;
   max-width:100% !important;
   margin:0 auto !important;
@@ -71,7 +71,9 @@ body.devices-open form#form01{
 
 /* Inputs: 50px, bold, black, centered, borderless */
 body.devices-open form#form01 input[type="text"],
-body.devices-open form#form01 input[type="email"]{
+body.devices-open form#form01 input[type="email"],
+body.devices-open form#inlineDevicesForm input[type="text"],
+body.devices-open form#inlineDevicesForm input[type="email"]{
   width:100% !important;
   text-align:center !important;
   font-size:50px !important;
@@ -85,18 +87,17 @@ body.devices-open form#form01 input[type="email"]{
   background:transparent !important;
   box-shadow:none !important;
 }
-body.devices-open form#form01 input::placeholder{
-  color:#000 !important;
-  opacity:1 !important;
-  font-size:50px !important;
-  font-weight:800 !important;
-  line-height:1.1 !important;
-  letter-spacing:0 !important;
+body.devices-open form#form01 input::placeholder,
+body.devices-open form#inlineDevicesForm input::placeholder{
+  color:#000 !important; opacity:1 !important;
+  font-size:50px !important; font-weight:800 !important; line-height:1.1 !important; letter-spacing:0 !important;
 }
 
 /* Submit: word only */
 body.devices-open form#form01 button[type="submit"],
-body.devices-open form#form01 input[type="submit"]{
+body.devices-open form#form01 input[type="submit"],
+body.devices-open form#inlineDevicesForm button[type="submit"],
+body.devices-open form#inlineDevicesForm input[type="submit"]{
   cursor:pointer !important;
   font-size:50px !important;
   font-weight:800 !important;
@@ -109,7 +110,9 @@ body.devices-open form#form01 input[type="submit"]{
   box-shadow:none !important;
 }
 body.devices-open form#form01 button[type="submit"]:hover,
-body.devices-open form#form01 input[type="submit"]:hover{ opacity:.75; }
+body.devices-open form#form01 input[type="submit"]:hover,
+body.devices-open form#inlineDevicesForm button[type="submit"]:hover,
+body.devices-open form#inlineDevicesForm input[type="submit"]:hover{ opacity:.75; }
 
 /* Hide any honeypot/URL fields if Carrd injects them */
 body.devices-open form#form01 input[type="url"],
@@ -119,15 +122,6 @@ body.devices-open form#form01 input[name*="website" i],
 body.devices-open form#form01 input[id*="website" i],
 body.devices-open form#form01 input[aria-hidden="true"],
 body.devices-open form#form01 input[tabindex="-1"]{
-  display:none !important;
-}
-body.devices-open form#form01 .field:has(input[type="url"]),
-body.devices-open form#form01 .field:has(input[name*="url" i]),
-body.devices-open form#form01 .field:has(input[id*="url" i]),
-body.devices-open form#form01 .field:has(input[name*="website" i]),
-body.devices-open form#form01 .field:has(input[id*="website" i]),
-body.devices-open form#form01 .field:has(input[aria-hidden="true"]),
-body.devices-open form#form01 .field:has(input[tabindex="-1"]){
   display:none !important;
 }
 
