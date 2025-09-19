@@ -80,11 +80,9 @@ body.devices-open form#form01 .field{
   box-shadow: none !important;
 }
 
-/* Inputs: 50px, bold, black, centered, no borders */
+/* Inputs: 50px, bold, black, centered, borderless (no all:unset) */
 body.devices-open form#form01 input[type="text"],
-body.devices-open form#form01 input[type="email"],
-body.devices-open form#form01 input[type="url"]{
-  all: unset !important;
+body.devices-open form#form01 input[type="email"]{
   width: 100% !important;
   text-align: center !important;
   font-size: 50px !important;
@@ -93,6 +91,9 @@ body.devices-open form#form01 input[type="url"]{
   letter-spacing: 0 !important;
   color: #000 !important;
   padding: .1em 0 !important;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
   box-shadow: none !important;
 }
 
@@ -109,20 +110,35 @@ body.devices-open form#form01 input::placeholder{
 /* Submit: just the word */
 body.devices-open form#form01 button[type="submit"],
 body.devices-open form#form01 input[type="submit"]{
-  all: unset !important;
   cursor: pointer !important;
   font-size: 50px !important;
   font-weight: 800 !important;
   line-height: 1.1 !important;
   color: #000 !important;
   text-transform: uppercase !important;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 body.devices-open form#form01 button[type="submit"]:hover,
 body.devices-open form#form01 input[type="submit"]:hover{ opacity:.75; }
 
-/* Hide any URL field (and wrapper) if Carrd added one */
+/* Hide any honeypot/URL field + wrapper (extra insurance) */
 body.devices-open form#form01 input[type="url"],
-body.devices-open form#form01 .field:has(input[type="url"]) {
+body.devices-open form#form01 input[name*="url" i],
+body.devices-open form#form01 input[id*="url" i],
+body.devices-open form#form01 input[name*="website" i],
+body.devices-open form#form01 input[id*="website" i],
+body.devices-open form#form01 input[aria-hidden="true"],
+body.devices-open form#form01 input[tabindex="-1"],
+body.devices-open form#form01 .field:has(input[type="url"]),
+body.devices-open form#form01 .field:has(input[name*="url" i]),
+body.devices-open form#form01 .field:has(input[id*="url" i]),
+body.devices-open form#form01 .field:has(input[name*="website" i]),
+body.devices-open form#form01 .field:has(input[id*="website" i]),
+body.devices-open form#form01 .field:has(input[aria-hidden="true"]),
+body.devices-open form#form01 .field:has(input[tabindex="-1"]) {
   display: none !important;
 }
 
