@@ -171,53 +171,65 @@
       return iframe;
     }
 
-    function buildDevicesForm(){
-      if (devicesForm) return devicesForm;
-      ensureBDIframe();
+function buildDevicesForm(){
+  if (devicesForm) return devicesForm;
 
-      const form = document.createElement("form");
-      form.id = "inlineDevicesForm";
-      form.method = "post";
-      form.action = "https://buttondown.email/api/emails/subscribe";
-      form.target = "bd_iframe";
+  // hidden target so we don't navigate away
+  let iframe = document.getElementById("bd_iframe");
+  if (!iframe){
+    iframe = document.createElement("iframe");
+    iframe.name = "bd_iframe";
+    iframe.id   = "bd_iframe";
+    iframe.style.display = "none";
+    document.body.appendChild(iframe);
+  }
 
-      const nameI = document.createElement("input");
-      nameI.type = "text";
-      nameI.name = "metadata__name";
-      nameI.placeholder = "NAME";
-      nameI.className = "fld-name";
+  const form = document.createElement("form");
+  form.id     = "inlineDevicesForm";
+  form.method = "post";
+  // ✅ HTML endpoint, no API token needed
+  form.action = "https://buttondown.email/" + String(BUTTONDOWN_USERNAME || "").toLowerCase();
+  form.target = "bd_iframe";
 
-      const emailI = document.createElement("input");
-      emailI.type = "email";
-      emailI.name = "email";
-      emailI.placeholder = "EMAIL";
-      emailI.required = true;
-      emailI.className = "fld-email";
+  // NAME (stored as metadata on the subscriber)
+  const nameI = document.createElement("input");
+  nameI.type = "text";
+  nameI.name = "metadata__name";
+  nameI.placeholder = "NAME";
+  nameI.className = "fld-name";
 
-      const embedI = document.createElement("input");
-      embedI.type = "hidden";
-      embedI.name = "embed";
-      embedI.value = "1";
+  // EMAIL (required)
+  const emailI = document.createElement("input");
+  emailI.type = "email";
+  emailI.name = "email";
+  emailI.placeholder = "EMAIL";
+  emailI.required = true;
+  emailI.className = "fld-email";
 
-      const listI = document.createElement("input");
-      listI.type = "hidden";
-      listI.name = "list";
-      listI.value = BUTTONDOWN_USERNAME;
+  // tell Buttondown this came from an embed (prettier flow)
+  const embedI = document.createElement("input");
+  embedI.type  = "hidden";
+  embedI.name  = "embed";
+  embedI.value = "1";
 
-      const btn = document.createElement("button");
-      btn.type = "submit";
-      btn.textContent = "SUBMIT";
+  // SUBMIT (word only, no box)
+  const btn = document.createElement("button");
+  btn.type = "submit";
+  btn.textContent = "SUBMIT";
 
-      form.addEventListener("submit", function(){
-        btn.disabled = true;
-        btn.style.opacity = "0.75";
-        btn.textContent = "SENT";
-      });
+  // Nice UX: freeze briefly then nudge the user to confirm
+  form.addEventListener("submit", function(){
+    btn.disabled = true;
+    btn.style.opacity = "0.75";
+    btn.textContent = "CHECK EMAIL";
+    setTimeout(()=>{ btn.disabled = false; btn.style.opacity = "1"; btn.textContent = "SUBMIT"; }, 8000);
+  });
 
-      [nameI, emailI, embedI, listI, btn].forEach(el=>form.appendChild(el));
-      devicesForm = form;
-      return form;
-    }
+  [nameI, emailI, embedI, btn].forEach(el => form.appendChild(el));
+  devicesForm = form;
+  return form;
+}
+
 
     function ensureDevicesOverlay(){
       if (devicesOverlay) return devicesOverlay;
