@@ -1,5 +1,5 @@
 /* =========================
-   OMEN — styles.css
+   OMEN — styles.css (V3)
    ========================= */
 
 :root{
@@ -20,7 +20,7 @@ body{
   text-transform:uppercase;
 }
 
-/* Links (hover-only UX; JS prevents clicks) */
+/* Links */
 a{
   color:inherit; text-decoration:none; font-weight:700; letter-spacing:.06em;
   cursor:pointer; transition:opacity .15s ease, transform .15s ease;
@@ -32,7 +32,7 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
 .omen{
   position:fixed; top:var(--pad); right:var(--pad);
   font-size:var(--omen-size); font-weight:800; letter-spacing:.06em; line-height:.9;
-  pointer-events:none;
+  pointer-events:auto; cursor:pointer;
 }
 
 .top-left,.bottom-left{ display:flex; flex-direction:column; gap:var(--gap); }
@@ -46,7 +46,7 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
   transform:translateY(var(--weekly-nudge));
 }
 
-/* HUD */
+/* ================= HUD ================= */
 .hud-wrap{
   position:fixed; inset:0; display:none; z-index:900; pointer-events:none;
 }
@@ -62,7 +62,7 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
 .hud-title{ font-size:calc(var(--hud-font)*1.25); font-weight:900; margin:0 0 2em 0; }
 .hud-line{ margin:.3em 0 0 0; font-size:var(--hud-font); opacity:0; transition:opacity 2s ease; }
 
-/* Weekly ticker */
+/* ================= Weekly ticker ================= */
 .ticker-wrap{ position:fixed; inset:0; display:none; z-index:800; pointer-events:none; }
 .ticker-wrap.is-visible{ display:block; }
 .ticker-rail{
@@ -79,56 +79,88 @@ a:hover{ opacity:.85; transform:translateY(-1px); }
   to  { transform:translateX(-110%); }
 }
 
-/* Breathe overlay */
+/* ================= BREATHE overlay ================= */
 .breathe{ position:fixed; inset:0; display:none; background:var(--bg); z-index:1200; pointer-events:none; }
-.breathe.is-open{ display:block; }
+.breathe.is-open{ display:block; pointer-events:auto; }
 #stopBtn{
   position:absolute; inset:0; display:grid; place-items:center;
   font-weight:800; letter-spacing:.06em; user-select:none;
   font-size:calc(var(--omen-size) * var(--item-scale));
 }
 
-/* Snake / Breathing bar (double buffer) */
+/* ================= Snake / Breathing bar ================= */
 #breathingBar{ position:fixed; inset:0; display:none; z-index:1300; pointer-events:none; }
 #breathingBar.is-active{ display:block; }
 #breathingBar .layer{ position:absolute; inset:0; }
 #breathingBar .layer.run{ z-index:2; }
 #breathingBar .layer:not(.run){ z-index:1; }
-
-/* Segments */
 .seg{
-  position:absolute; background:#000;
-  opacity:1; transition:opacity 2s linear;           /* fade handled by .is-fading */
+  position:absolute; background:#000; opacity:1; transition:opacity 2s linear;
   will-change:width,height,opacity;
   animation-duration:16s; animation-timing-function:linear;
-  animation-fill-mode:both; animation-iteration-count:1;
-  animation-play-state:paused;                        /* run only when .layer.run */
+  animation-fill-mode:both; animation-iteration-count:1; animation-play-state:paused;
 }
 #breathingBar .layer.run .seg{ animation-play-state:running; }
 #breathingBar .seg.is-fading{ opacity:0; }
-
-/* Segment geometry + keyframes (no opacity here) */
 .top   { top:0; left:0; height:var(--bar); width:0; animation-name:topSnake; }
 .right { top:var(--bar); right:0; width:var(--bar); height:0; animation-name:rightSnake; }
 .bottom{ bottom:0; right:var(--bar); height:var(--bar); width:0; animation-name:bottomSnake; }
-
-/* Left segment: start above bottom bar, grow to just under top bar */
-.left{
-  bottom: var(--bar);
-  left: 0;
-  width: var(--bar);
-  height: 0;
-  animation-name: leftSnake;
-}
-
+.left  { bottom:var(--bar); left:0; width:var(--bar); height:0; animation-name:leftSnake; }
 @keyframes topSnake    { 0%{width:0} 25%{width:100%}                                  100%{width:100%} }
 @keyframes rightSnake  { 0%{height:0} 25%{height:0} 50%{height:calc(100% - var(--bar))} 100%{height:calc(100% - var(--bar))} }
 @keyframes bottomSnake { 0%{width:0} 50%{width:0} 75%{width:calc(100% - var(--bar))}    100%{width:calc(100% - var(--bar))} }
 @keyframes leftSnake   { 0%{height:0} 75%{height:0} 100%{height:calc(100% - (var(--bar) * 2))} }
-
-/* Thickness modes */
 body.small-bar{ --bar:var(--bar-thin); }
 body.big-bar  { --bar:var(--bar-thick); }
+
+/* ================= DEVICES overlay + inline Buttondown form ================= */
+
+/* Hidden by default in case JS hasn’t run yet */
+#devicesOverlay{ display:none; }
+
+#devicesOverlay{
+  position:fixed; inset:0; z-index:6000; background:var(--bg);
+  display:grid; place-items:center; padding:6vh 6vw;
+}
+
+/* Titles */
+#devicesContent{
+  text-align:center; text-transform:uppercase; font-weight:800; letter-spacing:0;
+  margin-bottom:1.1em;
+}
+#devicesContent > div{ font-size:50px; line-height:1.1; }
+#devicesContent > div + div{ letter-spacing:1px; margin-top:.2em; }
+
+/* One horizontal line: NAME · EMAIL · SUBMIT */
+#inlineDevicesForm{
+  display:flex; align-items:baseline; justify-content:center; gap:.9em;
+  text-transform:uppercase; font-size:50px; font-weight:800; color:#000;
+  max-width:92vw; flex-wrap:nowrap;
+}
+
+/* Inputs — no boxes, centered text, stable width via clamp() */
+#inlineDevicesForm input[type="text"],
+#inlineDevicesForm input[type="email"]{
+  all:unset; font:inherit; color:#000; text-transform:uppercase; text-align:center;
+  line-height:1.1; padding:.05em .25em; caret-color:#000;
+}
+#inlineDevicesForm .fld-name  { width:clamp(8ch, 22vw, 24ch); }
+#inlineDevicesForm .fld-email { width:clamp(12ch,28vw, 32ch); }
+#inlineDevicesForm ::placeholder{ color:#000; opacity:1; }
+
+/* Submit is just a word */
+#inlineDevicesForm button[type="submit"]{
+  all:unset; cursor:pointer; font:inherit; color:#000; line-height:1.1; white-space:nowrap;
+}
+#inlineDevicesForm button[type="submit"]:hover{ opacity:.75; }
+
+/* Hidden iframe for Buttondown */
+#bd_iframe{ display:none !important; width:0 !important; height:0 !important; }
+
+/* ================= Mobile tweaks ================= */
+@media (max-width: 980px){
+  #inlineDevicesForm{ flex-wrap:wrap; row-gap:.4em; }
+}
 
 /* Weekly label: two lines on mobile only */
 #weekly{ text-align:center; line-height:1.2; white-space:nowrap; }
@@ -138,44 +170,14 @@ body.big-bar  { --bar:var(--bar-thick); }
   #weekly .mbr{ display:block; height:0; }
 }
 
-/* =================
-   MOBILE REFINEMENTS
-   ================= */
-
-/* 1) Weekly Exploration aligned right on mobile */
-@media (max-width: 640px) {
-  .bottom-right {
-    right: var(--pad);
-    left: auto;
-    text-align: right;
+/* HUD gutters on small screens */
+@media (max-width: 640px){
+  .hud{
+    width:100vw; max-width:none; min-width:0; box-sizing:border-box;
+    padding-left:max(16.6667vw,1rem,env(safe-area-inset-left));
+    padding-right:max(16.6667vw,1rem,env(safe-area-inset-right));
+    padding-top:1rem; padding-bottom:1rem;
+    font-size:calc(var(--hud-font) * 1.5);
   }
-  #weekly {
-    display: inline-block;
-    text-align: right;
-  }
-}
-
-/* 2) HUD gutters: keep 1/6 viewport empty on each side (content spans middle 4/6) */
-@media (max-width: 640px) {
-  .hud {
-    width: 100vw;
-    max-width: none;
-    min-width: 0;
-    box-sizing: border-box;
-
-    /* 1/6 viewport gutters left/right; keep at least 1rem; respect safe areas */
-    padding-left: max(16.6667vw, 1rem, env(safe-area-inset-left));
-    padding-right: max(16.6667vw, 1rem, env(safe-area-inset-right));
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-
-    /* keep your larger mobile font size */
-    font-size: calc(var(--hud-font) * 1.5);
-  }
-
-  .hud-content {
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    hyphens: auto;
-  }
+  .hud-content{ overflow-wrap:anywhere; word-break:break-word; hyphens:auto; }
 }
